@@ -336,7 +336,44 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, outputSheetName A
     outputWs.Columns.AutoFit
 End Sub
 
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, outputSheetName As String)
+    Dim outputWs As Worksheet
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets(outputSheetName)
+    On Error GoTo 0
 
+    ' Create or clear the output worksheet
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = outputSheetName
+    Else
+        outputWs.Cells.Clear
+    End If
+
+    Dim BucketRange As Variant
+    Dim rowCounter As Long
+    rowCounter = 1
+
+    For Each BucketRange In BucketDict.Keys
+        ' Initialize sum for each bucket
+        Dim totalCurrentBalance As Double
+        totalCurrentBalance = 0
+
+        ' Calculate total current balance for each bucket
+        Dim BucketData As Variant
+        For Each BucketData In BucketDict.Item(BucketRange)
+            totalCurrentBalance = totalCurrentBalance + BucketData(1) ' Assuming second element is current balance
+        Next BucketData
+
+        ' Output the total current balance for the bucket
+        outputWs.Cells(rowCounter, 1).Value = "Bucket: " & BucketRange
+        outputWs.Cells(rowCounter, 2).Value = totalCurrentBalance
+        rowCounter = rowCounter + 1
+    Next BucketRange
+
+    ' AutoFit columns for readability
+    outputWs.Columns.AutoFit
+End Sub
 
 
 
