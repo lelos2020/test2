@@ -68,3 +68,33 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetPrefix
         Next i
     Next key
 End Sub
+
+
+Sub StratifyByCurrentBalance(ws As Worksheet, colDict As Object, balanceFieldCode As String)
+    ' Check if the balance field code is in the dictionary
+    If Not colDict.Exists(balanceFieldCode) Then
+        MsgBox "Balance field code not found in the dataset."
+        Exit Sub
+    End If
+
+    ' Get the column number for the current balance
+    Dim colCurrentBalance As Integer
+    colCurrentBalance = colDict.Item(balanceFieldCode)
+
+    ' Define buckets for Current Balance
+    Dim BalanceBuckets As Variant
+    BalanceBuckets = Array(0, 100000, 200000, 300000, 400000, 500000) ' Define your bucket ranges
+    
+    Dim BucketTable As Collection
+    Set BucketTable = New Collection
+    
+    Dim i As Long
+    For i = LBound(BalanceBuckets) To UBound(BalanceBuckets) - 1
+        Dim BucketRange As String
+        BucketRange = ">= " & BalanceBuckets(i) & " And < " & BalanceBuckets(i + 1)
+        BucketTable.Add BucketRange
+    Next i
+
+    ' Add code to distribute data into buckets and create a table for each bucket
+    ' ... (Rest of the stratification logic here)
+End Sub
