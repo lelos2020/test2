@@ -297,6 +297,45 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetPrefix
         outputWs.Cells(rowCounter + 1, 2).Value = totalBalanceInBucket
     Next BucketRange
 End Sub
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, outputSheetName As String)
+    Dim outputWs As Worksheet
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets(outputSheetName)
+    On Error GoTo 0
+
+    ' Create the output worksheet if it doesn't exist
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = outputSheetName
+    Else
+        outputWs.Cells.Clear ' Clear existing data if sheet exists
+    End If
+
+    Dim BucketRange As Variant
+    Dim rowCounter As Long
+    rowCounter = 1 ' Start from the first row
+
+    For Each BucketRange In BucketDict.Keys
+        ' Print the bucket range as a header
+        outputWs.Cells(rowCounter, 1).Value = "Bucket: " & BucketRange
+        rowCounter = rowCounter + 1
+
+        ' Print data for each item in the bucket
+        Dim BucketData As Variant
+        For Each BucketData In BucketDict.Item(BucketRange)
+            ' Assuming BucketData(0) contains the row number
+            sourceWs.Rows(BucketData(0)).Copy Destination:=outputWs.Rows(rowCounter)
+            rowCounter = rowCounter + 1
+        Next BucketData
+
+        ' Add a blank row after each bucket for separation
+        rowCounter = rowCounter + 1
+    Next BucketRange
+
+    ' AutoFit for readability
+    outputWs.Columns.AutoFit
+End Sub
+
 
 
 
