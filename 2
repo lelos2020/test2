@@ -1,0 +1,43 @@
+Sub CalculateSummaryStatistics(ws As Worksheet)
+    ' Assuming LTV is in Column D, Loan Balance in Column E, and Maturity in Column F
+    Const LTV_COL As String = "D"
+    Const BALANCE_COL As String = "E"
+    Const MATURITY_COL As String = "F"
+    Const START_ROW As Integer = 2
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, LTV_COL).End(xlUp).Row
+    
+    ' Variables for calculations
+    Dim totalBalance As Double
+    Dim weightedLTV As Double
+    Dim weightedMaturity As Double
+    
+    Dim i As Long
+    For i = START_ROW To lastRow
+        Dim currentBalance As Double
+        Dim currentLTV As Double
+        Dim currentMaturity As Double
+
+        currentBalance = ws.Cells(i, BALANCE_COL).Value
+        currentLTV = ws.Cells(i, LTV_COL).Value
+        currentMaturity = ws.Cells(i, MATURITY_COL).Value
+        
+        ' Weighted calculations
+        weightedLTV = weightedLTV + (currentLTV * currentBalance)
+        weightedMaturity = weightedMaturity + (currentMaturity * currentBalance)
+        totalBalance = totalBalance + currentBalance
+    Next i
+
+    ' Finalize weighted averages
+    If totalBalance > 0 Then
+        weightedLTV = weightedLTV / totalBalance
+        weightedMaturity = weightedMaturity / totalBalance
+    Else
+        weightedLTV = 0
+        weightedMaturity = 0
+    End If
+
+    ' Output results to Immediate Window (Ctrl + G in VBA Editor to view)
+    Debug.Print "Weighted Average LTV: " & weightedLTV
+    Debug.Print "Weighted Average Maturity: " & weightedMaturity
+End Sub
