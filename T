@@ -170,3 +170,57 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetPrefix
         Next i
     Next key
 End Sub
+Sub StratifyByCurrentBalance(ws As Worksheet, colDict As Object, balanceFieldCode As String)
+    ' Check if the balance field code is in the dictionary
+    If Not colDict.Exists(balanceFieldCode) Then
+        MsgBox "Balance field code not found in the dataset."
+        Exit Sub
+    End If
+
+    ' Get the column number for the current balance
+    Dim colCurrentBalance As Integer
+    colCurrentBalance = colDict.Item(balanceFieldCode)
+
+    ' Define buckets for Current Balance
+    Dim BalanceBuckets As Variant
+    BalanceBuckets = Array(0, 100000, 200000, 300000, 400000, 500000) ' Define your bucket ranges
+    
+    ' Initialize BucketDict
+    Dim BucketDict As Object
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    
+    Dim i As Long
+    For i = LBound(BalanceBuckets) To UBound(BalanceBuckets) - 1
+        Dim BucketKey As String
+        BucketKey = BalanceBuckets(i) & "-" & BalanceBuckets(i + 1)
+        BucketDict.Add BucketKey, New Collection
+    Next i
+
+    ' Loop through data and assign each entry to the appropriate bucket
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colCurrentBalance).End(xlUp).Row
+    
+    Dim r As Long, currentBalance As Double, BucketRange As String
+    For r = 2 To lastRow ' Assuming data starts from row 2
+        currentBalance = ws.Cells(r, colCurrentBalance).Value
+        
+        For i = LBound(BalanceBuckets) To UBound(BalanceBuckets) - 1
+            If currentBalance >= BalanceBuckets(i) And currentBalance < BalanceBuckets(i + 1) Then
+                BucketRange = BalanceBuckets(i) & "-" & BalanceBuckets(i + 1)
+                BucketDict.Item(BucketRange).Add r ' Storing row numbers
+                Exit For
+            End If
+        Next i
+    Next r
+
+    ' Output the results (Example: print count of loans in each bucket)
+    For Each BucketRange In BucketDict.Keys
+        Debug.Print "Bucket " & BucketRange & ": " & BucketDict.Item(BucketRange).Count & " loans"
+    Next BucketRange
+End Sub
+
+
+
+
+
+
