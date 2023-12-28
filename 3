@@ -1,0 +1,38 @@
+Function GetColumnNumbersByFieldCodes(ws As Worksheet, ByVal fieldCodes As Variant) As Object
+    Dim col As Integer
+    Dim fieldCode As Variant
+    Dim fieldCodeDict As Object
+    Set fieldCodeDict = CreateObject("Scripting.Dictionary")
+    
+    ' Initialize dictionary
+    For Each fieldCode In fieldCodes
+        fieldCodeDict(fieldCode) = 0
+    Next fieldCode
+
+    ' Map field codes to columns
+    For col = 1 To ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        fieldCode = ws.Cells(1, col).Value
+        If fieldCodeDict.Exists(fieldCode) Then
+            fieldCodeDict(fieldCode) = col
+        End If
+    Next col
+
+    Set GetColumnNumbersByFieldCodes = fieldCodeDict
+End Function
+
+Sub CalculateSummaryStatistics(ws As Worksheet)
+    Dim fieldCodes As Variant
+    fieldCodes = Array("AR135", "ARxxx", "ARyyy") ' Replace with actual field codes
+
+    Dim colDict As Object
+    Set colDict = GetColumnNumbersByFieldCodes(ws, fieldCodes)
+
+    ' Ensure columns were found
+    If colDict("AR135") = 0 Or colDict("ARxxx") = 0 Or colDict("ARyyy") = 0 Then
+        MsgBox "One or more field codes not found in the dataset."
+        Exit Sub
+    End If
+
+    ' Use colDict("AR135"), colDict("ARxxx"), colDict("ARyyy") for calculations
+    ' Rest of the code for calculating summary statistics...
+End Sub
