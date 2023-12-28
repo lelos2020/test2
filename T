@@ -375,5 +375,61 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, outputSheetName A
     outputWs.Columns.AutoFit
 End Sub
 
+Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, buckets As Variant, outputSheetName As String)
+    ' Check if the field code is in the dictionary
+    If Not colDict.Exists(fieldCode) Then
+        MsgBox "Field code " & fieldCode & " not found in the dataset."
+        Exit Sub
+    End If
+
+    ' Get the column number for the field
+    Dim colNumber As Integer
+    colNumber = colDict.Item(fieldCode)
+
+    ' Initialize BucketDict
+    Dim BucketDict As Object
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+
+    ' Add buckets to BucketDict
+    Dim i As Long
+    For i = LBound(buckets) To UBound(buckets) - 1
+        Dim BucketKey As String
+        BucketKey = buckets(i) & "-" & buckets(i + 1)
+        BucketDict.Add BucketKey, New Collection
+    Next i
+
+    ' Additional bucket for values exceeding the last bucket's range
+    Dim overflowBucketKey As String
+    overflowBucketKey = ">" & buckets(UBound(buckets))
+    BucketDict.Add overflowBucketKey, New Collection
+
+    ' Loop through data and assign each entry to the appropriate bucket
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colNumber).End(xlUp).Row
+    Dim r As Long, fieldValue As Double
+    For r = 2 To lastRow ' Assuming data starts from row 2
+        fieldValue = ws.Cells(r, colNumber).Value
+        Dim bucketFound As Boolean
+        bucketFound = False
+        
+        For i = LBound(buckets) To UBound(buckets) - 1
+            If fieldValue >= buckets(i) And fieldValue < buckets(i + 1) Then
+                Dim BucketRange As String
+                BucketRange = buckets(i) & "-" & buckets(i + 1)
+                BucketDict.Item(BucketRange).Add Array(r, fieldValue)
+                bucketFound = True
+                Exit For
+            End If
+        Next i
+
+        If Not bucketFound And fieldValue >= buckets(UBound(buckets)) Then
+            BucketDict.Item(overflowBucketKey).Add Array(r, fieldValue)
+        End If
+    Next r
+
+    ' Call OutputBuckets or any other function to process this data
+    Call OutputBuckets(ws, BucketDict, outputSheetName)
+End Sub
+
 
 
