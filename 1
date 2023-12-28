@@ -1,0 +1,35 @@
+Function GetColumnNumberByFieldCode(ws As Worksheet, fieldCode As String) As Integer
+    Dim col As Integer
+    For col = 1 To ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If ws.Cells(1, col).Value = fieldCode Then
+            GetColumnNumberByFieldCode = col
+            Exit Function
+        End If
+    Next col
+    
+    ' If field code not found, return 0
+    GetColumnNumberByFieldCode = 0
+End Function
+
+Sub CalculateSummaryStatistics(ws As Worksheet)
+    ' Replace these with actual field codes from your template
+    Const FIELD_CODE_LTV As String = "AR135"
+    Const FIELD_CODE_BALANCE As String = "ARxxx"
+    Const FIELD_CODE_MATURITY As String = "ARyyy"
+
+    Dim colLTV As Integer
+    Dim colBalance As Integer
+    Dim colMaturity As Integer
+
+    colLTV = GetColumnNumberByFieldCode(ws, FIELD_CODE_LTV)
+    colBalance = GetColumnNumberByFieldCode(ws, FIELD_CODE_BALANCE)
+    colMaturity = GetColumnNumberByFieldCode(ws, FIELD_CODE_MATURITY)
+
+    ' Ensure columns were found
+    If colLTV = 0 Or colBalance = 0 Or colMaturity = 0 Then
+        MsgBox "One or more field codes not found in the dataset."
+        Exit Sub
+    End If
+
+    ' Rest of the code for calculating summary statistics...
+End Sub
