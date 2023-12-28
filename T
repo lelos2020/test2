@@ -98,3 +98,75 @@ Sub StratifyByCurrentBalance(ws As Worksheet, colDict As Object, balanceFieldCod
     ' Add code to distribute data into buckets and create a table for each bucket
     ' ... (Rest of the stratification logic here)
 End Sub
+
+
+Sub AnalyzeLoanData()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("LLD") ' Replace with your data sheet name
+    
+    ' Assume "Current Balance" is in Column B and "Original LTV" in Column C
+    Const BALANCE_COL As String = "B"
+    Const LTV_COL As String = "C"
+    Const START_ROW As Integer = 2 ' Assuming data starts from row 2
+    
+    ' Stratify Data
+    Call StratifyByCurrentBalance(ws, BALANCE_COL, START_ROW)
+    Call StratifyByOriginalLTV(ws, LTV_COL, START_ROW)
+End Sub
+
+Sub StratifyByCurrentBalance(ws As Worksheet, col As String, startRow As Integer)
+    Dim BalanceBuckets As Variant
+    BalanceBuckets = Array(0, 100000, 200000, 300000, 400000, 500000) ' Define your bucket ranges
+    
+    Dim i As Long
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
+    
+    Dim BucketDict As Object
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    
+    ' Initialize buckets in dictionary
+    For i = LBound(BalanceBuckets) To UBound(BalanceBuckets) - 1
+        BucketDict(BalanceBuckets(i) & "-" & BalanceBuckets(i + 1)) = New Collection
+    Next i
+
+    Dim r As Long, val As Double, key As String
+    For r = startRow To lastRow
+        val = ws.Cells(r, col).Value
+        For i = LBound(BalanceBuckets) To UBound(BalanceBuckets) - 1
+            If val >= BalanceBuckets(i) And val < BalanceBuckets(i + 1) Then
+                key = BalanceBuckets(i) & "-" & BalanceBuckets(i + 1)
+                BucketDict(key).Add r ' Storing row numbers
+                Exit For
+            End If
+        Next i
+    Next r
+
+    ' Output results
+    Call OutputBuckets(ws, BucketDict, "BalanceBuckets")
+End Sub
+
+Sub StratifyByOriginalLTV(ws As Worksheet, col As String, startRow As Integer)
+    ' Similar to StratifyByCurrentBalance, define LTVBuckets and distribute data
+    ' Use OutputBuckets function to output results
+End Sub
+
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetPrefix As String)
+    Dim key As Variant
+    Dim i As Integer, r As Long
+    Dim outputWs As Worksheet
+
+    For Each key In BucketDict.keys
+        Set outputWs = Worksheets.Add
+        outputWs.Name = OutputSheetPrefix & " " & key
+
+        ' Copy headings
+        sourceWs.Rows(1).Copy Destination:=outputWs.Rows(1)
+
+        ' Copy data rows
+        For i = 1 To BucketDict(key).Count
+            r = BucketDict(key)(i)
+            sourceWs.Rows(r).Copy Destination:=outputWs.Rows(i + 1)
+        Next i
+    Next key
+End Sub
