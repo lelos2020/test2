@@ -220,6 +220,83 @@ Sub StratifyByCurrentBalance(ws As Worksheet, colDict As Object, balanceFieldCod
 End Sub
 
 
+Sub StratifyByCurrentBalance(ws As Worksheet, colDict As Object, balanceFieldCode As String)
+    ' Check if the balance field code is in the dictionary
+    If Not colDict.Exists(balanceFieldCode) Then
+        MsgBox "Balance field code not found in the dataset."
+        Exit Sub
+    End If
+
+    ' Get the column number for the current balance
+    Dim colCurrentBalance As Integer
+    colCurrentBalance = colDict.Item(balanceFieldCode)
+
+    ' Define buckets for Current Balance
+    Dim BalanceBuckets As Variant
+    BalanceBuckets = Array(0, 100000, 200000, 300000, 400000, 500000) ' Define your bucket ranges
+    
+    ' Initialize BucketDict
+    Dim BucketDict As Object
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    
+    Dim i As Long
+    For i = LBound(BalanceBuckets) To UBound(BalanceBuckets) - 1
+        Dim BucketKey As String
+        BucketKey = BalanceBuckets(i) & "-" & BalanceBuckets(i + 1)
+        BucketDict.Add BucketKey, New Collection
+    Next i
+
+    ' Loop through data and assign each entry to the appropriate bucket
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colCurrentBalance).End(xlUp).Row
+    
+    Dim r As Long, currentBalance As Double, BucketRange As String
+    For r = 2 To lastRow ' Assuming data starts from row 2
+        currentBalance = ws.Cells(r, colCurrentBalance).Value
+        
+        For i = LBound(BalanceBuckets) To UBound(BalanceBuckets) - 1
+            If currentBalance >= BalanceBuckets(i) And currentBalance < BalanceBuckets(i + 1) Then
+                BucketRange = BalanceBuckets(i) & "-" & BalanceBuckets(i + 1)
+                BucketDict.Item(BucketRange).Add Array(r, currentBalance) ' Storing row number and balance
+                Exit For
+            End If
+        Next i
+    Next r
+
+    ' Utilize OutputBuckets subroutine to handle the results
+    Call OutputBuckets(ws, BucketDict, "BalanceBucket")
+End Sub
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetPrefix As String)
+    Dim BucketRange As Variant
+    Dim BucketData As Variant
+    Dim outputWs As Worksheet
+    Dim rowCounter As Long
+
+    For Each BucketRange In BucketDict.Keys
+        Set outputWs = Worksheets.Add
+        outputWs.Name = OutputSheetPrefix & " " & BucketRange
+
+        ' Copy headings
+        sourceWs.Rows(1).Copy Destination:=outputWs.Rows(1)
+
+        ' Initialize row counter
+        rowCounter = 2
+
+        ' Copy data rows and sum balances
+        Dim totalBalanceInBucket As Double
+        totalBalanceInBucket = 0
+
+        For Each BucketData In BucketDict.Item(BucketRange)
+            sourceWs.Rows(BucketData(0)).Copy Destination:=outputWs.Rows(rowCounter)
+            totalBalanceInBucket = totalBalanceInBucket + BucketData(1)
+            rowCounter = rowCounter + 1
+        Next BucketData
+
+        ' Output total balance in the bucket
+        outputWs.Cells(rowCounter + 1, 1).Value = "Total Balance in Bucket:"
+        outputWs.Cells(rowCounter + 1, 2).Value = totalBalanceInBucket
+    Next BucketRange
+End Sub
 
 
 
