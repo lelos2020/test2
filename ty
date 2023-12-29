@@ -1,0 +1,51 @@
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' Assume colDict is already populated with necessary field codes
+    ' Example: colCurrentBalance = colDict("AR67"), colRepaymentType = colDict("RepaymentTypeCode")
+
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colDict("AR67")).End(xlUp).Row
+    
+    ' Variables for aggregate data
+    Dim totalBalance As Double, totalInterestPayment As Double, totalPrincipalPayment As Double
+    totalBalance = 0
+    totalInterestPayment = 0
+    totalPrincipalPayment = 0
+
+    Dim i As Long
+    For i = 2 To lastRow
+        ' Extracting loan data
+        Dim currentBalance As Double, repaymentType As String, interestRateType As String, ' other variables
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        repaymentType = ws.Cells(i, colDict("RepaymentTypeCode")).Value ' Replace "RepaymentTypeCode" with actual field code
+        ' ... extract other necessary loan data ...
+
+        ' Classify loans based on interest rate type
+        ' ... logic to determine interest rate type ...
+
+        ' Calculate loan payments
+        Dim monthlyPayment As Double, interestPayment As Double, principalPayment As Double
+        ' Basic example using Excel's PMT function
+        ' monthlyPayment = Pmt(interestRate / 12, term, -currentBalance)
+        ' interestPayment = ... ' Calculation based on the type of loan
+        ' principalPayment = ... ' Calculation based on the type of loan
+
+        ' Aggregate the calculations
+        totalBalance = totalBalance + currentBalance
+        totalInterestPayment = totalInterestPayment + interestPayment
+        totalPrincipalPayment = totalPrincipalPayment + principalPayment
+    Next i
+
+    ' Output results to a new worksheet or a designated area in the existing worksheet
+    ' Example: Output in a new worksheet
+    Dim summaryWs As Worksheet
+    Set summaryWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+    summaryWs.Name = "Portfolio Summary"
+    With summaryWs
+        .Cells(1, 1).Value = "Total Balance"
+        .Cells(1, 2).Value = totalBalance
+        .Cells(2, 1).Value = "Total Interest Payment"
+        .Cells(2, 2).Value = totalInterestPayment
+        .Cells(3, 1).Value = "Total Principal Payment"
+        .Cells(3, 2).Value = totalPrincipalPayment
+    End With
+End Sub
