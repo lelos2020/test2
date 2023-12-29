@@ -1,3 +1,6 @@
+
+
+
 Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
     ' Assume colDict is already populated with necessary field codes
     ' Example: colCurrentBalance = colDict("AR67"), colRepaymentType = colDict("RepaymentTypeCode")
@@ -378,5 +381,133 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
     ' Output aggregated results
     ' ... Output total balances and other aggregate metrics ...
 End Sub
+
+---
+
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' ... [previous code initialization] ...
+
+    ' Additional variables for fixed to floating aggregates
+    Dim totalFixedToFloatingFixedPeriodBalance As Double, totalFixedToFloatingFloatingPeriodBalance As Double
+    totalFixedToFloatingFixedPeriodBalance = 0
+    totalFixedToFloatingFloatingPeriodBalance = 0
+
+    ' ... [rest of the initialization] ...
+
+    Dim i As Long
+    For i = 2 To lastRow
+        ' ... [extract loan data] ...
+
+        ' ... [rest of the code for loan analysis] ...
+
+        ' Aggregate totals based on loan type and period for FixedToFloating
+        If interestRateType = "FixedToFloating" Then
+            If isFixedPeriod Then
+                totalFixedToFloatingFixedPeriodBalance = totalFixedToFloatingFixedPeriodBalance + currentBalance
+            Else
+                totalFixedToFloatingFloatingPeriodBalance = totalFixedToFloatingFloatingPeriodBalance + currentBalance
+            End If
+        End If
+
+        ' ... [rest of the aggregation for other loan types] ...
+    Next i
+
+    ' Output aggregated results to "Outputs" tab
+    Dim outputWs As Worksheet
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets("Outputs")
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Worksheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = "Outputs"
+    End If
+    On Error GoTo 0
+    outputWs.Cells.Clear
+
+    With outputWs
+        .Cells(1, 1).Value = "Total Fixed Balance"
+        .Cells(1, 2).Value = totalFixedBalance
+        .Cells(2, 1).Value = "Total Floating Balance"
+        .Cells(2, 2).Value = totalFloatingBalance
+        .Cells(3, 1).Value = "Total Fixed to Floating (Fixed Period) Balance"
+        .Cells(3, 2).Value = totalFixedToFloatingFixedPeriodBalance
+        .Cells(4, 1).Value = "Total Fixed to Floating (Floating Period) Balance"
+        .Cells(4, 2).Value = totalFixedToFloatingFloatingPeriodBalance
+        ' ... Add more rows for other aggregates ...
+    End With
+End Sub
+
+----
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' ... [previous code initialization] ...
+
+    ' Dictionary to store aggregates for each period
+    Dim periodAggregates As Object
+    Set periodAggregates = CreateObject("Scripting.Dictionary")
+
+    Dim i As Long, month As Integer
+    For i = 2 To lastRow
+        ' ... [extract loan data] ...
+
+        ' ... [rest of the code for loan analysis] ...
+
+        ' Iterate over each payment period and update period aggregates
+        For month = 1 To remainingTerm
+            ' ... [perform calculations for each loan type and period] ...
+
+            ' Update period aggregates
+            If Not periodAggregates.Exists(month) Then
+                ' Initialize with zeros for Fixed, Floating, FixedToFloatingFixed, FixedToFloatingFloating
+                periodAggregates.Add month, Array(0, 0, 0, 0) 
+            End If
+
+            ' Update aggregates based on loan type and period
+            Dim currentPeriodData As Variant
+            currentPeriodData = periodAggregates(month)
+
+            Select Case interestRateType
+                Case "Fixed"
+                    currentPeriodData(0) = currentPeriodData(0) + currentBalance ' Update fixed
+                Case "Floating"
+                    currentPeriodData(1) = currentPeriodData(1) + currentBalance ' Update floating
+                Case "FixedToFloating"
+                    If isFixedPeriod Then
+                        currentPeriodData(2) = currentPeriodData(2) + currentBalance ' Update fixed period of FixedToFloating
+                    Else
+                        currentPeriodData(3) = currentPeriodData(3) + currentBalance ' Update floating period of FixedToFloating
+                    End If
+            End Select
+
+            periodAggregates(month) = currentPeriodData
+        Next month
+    Next i
+
+    ' Output aggregated results to "Outputs" tab
+    ' ... [code to set up or clear the Outputs worksheet] ...
+
+    With outputWs
+        .Cells(1, 1).Value = "Period"
+        .Cells(1, 2).Value = "Total Fixed Balance"
+        .Cells(1, 3).Value = "Total Floating Balance"
+        .Cells(1, 4).Value = "Total Fixed to Floating (Fixed Period) Balance"
+        .Cells(1, 5).Value = "Total Fixed to Floating (Floating Period) Balance"
+
+        Dim periodKey As Variant
+        Dim row As Integer
+        row = 2 ' Start from the second row for data
+        For Each periodKey In periodAggregates.Keys
+            .Cells(row, 1).Value = periodKey
+            .Cells(row, 2).Value = periodAggregates(periodKey)(0) ' Fixed
+            .Cells(row, 3).Value = periodAggregates(periodKey)(1) ' Floating
+            .Cells(row, 4).Value = periodAggregates(periodKey)(2) ' FixedToFloatingFixed
+            .Cells(row, 5).Value = periodAggregates(periodKey)(3) ' FixedToFloatingFloating
+            row = row + 1
+        Next periodKey
+    End With
+End Sub
+
+
+-----
+
+
 
 
