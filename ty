@@ -49,3 +49,84 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
         .Cells(3, 2).Value = totalPrincipalPayment
     End With
 End Sub
+
+
+======
+
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' Assuming colDict has necessary mappings
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colDict("AR67")).End(xlUp).Row
+
+    ' Variables for aggregate data, categorized by interest rate type
+    Dim totalFixedBalance As Double, totalFloatingBalance As Double, totalFixedToFloatingBalance As Double
+    totalFixedBalance = 0
+    totalFloatingBalance = 0
+    totalFixedToFloatingBalance = 0
+
+    ' Pool cut-off date
+    Dim poolCutOffDate As Date
+    poolCutOffDate = ws.Cells(2, colDict("AR1")).Value  ' Assuming the same date is used for all loans
+
+    Dim i As Long
+    For i = 2 To lastRow
+        ' Extract loan data
+        Dim currentBalance As Double, interestRateType As String, interestRate As Double, monthlyPayment As Double, remainingTerm As Integer
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        interestRateType = ws.Cells(i, colDict("InterestRateTypeCode")).Value ' Replace with actual field code
+        interestRate = ws.Cells(i, colDict("InterestRateCode")).Value ' Replace with actual field code
+        remainingTerm = ws.Cells(i, colDict("RemainingTermCode")).Value ' Replace with actual field code
+
+        ' Initialize variables for each loan
+        Dim totalInterestThisLoan As Double, totalPrincipalThisLoan As Double
+        totalInterestThisLoan = 0
+        totalPrincipalThisLoan = 0
+
+        Select Case interestRateType
+            Case "Fixed"
+                ' Perform calculations for fixed rate loans (same as previous code)
+
+            Case "Floating"
+                ' Perform calculations for floating rate loans (same as previous code)
+
+            Case "FixedToFloating"
+                ' Retrieve reversion date and margin
+                Dim reversionDate As Date, postReversionMargin As Double
+                reversionDate = ws.Cells(i, colDict("AR121")).Value
+                postReversionMargin = ws.Cells(i, colDict("AR120")).Value
+
+                ' Determine if in fixed or floating period
+                Dim monthsUntilReversion As Integer
+                monthsUntilReversion = DateDiff("m", poolCutOffDate, reversionDate)
+
+                ' Perform calculations for fixed period
+                For month = 1 To Min(monthsUntilReversion, remainingTerm)
+                    ' Fixed period calculations (same as in "Fixed" case)
+                Next month
+
+                ' Perform calculations for floating period if applicable
+                If remainingTerm > monthsUntilReversion Then
+                    For month = monthsUntilReversion + 1 To remainingTerm
+                        ' Adjust interest rate based on post-reversion margin
+                        interestRate = indexRate + postReversionMargin
+                        ' Floating period calculations (same as in "Floating" case)
+                    Next month
+                End If
+
+                totalFixedToFloatingBalance = totalFixedToFloatingBalance + currentBalance
+
+            ' ... Handle other cases or default ...
+        End Select
+    Next i
+
+    ' Output aggregated results (same as previous code)
+End Sub
+
+' Helper Function to find the minimum of two values
+Function Min(val1 As Integer, val2 As Integer) As Integer
+    If val1 < val2 Then
+        Min = val1
+    Else
+        Min = val2
+    End If
+End Function
