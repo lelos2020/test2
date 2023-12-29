@@ -49,6 +49,83 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
         .Cells(3, 2).Value = totalPrincipalPayment
     End With
 End Sub
+-------
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' Assuming colDict has necessary mappings
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colDict("AR67")).End(xlUp).Row
+
+    ' Aggregate variables for each type of loan
+    Dim totalFixedBalance As Double, totalFloatingBalance As Double, totalFixedToFloatingBalance As Double
+    totalFixedBalance = 0
+    totalFloatingBalance = 0
+    totalFixedToFloatingBalance = 0
+
+    ' Other necessary variables for calculation
+    Dim indexRate As Double  ' Assuming this is a known value or retrieved from somewhere
+    indexRate = 0.03  ' Example value, replace with actual index rate
+
+    Dim i As Long
+    For i = 2 To lastRow
+        ' Extract loan data
+        Dim currentBalance As Double, interestRateType As String, interestRate As Double, monthlyPayment As Double, remainingTerm As Integer
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        interestRateType = ws.Cells(i, colDict("InterestRateTypeCode")).Value ' Replace with actual field code
+        interestRate = ws.Cells(i, colDict("InterestRateCode")).Value ' Replace with actual field code
+        remainingTerm = ws.Cells(i, colDict("RemainingTermCode")).Value ' Replace with actual field code
+
+        ' Initialize variables for each loan
+        Dim totalInterestThisLoan As Double, totalPrincipalThisLoan As Double
+        totalInterestThisLoan = 0
+        totalPrincipalThisLoan = 0
+
+        Select Case interestRateType
+            Case "Fixed"
+                monthlyPayment = Pmt(interestRate / 12, remainingTerm, -currentBalance)
+                ' Simplified fixed-rate loan calculations
+                Dim month As Integer
+                For month = 1 To remainingTerm
+                    Dim interestThisMonth As Double
+                    interestThisMonth = currentBalance * (interestRate / 12)
+                    Dim principalThisMonth As Double
+                    principalThisMonth = monthlyPayment - interestThisMonth
+                    currentBalance = currentBalance - principalThisMonth
+
+                    totalInterestThisLoan = totalInterestThisLoan + interestThisMonth
+                    totalPrincipalThisLoan = totalPrincipalThisLoan + principalThisMonth
+                Next month
+                totalFixedBalance = totalFixedBalance + currentBalance
+
+            Case "Floating"
+                ' Assuming the interest rate for floating loans is indexRate + margin
+                Dim margin As Double
+                margin = ws.Cells(i, colDict("MarginCode")).Value ' Replace with actual field code
+                ' Floating-rate loan calculations with changing interest rate
+                For month = 1 To remainingTerm
+                    interestRate = indexRate + margin
+                    monthlyPayment = Pmt(interestRate / 12, remainingTerm - month + 1, -currentBalance)
+                    interestThisMonth = currentBalance * (interestRate / 12)
+                    principalThisMonth = monthlyPayment - interestThisMonth
+                    currentBalance = currentBalance - principalThisMonth
+
+                    totalInterestThisLoan = totalInterestThisLoan + interestThisMonth
+                    totalPrincipalThisLoan = totalPrincipalThisLoan + principalThisMonth
+                Next month
+                totalFloatingBalance = totalFloatingBalance + currentBalance
+
+            Case "FixedToFloating"
+                ' Additional logic to determine whether the loan is currently in fixed or floating period
+                ' ... Logic for determining the period ...
+                ' Then perform similar calculations as above for either fixed or floating period
+                ' ...
+                totalFixedToFloatingBalance = totalFixedToFloatingBalance + currentBalance
+        End Select
+    Next i
+
+    ' Output aggregated results
+    ' ... Output total balances and other aggregate metrics ...
+End Sub
+
 
 
 ======
