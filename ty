@@ -508,6 +508,140 @@ End Sub
 
 -----
 
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' Assuming colDict has necessary mappings
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colDict("AR67")).End(xlUp).Row
 
+    ' Variables for aggregate data, categorized by interest rate type
+    Dim totalFixedBalance As Double, totalFloatingBalance As Double
+    Dim totalFixedToFloatingFixedPeriodBalance As Double, totalFixedToFloatingFloatingPeriodBalance As Double
+    totalFixedBalance = 0
+    totalFloatingBalance = 0
+    totalFixedToFloatingFixedPeriodBalance = 0
+    totalFixedToFloatingFloatingPeriodBalance = 0
 
+    ' Dictionary to store aggregates for each period
+    Dim periodAggregates As Object
+    Set periodAggregates = CreateObject("Scripting.Dictionary")
+
+    ' Retrieve the pool cut-off date
+    Dim poolCutOffDate As Date
+    poolCutOffDate = ws.Cells(2, colDict("AR1")).Value ' Assuming same cut-off date for all loans
+
+    Dim i As Long, month As Integer
+    For i = 2 To lastRow
+        ' Extract loan data
+        Dim currentBalance As Double, interestRateType As String, repaymentType As Integer
+        Dim interestRate As Double, monthlyPayment As Double, remainingTerm As Integer
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        interestRateType = ws.Cells(i, colDict("InterestRateTypeCode")).Value
+        repaymentType = ws.Cells(i, colDict("AR69")).Value
+        interestRate = ws.Cells(i, colDict("InterestRateCode")).Value ' Replace with actual field code
+        remainingTerm = ws.Cells(i, colDict("RemainingTermCode")).Value ' Replace with actual field code
+
+        ' Initialize variables for each loan
+        Dim totalInterestThisLoan As Double, totalPrincipalThisLoan As Double
+        totalInterestThisLoan = 0
+        totalPrincipalThisLoan = 0
+
+        ' Determine if loan is in fixed or floating period (for FixedToFloating loans)
+        Dim isFixedPeriod As Boolean
+        isFixedPeriod = True ' Default to fixed period
+        If interestRateType = "FixedToFloating" Then
+            Dim reversionDate As Date
+            reversionDate = ws.Cells(i, colDict("AR121")).Value
+            If poolCutOffDate >= reversionDate Then
+                isFixedPeriod = False ' Loan is in floating period
+            End If
+        End If
+
+        ' Iterating over each payment period
+        For month = 1 To remainingTerm
+            ' Determine the monthly interest rate
+            Dim monthlyInterestRate As Double
+            monthlyInterestRate = interestRate / 12
+
+            ' Calculate monthly interest
+            Dim interestThisMonth As Double
+            interestThisMonth = currentBalance * monthlyInterestRate
+
+            ' Determine payment based on repayment type
+            Select Case repaymentType
+                Case 1 ' Interest Only
+                    monthlyPayment = interestThisMonth
+                    If month = remainingTerm Then
+                        totalPrincipalThisLoan = currentBalance ' Bullet payment at maturity
+                    End If
+
+                Case 2 ' Amortizing
+                    monthlyPayment = Pmt(monthlyInterestRate, remainingTerm - month + 1, -currentBalance)
+                    Dim principalThisMonth As Double
+                    principalThisMonth = monthlyPayment - interestThisMonth
+                    currentBalance = currentBalance - principalThisMonth
+                    totalPrincipalThisLoan = totalPrincipalThisLoan + principalThisMonth
+            End Select
+
+            ' Update period aggregates
+            If Not periodAggregates.Exists(month) Then
+                periodAggregates.Add month, Array(0, 0, 0, 0) ' Initialize with zeros for each type
+            End If
+            Dim currentPeriodData As Variant
+            currentPeriodData = periodAggregates(month)
+            Select Case interestRateType
+                Case "Fixed"
+                    currentPeriodData(0) = currentPeriodData(0) + currentBalance
+                Case "Floating"
+                    currentPeriodData(1) = currentPeriodData(1) + currentBalance
+                Case "FixedToFloating"
+                    If isFixedPeriod Then
+                        currentPeriodData(2) = currentPeriodData(2) + currentBalance
+                    Else
+                        currentPeriodData(3) = currentPeriodData(3) + currentBalance
+                    End If
+            End Select
+            periodAggregates(month) = currentPeriodData
+
+            ' Aggregate interest for this loan
+            totalInterestThisLoan = totalInterestThisLoan + interest
+
+    ' Aggregate totals based on loan type
+    totalFixedBalance = totalFixedBalance + totalInterestThisLoan
+    totalFloatingBalance = totalFloatingBalance + totalInterestThisLoan
+    If interestRateType = "FixedToFloating" Then
+        If isFixedPeriod Then
+            totalFixedToFloatingFixedPeriodBalance = totalFixedToFloatingFixedPeriodBalance + totalInterestThisLoan
+        Else
+            totalFixedToFloatingFloatingPeriodBalance = totalFixedToFloatingFloatingPeriodBalance + totalInterestThisLoan
+        End If
+    End If
+Next i
+
+' Output aggregated results to "Outputs" tab
+Dim outputWs As Worksheet
+Set outputWs = ThisWorkbook.Sheets("Outputs")
+If outputWs Is Nothing Then
+    Set outputWs = ThisWorkbook.Worksheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+    outputWs.Name = "Outputs"
+End If
+outputWs.Cells.Clear
+
+With outputWs
+    .Cells(1, 1).Value = "Period"
+    .Cells(1, 2).Value = "Total Fixed Balance"
+    .Cells(1, 3).Value = "Total Floating Balance"
+    .Cells(1, 4).Value = "Total Fixed to Floating (Fixed Period) Balance"
+    .Cells(1, 5).Value = "Total Fixed to Floating (Floating Period) Balance"
+    Dim periodKey As Variant
+    Dim row As Integer
+    row = 2 ' Start from the second row for data
+    For Each periodKey In periodAggregates.Keys
+        .Cells(row, 1).Value = periodKey
+        .Cells(row, 2).Value = periodAggregates(periodKey)(0) ' Fixed
+        .Cells(row, 3).Value = periodAggregates(periodKey)(1) ' Floating
+        .Cells(row, 4).Value = periodAggregates(periodKey)(2) ' FixedToFloatingFixed
+        .Cells(row, 5).Value = periodAggregates(periodKey)(3) ' FixedToFloatingFloating
+        row = row + 1
+    Next periodKey
+End With
 
