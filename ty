@@ -283,5 +283,100 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
 
     ' ... [output aggregated results] ...
 End Sub
+----------
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' Assuming colDict has necessary mappings
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colDict("AR67")).End(xlUp).Row
+
+    ' Variables for aggregate data, categorized by interest rate type
+    Dim totalFixedBalance As Double, totalFloatingBalance As Double, totalFixedToFloatingBalance As Double
+    totalFixedBalance = 0
+    totalFloatingBalance = 0
+    totalFixedToFloatingBalance = 0
+
+    ' Retrieve the pool cut-off date
+    Dim poolCutOffDate As Date
+    poolCutOffDate = ws.Cells(2, colDict("AR1")).Value ' Assuming same cut-off date for all loans
+
+    Dim i As Long
+    For i = 2 To lastRow
+        ' Extract loan data
+        Dim currentBalance As Double, interestRateType As String, repaymentType As Integer
+        Dim interestRate As Double, monthlyPayment As Double, remainingTerm As Integer
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        interestRateType = ws.Cells(i, colDict("InterestRateTypeCode")).Value
+        repaymentType = ws.Cells(i, colDict("AR69")).Value
+        ' ... [other data extraction] ...
+
+        ' Initialize variables for each loan
+        Dim totalInterestThisLoan As Double, totalPrincipalThisLoan As Double
+        totalInterestThisLoan = 0
+        totalPrincipalThisLoan = 0
+
+        ' Determine interest rate type and period for Fixed to Floating loans
+        Dim isFixedPeriod As Boolean
+        isFixedPeriod = True ' Default to True
+        If interestRateType = "FixedToFloating" Then
+            Dim reversionDate As Date, postReversionMargin As Double
+            reversionDate = ws.Cells(i, colDict("AR121")).Value
+            postReversionMargin = ws.Cells(i, colDict("AR120")).Value
+            If poolCutOffDate >= reversionDate Then
+                isFixedPeriod = False ' Loan is in floating period
+                interestRate = indexRate + postReversionMargin ' Adjust interest rate post-reversion
+            End If
+        End If
+
+        ' Iterating over each payment period
+        For month = 1 To remainingTerm
+            ' Determine the monthly interest rate
+            Dim monthlyInterestRate As Double
+            monthlyInterestRate = interestRate / 12 ' Adjust this based on the loan's current interest rate status
+
+            ' Calculate monthly interest
+            Dim interestThisMonth As Double
+            interestThisMonth = currentBalance * monthlyInterestRate
+
+            ' Determine payment based on repayment type
+            Select Case repaymentType
+                Case 1 ' Interest Only
+                    monthlyPayment = interestThisMonth
+                    ' Principal remains unchanged until the end for interest-only loans
+
+                Case 2 ' Amortizing
+                    ' Calculate monthly payment if not already provided
+                    If month = 1 Or interestRateType = "FixedToFloating" And Not isFixedPeriod Then
+                        ' Recalculate payment if it's the first month or if the loan type changes
+                        monthlyPayment = Pmt(monthlyInterestRate, remainingTerm - month + 1, -currentBalance)
+                    End If
+                    ' Calculate principal part of the payment
+                    Dim principalThisMonth As Double
+                    principalThisMonth = monthlyPayment - interestThisMonth
+                    currentBalance = currentBalance - principalThisMonth
+                    totalPrincipalThisLoan = totalPrincipalThisLoan + principalThisMonth
+
+            End Select
+
+            ' Aggregate interest for this loan
+            totalInterestThisLoan = totalInterestThisLoan + interestThisMonth
+        Next month
+
+        ' Aggregate totals based on loan type
+        Select Case interestRateType
+            Case "Fixed"
+                totalFixedBalance = totalFixedBalance + currentBalance
+
+            Case "Floating"
+                totalFloatingBalance = totalFloatingBalance + currentBalance
+
+            Case "FixedToFloating"
+                totalFixedToFloatingBalance = totalFixedToFloatingBalance + currentBalance
+
+        End Select
+    Next i
+
+    ' Output aggregated results
+    ' ... Output total balances and other aggregate metrics ...
+End Sub
 
 
