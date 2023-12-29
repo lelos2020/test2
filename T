@@ -431,5 +431,73 @@ Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, bucket
     Call OutputBuckets(ws, BucketDict, outputSheetName)
 End Sub
 
+Sub StratifyDataDynamically(ws As Worksheet, colDict As Object, fieldCode As String, numberOfBuckets As Integer, outputSheetName As String)
+    If Not colDict.Exists(fieldCode) Then
+        MsgBox "Field code not found."
+        Exit Sub
+    End If
 
+    Dim colNumber As Integer
+    colNumber = colDict.Item(fieldCode)
+
+    ' Collect field values into an array
+    Dim lastRow As Long, i As Long
+    lastRow = ws.Cells(ws.Rows.Count, colNumber).End(xlUp).Row
+    Dim fieldValues() As Double
+    ReDim fieldValues(1 To lastRow - 1)
+
+    For i = 2 To lastRow
+        fieldValues(i - 1) = ws.Cells(i, colNumber).Value
+    Next i
+
+    ' Sort the array
+    Call QuickSort(fieldValues, LBound(fieldValues), UBound(fieldValues))
+
+    ' Define buckets based on quantiles
+    Dim buckets() As Double
+    ReDim buckets(1 To numberOfBuckets + 1)
+    buckets(1) = fieldValues(LBound(fieldValues))
+
+    For i = 2 To numberOfBuckets
+        buckets(i) = fieldValues(((UBound(fieldValues) - LBound(fieldValues) + 1) * i / numberOfBuckets) + LBound(fieldValues))
+    Next i
+
+    buckets(numberOfBuckets + 1) = fieldValues(UBound(fieldValues))
+
+    ' Now use these buckets to stratify data - similar to the StratifyByCurrentBalance logic
+    ' ...
+End Sub
+
+' QuickSort implementation for VBA
+Sub QuickSort(arr() As Double, first As Long, last As Long)
+    Dim pivot As Double, temp As Double
+    Dim i As Long, j As Long
+
+    If first >= last Then Exit Sub
+
+    pivot = arr((first + last) \ 2)
+    i = first
+    j = last
+
+    While i <= j
+        While arr(i) < pivot And i < last
+            i = i + 1
+        Wend
+
+        While arr(j) > pivot And j > first
+            j = j - 1
+        Wend
+
+        If i <= j Then
+            temp = arr(i)
+            arr(i) = arr(j)
+            arr(j) = temp
+            i = i + 1
+            j = j - 1
+        End If
+    Wend
+
+    If first < j Then QuickSort arr, first, j
+    If i < last Then QuickSort arr, i, last
+End Sub
 
