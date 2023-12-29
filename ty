@@ -207,3 +207,81 @@ Function Min(val1 As Integer, val2 As Integer) As Integer
         Min = val2
     End If
 End Function
+---------
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' ... [previous code initialization] ...
+
+    Dim i As Long
+    For i = 2 To lastRow
+        ' Extract loan data
+        Dim currentBalance As Double, interestRateType As String, repaymentType As Integer
+        Dim interestRate As Double, monthlyPayment As Double, remainingTerm As Integer
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        interestRateType = ws.Cells(i, colDict("InterestRateTypeCode")).Value
+        repaymentType = ws.Cells(i, colDict("AR69")).Value
+        ' ... [other data extraction] ...
+
+        ' Initialize variables for each loan
+        Dim totalInterestThisLoan As Double, totalPrincipalThisLoan As Double
+        totalInterestThisLoan = 0
+        totalPrincipalThisLoan = 0
+
+        Select Case interestRateType
+            Case "Fixed", "Floating", "FixedToFloating"
+                ' Determine if loan is in fixed or floating period
+                ' ... [logic for fixed to floating] ...
+
+                ' Iterate over each payment period
+                For month = 1 To remainingTerm
+                    ' Determine the monthly interest rate
+                    Dim monthlyInterestRate As Double
+                    monthlyInterestRate = interestRate / 12 ' Adjust this based on the loan's current interest rate status
+
+                    ' Calculate monthly interest
+                    Dim interestThisMonth As Double
+                    interestThisMonth = currentBalance * monthlyInterestRate
+
+                    ' Determine payment based on repayment type
+                    Select Case repaymentType
+                        Case 1 ' Interest Only
+                            monthlyPayment = interestThisMonth
+                            ' Principal remains unchanged until the end for interest-only loans
+
+                        Case 2 ' Amortizing
+                            ' Calculate monthly payment if not already provided
+                            If month = 1 Or interestRateType = "FixedToFloating" Then
+                                ' Recalculate payment if it's the first month or if the loan type changes
+                                monthlyPayment = Pmt(monthlyInterestRate, remainingTerm - month + 1, -currentBalance)
+                            End If
+                            ' Calculate principal part of the payment
+                            Dim principalThisMonth As Double
+                            principalThisMonth = monthlyPayment - interestThisMonth
+                            currentBalance = currentBalance - principalThisMonth
+                            totalPrincipalThisLoan = totalPrincipalThisLoan + principalThisMonth
+
+                    End Select
+
+                    ' Aggregate interest for this loan
+                    totalInterestThisLoan = totalInterestThisLoan + interestThisMonth
+                Next month
+
+                ' Aggregate totals based on loan type
+                Select Case interestRateType
+                    Case "Fixed"
+                        totalFixedBalance = totalFixedBalance + currentBalance
+
+                    Case "Floating"
+                        totalFloatingBalance = totalFloatingBalance + currentBalance
+
+                    Case "FixedToFloating"
+                        totalFixedToFloatingBalance = totalFixedToFloatingBalance + currentBalance
+
+                End Select
+
+        End Select
+    Next i
+
+    ' ... [output aggregated results] ...
+End Sub
+
+
