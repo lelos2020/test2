@@ -130,3 +130,9 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
 
     MsgBox "Data aggregation complete."
 End Sub
+
+Function GetIndexRate(ByVal date As Date) As Double
+    ' Simplified example: returning a constant rate
+    ' Replace this logic with the actual method of retrieving the index rate
+    GetIndexRate = 0.03 ' 3% example rate
+End Function
