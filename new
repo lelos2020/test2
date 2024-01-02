@@ -18,13 +18,25 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
         interestRate = ws.Cells(i, colDict("InterestRateCode")).Value
         remainingTerm = ws.Cells(i, colDict("RemainingTermCode")).Value
 
+        ' Determine if loan is in fixed or floating period (for FixedToFloating loans)
+        Dim isFixedPeriod As Boolean
+        isFixedPeriod = True ' Default to fixed period
+        If interestRateType = "FixedToFloating" Then
+            Dim reversionDate As Date
+            reversionDate = ws.Cells(i, colDict("AR121")).Value
+            If DateDiff("m", poolCutOffDate, reversionDate) <= 0 Then
+                isFixedPeriod = False ' Loan is in floating period
+            End If
+        End If
+
         ' Iterating over each payment period
         For month = 1 To remainingTerm
             ' Initialize or retrieve detailed data for the current period
             Dim periodData As Variant
             If Not periodAggregates.Exists(month) Then
-                ' Each entry: Array(TotalBalance, InterestPayment, PrincipalPayment) for each loan type
-                periodData = Array(Array(0#, 0#, 0#), Array(0#, 0#, 0#), Array(0#, 0#, 0#)) ' Fixed, Floating, FixedToFloating
+                ' Each entry: Array(TotalBalance, InterestPayment, PrincipalPayment)
+                ' Added two subcategories for FixedToFloating: Fixed Period and Floating Period
+                periodData = Array(Array(0#, 0#, 0#), Array(0#, 0#, 0#), Array(0#, 0#, 0#), Array(0#, 0#, 0#)) ' Fixed, Floating, FixedToFloatingFixed, FixedToFloatingFloating
                 periodAggregates.Add month, periodData
             Else
                 periodData = periodAggregates(month)
@@ -38,7 +50,7 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
             interestThisMonth = currentBalance * (interestRate / 12)
             principalThisMonth = monthlyPayment - interestThisMonth
 
-            ' Update detailed data based on loan type
+            ' Determine the loan type index for updating aggregates
             Dim loanTypeIndex As Integer
             Select Case interestRateType
                 Case "Fixed"
@@ -46,7 +58,11 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
                 Case "Floating"
                     loanTypeIndex = 1
                 Case "FixedToFloating"
-                    loanTypeIndex = 2
+                    If isFixedPeriod Then
+                        loanTypeIndex = 2 ' FixedToFloating - Fixed Period
+                    Else
+                        loanTypeIndex = 3 ' FixedToFloating - Floating Period
+                    End If
             End Select
 
             ' Update aggregates
@@ -68,7 +84,7 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
     End If
     outputWs.Cells.Clear
 
-    ' Write headers
+      ' Write headers for the Output worksheet
     outputWs.Cells(1, 1).Value = "Month"
     outputWs.Cells(1, 2).Value = "Fixed - Total Balance"
     outputWs.Cells(1, 3).Value = "Fixed - Interest Payment"
@@ -76,11 +92,14 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
     outputWs.Cells(1, 5).Value = "Floating - Total Balance"
     outputWs.Cells(1, 6).Value = "Floating - Interest Payment"
     outputWs.Cells(1, 7).Value = "Floating - Principal Payment"
-    outputWs.Cells(1, 8).Value = "FixedToFloating - Total Balance"
-    outputWs.Cells(1, 9).Value = "FixedToFloating - Interest Payment"
-    outputWs.Cells(1, 10).Value = "FixedToFloating - Principal Payment"
+    outputWs.Cells(1, 8).Value = "FixedToFloating (Fixed Period) - Total Balance"
+    outputWs.Cells(1, 9).Value = "FixedToFloating (Fixed Period) - Interest Payment"
+    outputWs.Cells(1, 10).Value = "FixedToFloating (Fixed Period) - Principal Payment"
+    outputWs.Cells(1, 11).Value = "FixedToFloating (Floating Period) - Total Balance"
+    outputWs.Cells(1, 12).Value = "FixedToFloating (Floating Period) - Interest Payment"
+    outputWs.Cells(1, 13).Value = "FixedToFloating (Floating Period) - Principal Payment"
 
-        ' Write data
+    ' Write the aggregated data
     Dim row As Integer
     row = 2 ' Start from the second row for data
     Dim key As Variant
@@ -89,18 +108,22 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
         monthData = periodAggregates(key)
 
         outputWs.Cells(row, 1).Value = key ' Month
-        ' Writing Fixed loan type data
+        ' Write Fixed loan type data
         outputWs.Cells(row, 2).Value = monthData(0)(0) ' Fixed - Total Balance
         outputWs.Cells(row, 3).Value = monthData(0)(1) ' Fixed - Interest Payment
         outputWs.Cells(row, 4).Value = monthData(0)(2) ' Fixed - Principal Payment
-        ' Writing Floating loan type data
+        ' Write Floating loan type data
         outputWs.Cells(row, 5).Value = monthData(1)(0) ' Floating - Total Balance
         outputWs.Cells(row, 6).Value = monthData(1)(1) ' Floating - Interest Payment
         outputWs.Cells(row, 7).Value = monthData(1)(2) ' Floating - Principal Payment
-        ' Writing FixedToFloating loan type data
-        outputWs.Cells(row, 8).Value = monthData(2)(0) ' FixedToFloating - Total Balance
-        outputWs.Cells(row, 9).Value = monthData(2)(1) ' FixedToFloating - Interest Payment
-        outputWs.Cells(row, 10).Value = monthData(2)(2) ' FixedToFloating - Principal Payment
+        ' Write FixedToFloating (Fixed Period) loan type data
+        outputWs.Cells(row, 8).Value = monthData(2)(0) ' FixedToFloating (Fixed) - Total Balance
+        outputWs.Cells(row, 9).Value = monthData(2)(1) ' FixedToFloating (Fixed) - Interest Payment
+        outputWs.Cells(row, 10).Value = monthData(2)(2) ' FixedToFloating (Fixed) - Principal Payment
+        ' Write FixedToFloating (Floating Period) loan type data
+        outputWs.Cells(row, 11).Value = monthData(3)(0) ' FixedToFloating (Floating) - Total Balance
+        outputWs.Cells(row, 12).Value = monthData(3)(1) ' FixedToFloating (Floating) - Interest Payment
+        outputWs.Cells(row, 13).Value = monthData(3)(2) ' FixedToFloating (Floating) - Principal Payment
 
         row = row + 1
     Next key
