@@ -3,41 +3,107 @@ Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
     Dim lastRow As Long
     lastRow = ws.Cells(ws.Rows.Count, colDict("AR67")).End(xlUp).Row
 
-    ' Dictionary to store aggregates for each period
+    ' Dictionary to store detailed aggregates for each period
     Dim periodAggregates As Object
     Set periodAggregates = CreateObject("Scripting.Dictionary")
 
     Dim i As Long, month As Integer
     For i = 2 To lastRow
         ' Extract loan data
-        ' ... [extract loan data] ...
+        Dim currentBalance As Double, interestRateType As String, repaymentType As Integer
+        Dim interestRate As Double, monthlyPayment As Double, remainingTerm As Integer
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        interestRateType = ws.Cells(i, colDict("InterestRateTypeCode")).Value
+        repaymentType = ws.Cells(i, colDict("AR69")).Value
+        interestRate = ws.Cells(i, colDict("InterestRateCode")).Value
+        remainingTerm = ws.Cells(i, colDict("RemainingTermCode")).Value
 
         ' Iterating over each payment period
         For month = 1 To remainingTerm
-            ' Initialize or fetch current period data
-            Dim currentPeriodData As Variant
+            ' Initialize or retrieve detailed data for the current period
+            Dim periodData As Variant
             If Not periodAggregates.Exists(month) Then
-                currentPeriodData = Array(0#, 0#, 0#, 0#) ' Initialize for new month
-                periodAggregates.Add month, currentPeriodData
+                ' Each entry: Array(TotalBalance, InterestPayment, PrincipalPayment) for each loan type
+                periodData = Array(Array(0#, 0#, 0#), Array(0#, 0#, 0#), Array(0#, 0#, 0#)) ' Fixed, Floating, FixedToFloating
+                periodAggregates.Add month, periodData
             Else
-                currentPeriodData = periodAggregates(month) ' Fetch existing data for the month
+                periodData = periodAggregates(month)
             End If
 
-            ' ... [perform calculations for each loan type and period] ...
+            ' Perform calculations for interest and principal based on loan type and repayment type
+            ' Assume calculations are done here and result in interestThisMonth and principalThisMonth
+            Dim interestThisMonth As Double
+            Dim principalThisMonth As Double
+            ' Example calculation (replace with actual logic)
+            interestThisMonth = currentBalance * (interestRate / 12)
+            principalThisMonth = monthlyPayment - interestThisMonth
 
-            ' Update aggregates based on loan type
-            ' ... [update logic for Fixed, Floating, FixedToFloating] ...
+            ' Update detailed data based on loan type
+            Dim loanTypeIndex As Integer
+            Select Case interestRateType
+                Case "Fixed"
+                    loanTypeIndex = 0
+                Case "Floating"
+                    loanTypeIndex = 1
+                Case "FixedToFloating"
+                    loanTypeIndex = 2
+            End Select
 
-            ' Update the dictionary for the month
-            periodAggregates(month) = currentPeriodData
+            ' Update aggregates
+            periodData(loanTypeIndex)(0) = periodData(loanTypeIndex)(0) + currentBalance ' Update balance
+            periodData(loanTypeIndex)(1) = periodData(loanTypeIndex)(1) + interestThisMonth ' Update interest
+            periodData(loanTypeIndex)(2) = periodData(loanTypeIndex)(2) + principalThisMonth ' Update principal
 
-            ' Debugging: Check the updated data
-            If IsEmpty(periodAggregates(month)) Then
-                MsgBox "Data is empty for month " & month & " in row " & i
-            End If
+            ' Reassign the updated data back to the dictionary
+            periodAggregates(month) = periodData
         Next month
     Next i
 
     ' Output to "Outputs" worksheet
-    ' ... [output code] ...
+    Dim outputWs As Worksheet
+    Set outputWs = ThisWorkbook.Sheets("Outputs")
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Worksheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = "Outputs"
+    End If
+    outputWs.Cells.Clear
+
+    ' Write headers
+    outputWs.Cells(1, 1).Value = "Month"
+    outputWs.Cells(1, 2).Value = "Fixed - Total Balance"
+    outputWs.Cells(1, 3).Value = "Fixed - Interest Payment"
+    outputWs.Cells(1, 4).Value = "Fixed - Principal Payment"
+    outputWs.Cells(1, 5).Value = "Floating - Total Balance"
+    outputWs.Cells(1, 6).Value = "Floating - Interest Payment"
+    outputWs.Cells(1, 7).Value = "Floating - Principal Payment"
+    outputWs.Cells(1, 8).Value = "FixedToFloating - Total Balance"
+    outputWs.Cells(1, 9).Value = "FixedToFloating - Interest Payment"
+    outputWs.Cells(1, 10).Value = "FixedToFloating - Principal Payment"
+
+        ' Write data
+    Dim row As Integer
+    row = 2 ' Start from the second row for data
+    Dim key As Variant
+    For Each key In periodAggregates.Keys
+        Dim monthData As Variant
+        monthData = periodAggregates(key)
+
+        outputWs.Cells(row, 1).Value = key ' Month
+        ' Writing Fixed loan type data
+        outputWs.Cells(row, 2).Value = monthData(0)(0) ' Fixed - Total Balance
+        outputWs.Cells(row, 3).Value = monthData(0)(1) ' Fixed - Interest Payment
+        outputWs.Cells(row, 4).Value = monthData(0)(2) ' Fixed - Principal Payment
+        ' Writing Floating loan type data
+        outputWs.Cells(row, 5).Value = monthData(1)(0) ' Floating - Total Balance
+        outputWs.Cells(row, 6).Value = monthData(1)(1) ' Floating - Interest Payment
+        outputWs.Cells(row, 7).Value = monthData(1)(2) ' Floating - Principal Payment
+        ' Writing FixedToFloating loan type data
+        outputWs.Cells(row, 8).Value = monthData(2)(0) ' FixedToFloating - Total Balance
+        outputWs.Cells(row, 9).Value = monthData(2)(1) ' FixedToFloating - Interest Payment
+        outputWs.Cells(row, 10).Value = monthData(2)(2) ' FixedToFloating - Principal Payment
+
+        row = row + 1
+    Next key
+
+    MsgBox "Data aggregation complete."
 End Sub
