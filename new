@@ -1,0 +1,43 @@
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    ' Assuming colDict has necessary mappings
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, colDict("AR67")).End(xlUp).Row
+
+    ' Dictionary to store aggregates for each period
+    Dim periodAggregates As Object
+    Set periodAggregates = CreateObject("Scripting.Dictionary")
+
+    Dim i As Long, month As Integer
+    For i = 2 To lastRow
+        ' Extract loan data
+        ' ... [extract loan data] ...
+
+        ' Iterating over each payment period
+        For month = 1 To remainingTerm
+            ' Initialize or fetch current period data
+            Dim currentPeriodData As Variant
+            If Not periodAggregates.Exists(month) Then
+                currentPeriodData = Array(0#, 0#, 0#, 0#) ' Initialize for new month
+                periodAggregates.Add month, currentPeriodData
+            Else
+                currentPeriodData = periodAggregates(month) ' Fetch existing data for the month
+            End If
+
+            ' ... [perform calculations for each loan type and period] ...
+
+            ' Update aggregates based on loan type
+            ' ... [update logic for Fixed, Floating, FixedToFloating] ...
+
+            ' Update the dictionary for the month
+            periodAggregates(month) = currentPeriodData
+
+            ' Debugging: Check the updated data
+            If IsEmpty(periodAggregates(month)) Then
+                MsgBox "Data is empty for month " & month & " in row " & i
+            End If
+        Next month
+    Next i
+
+    ' Output to "Outputs" worksheet
+    ' ... [output code] ...
+End Sub
