@@ -8,26 +8,29 @@ Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, bucket
     ' Get the column number for the field
     Dim colNumber As Integer
     colNumber = colDict.Item(fieldCode)
-    
+
+    ' Get the column number for the current balance
+    Dim colCurrentBalance As Integer
+    colCurrentBalance = colDict.Item("AR67")
+
     ' Initialize BucketDict
     Dim BucketDict As Object
     Set BucketDict = CreateObject("Scripting.Dictionary")
     Dim i As Long
     Dim BucketKey As String
-    
+
     ' Prepare buckets based on the StratificationMode
-    If StratificationMode = "Categorical" Or StratificationMode = "String" Then
+    If stratifymode = "Categorical" Then
         For i = LBound(buckets) To UBound(buckets)
             BucketKey = buckets(i)
             BucketDict.Add BucketKey, New Collection
         Next i
     Else
-        ' Add buckets to BucketDict for numerical or date ranges
+        ' Add buckets to BucketDict
         For i = LBound(buckets) To UBound(buckets) - 1
-            BucketKey = buckets(i) & " - " & buckets(i + 1)
+            BucketKey = buckets(i) & "_" & buckets(i + 1)
             BucketDict.Add BucketKey, New Collection
         Next i
-
         ' Additional bucket for values exceeding the last bucket's range
         Dim overflowBucketKey As String
         overflowBucketKey = ">" & buckets(UBound(buckets))
@@ -38,42 +41,33 @@ Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, bucket
     Dim lastRow As Long
     lastRow = ws.Cells(ws.Rows.Count, colNumber).End(xlUp).Row
     Dim fieldValue As Variant
-    Dim bucketFound As Boolean
-    
+    Dim currentBalance As Double
+
     For r = 2 To lastRow
         fieldValue = ws.Cells(r, colNumber).Value
+        currentBalance = ws.Cells(r, colCurrentBalance).Value 
+
+        Dim bucketFound As Boolean
         bucketFound = False
-        
-        Select Case StratificationMode
-            Case "Numerical"
-                For i = LBound(buckets) To UBound(buckets) - 1
-                    If fieldValue >= buckets(i) And fieldValue < buckets(i + 1) Then
-                        BucketKey = buckets(i) & " - " & buckets(i + 1)
-                        BucketDict.Item(BucketKey).Add r
-                        bucketFound = True
-                        Exit For
-                    End If
-                Next i
-                If Not bucketFound And fieldValue >= buckets(UBound(buckets)) Then
-                    BucketDict.Item(overflowBucketKey).Add r
-                End If
-                
-            Case "Categorical", "String"
-                If BucketDict.Exists(fieldValue) Then
-                    BucketDict.Item(fieldValue).Add r
+
+        If stratifymode = "Categorical" Then
+            If BucketDict.Exists(fieldValue) Then
+                BucketDict.Item(fieldValue).Add Array(r, currentBalance)
+                bucketFound = True
+            End If
+        Else
+            For i = LBound(buckets) To UBound(buckets) - 1
+                If fieldValue >= buckets(i) And fieldValue < buckets(i + 1) Then
+                    BucketKey = buckets(i) & "_" & buckets(i + 1)
+                    BucketDict.Item(BucketKey).Add Array(r, currentBalance)
                     bucketFound = True
+                    Exit For
                 End If
-                
-            Case "Date"
-                Dim yearValue As String
-                If IsDate(fieldValue) Then
-                    yearValue = CStr(Year(fieldValue))
-                    If BucketDict.Exists(yearValue) Then
-                        BucketDict.Item(yearValue).Add r
-                        bucketFound = True
-                    End If
-                End If
-        End Select
+            Next i
+            If Not bucketFound And fieldValue >= buckets(UBound(buckets)) Then
+                BucketDict.Item(overflowBucketKey).Add Array(r, currentBalance)
+            End If
+        End If
     Next r
 
     ' Call OutputBuckets or any other function to process this data
