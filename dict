@@ -1,0 +1,28 @@
+Function GetFieldValidationInfo(templateWs As Worksheet) As Collection
+    Dim fieldValidations As New Collection
+    Dim row As Long
+    Dim lastRow As Long
+    lastRow = templateWs.Cells(templateWs.Rows.Count, 2).End(xlUp).Row  ' Column B for Field Codes
+
+    For row = 2 To lastRow ' Starting from row 2
+        Dim info As New FieldValidationInfo
+        With templateWs
+            info.FieldCode = .Cells(row, 2).Value  ' Field Code in Column B
+            info.Category = .Cells(row, 6).Value  ' Category in Column F
+            info.DataType = .Cells(row, 7).Value  ' Data Type in Column G
+
+            If info.DataType = "List" Then
+                Set info.AllowedValues = New Collection
+                Dim values As Variant
+                values = Split(.Cells(row, 8).Value, ",")  ' Allowed values in Column H
+                Dim val As Variant
+                For Each val In values
+                    info.AllowedValues.Add Trim(val)
+                Next val
+            End If
+        End With
+        fieldValidations.Add info, info.FieldCode
+    Next row
+
+    Set GetFieldValidationInfo = fieldValidations
+End Function
