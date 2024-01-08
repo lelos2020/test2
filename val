@@ -30,3 +30,44 @@ Sub AnalyzeLoanData()
 
     ' ... [rest of your code] ...
 End Sub
+
+' In the same standard module
+Sub AnalyzeLoanData()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("LLD")
+    ' ... [existing code to find StartRow and ARFieldRow] ...
+
+    ' Get the field validation information from the template sheet
+    Dim templateWs As Worksheet
+    Set templateWs = ThisWorkbook.Sheets("Template and Instructions") ' Replace with actual sheet name
+    Dim fieldValidations As Collection
+    Set fieldValidations = GetFieldValidationInfo(templateWs)
+
+    ' Now use the fieldValidations for data validation
+    Dim validationInfo As CFieldValidationInfo
+    For Each validationInfo In fieldValidations
+        ' Retrieve the column number for the field code
+        Dim colNumber As Integer
+        colNumber = ws.Rows(ARFieldRow).Find(What:=validationInfo.FieldCode, LookIn:=xlValues, LookAt:=xlWhole).Column
+
+        ' Depending on DataType, perform the necessary validations
+        Select Case validationInfo.DataType
+            Case "Text/Numeric"
+                ' Perform validation for Text/Numeric fields
+                ' [Add your validation logic here]
+
+            Case "Date"
+                ' Perform validation for Date fields
+                ' [Add your validation logic here]
+
+            Case "List"
+                ' Perform validation for List fields
+                ' [Add your validation logic here]
+
+            ' Add cases for other DataTypes as needed
+
+        End Select
+    Next validationInfo
+
+    ' ... [rest of your code] ...
+End Sub
