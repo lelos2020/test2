@@ -57,3 +57,40 @@ Public Function GetFieldValidationInfo(templateWs As Worksheet) As Collection
     
     Set GetFieldValidationInfo = fieldValidations
 End Function
+
+Public Function GetFieldValidationInfo(templateWs As Worksheet) As Collection
+    Dim fieldValidations As New Collection
+    Dim fieldInfo As Range
+    Dim lastRow As Long
+    lastRow = templateWs.Cells(templateWs.Rows.Count, "B").End(xlUp).Row
+    
+    For Each fieldInfo In templateWs.Range("B2:B" & lastRow)
+        Dim validationInfo As New CFieldValidationInfo
+        With validationInfo
+            .FieldCode = fieldInfo.Value
+            .Category = fieldInfo.Offset(0, 4).Value ' Category in Column F
+            .DataType = fieldInfo.Offset(0, 5).Value ' Data Type in Column G
+
+            If .DataType = "List" Then
+                Set .AllowedValues = New Collection
+                Dim values As Variant
+                values = Split(fieldInfo.Offset(0, 6).Value, Chr(10)) ' Split by newline
+                Dim item As Variant
+                For Each item In values
+                    If Trim(item) <> "" Then ' Add only non-empty values
+                        .AllowedValues.Add Trim(item)
+                    End If
+                Next item
+            End If
+        End With
+        
+        ' Check if the FieldCode is already used as a key to ensure uniqueness
+        If Not fieldValidations.Contains(validationInfo.FieldCode) Then
+            fieldValidations.Add validationInfo, validationInfo.FieldCode
+        Else
+            ' Handle the duplicate FieldCode, maybe log it or raise an error
+        End If
+    Next fieldInfo
+    
+    Set GetFieldValidationInfo = fieldValidations
+End Function
