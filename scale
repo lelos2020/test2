@@ -1,0 +1,11 @@
+Function DetermineRoundingScale(weightedAvg As Double) As Integer
+    If weightedAvg >= 1000 Then
+        DetermineRoundingScale = 1000  ' Round to the nearest thousand
+    ElseIf weightedAvg >= 100 Then
+        DetermineRoundingScale = 100   ' Round to the nearest hundred
+    ElseIf weightedAvg >= 10 Then
+        DetermineRoundingScale = 10    ' Round to the nearest ten
+    Else
+        DetermineRoundingScale = 1     ' Round to the nearest unit
+    End If
+End Function
