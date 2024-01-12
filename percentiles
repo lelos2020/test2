@@ -1,0 +1,47 @@
+Function CalculatePercentiles(ws As Worksheet, colNumber As Integer, percentiles As Variant) As Variant
+    Dim dataRange As Range
+    Set dataRange = ws.Range(ws.Cells(2, colNumber), ws.Cells(ws.Cells(ws.Rows.Count, colNumber).End(xlUp).Row, colNumber))
+    
+    Dim dataArray() As Variant
+    dataArray = Application.Transpose(dataRange.Value)
+    
+    ' Sorting the data
+    Call QuickSort(dataArray, LBound(dataArray), UBound(dataArray))
+    
+    Dim results() As Variant
+    ReDim results(LBound(percentiles) To UBound(percentiles))
+    
+    Dim i As Integer
+    For i = LBound(percentiles) To UBound(percentiles)
+        Dim position As Double
+        position = ((UBound(dataArray) - LBound(dataArray) + 1) * percentiles(i)) + 0.5
+        results(i) = dataArray(Int(position))
+    Next i
+    
+    CalculatePercentiles = results
+End Function
+
+' QuickSort function for sorting data array
+Sub QuickSort(arr, first As Long, last As Long)
+    Dim lower As Long, upper As Long, pivot As Variant, temp As Variant
+    lower = first
+    upper = last
+    pivot = arr((first + last) \ 2)
+    Do While lower <= upper
+        Do While arr(lower) < pivot And lower < last
+            lower = lower + 1
+        Loop
+        Do While pivot < arr(upper) And upper > first
+            upper = upper - 1
+        Loop
+        If lower <= upper Then
+            temp = arr(lower)
+            arr(lower) = arr(upper)
+            arr(upper) = temp
+            lower = lower + 1
+            upper = upper - 1
+        End If
+    Loop
+    If first < upper Then QuickSort arr, first, upper
+    If lower < last Then QuickSort arr, lower, last
+End Sub
