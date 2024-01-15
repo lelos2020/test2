@@ -1,0 +1,14 @@
+Function GetUniqueItems(ws As Worksheet, colNumber As Integer) As Collection
+    Dim cell As Range
+    Dim uniqueItems As New Collection
+    On Error Resume Next ' Ignore error if item already exists in the collection
+
+    For Each cell In ws.Columns(colNumber).Cells
+        If cell.Row >= StartRow Then ' Assuming StartRow is where your data starts
+            uniqueItems.Add cell.Value, CStr(cell.Value)
+        End If
+    Next cell
+
+    On Error GoTo 0 ' Reset error handling
+    Set GetUniqueItems = uniqueItems
+End Function
