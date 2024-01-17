@@ -1,0 +1,33 @@
+Sub CallOpenAI()
+    Dim httpRequest As Object
+    Set httpRequest = CreateObject("MSXML2.XMLHTTP")
+
+    ' Set your API URL and Key here
+    Dim apiUrl As String
+    Dim apiKey As String
+    apiUrl = "https://api.openai.com/v1/engines/davinci/completions"  ' Example API URL
+    apiKey = "your-api-key"  ' Replace with your actual OpenAI API key
+
+    ' Setup the API call
+    With httpRequest
+        .Open "POST", apiUrl, False
+        .SetRequestHeader "Content-Type", "application/json"
+        .SetRequestHeader "Authorization", "Bearer " & apiKey
+
+        ' Define the data to send - here, we're asking GPT to create a text
+        Dim data As String
+        data = "{""prompt"":""Once upon a time, "",""max_tokens"":50}"
+        
+        ' Send the request
+        .Send data
+
+        ' Check the response
+        If .Status = 200 Then
+            Dim response As String
+            response = .ResponseText
+            MsgBox response
+        Else
+            MsgBox "Error " & .Status & ": " & .StatusText
+        End If
+    End With
+End Sub
