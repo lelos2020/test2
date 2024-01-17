@@ -71,3 +71,25 @@ Sub AnalyzeLoanData()
 
     ' ... [rest of your code] ...
 End Sub
+Sub ValidateData(ws As Worksheet, row As Integer, col As Integer, validationInfo As Object)
+    Dim cellValue As Variant
+    cellValue = ws.Cells(row, col).Value
+
+    Select Case validationInfo.DataType
+        Case "Numeric"
+            If Not IsNumeric(cellValue) And Not IsEmpty(cellValue) Then
+                MsgBox "Invalid numeric value in row " & row
+                Exit Sub
+            End If
+
+        Case "Date"
+            ' Check if the cell contains a date and exclude time formats
+            If Not IsDate(cellValue) Or (VBA.Hour(cellValue) <> 0 Or VBA.Minute(cellValue) <> 0 Or VBA.Second(cellValue) <> 0) Then
+                MsgBox "Invalid date or time format in row " & row
+                Exit Sub
+            End If
+
+        ' Add other cases as needed
+    End Select
+End Sub
+
