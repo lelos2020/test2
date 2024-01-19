@@ -91,3 +91,47 @@ Sub CreateChart(outputWs As Worksheet, bucketLabels() As String, percentageData(
         ' Additional formatting as needed
     End With
 End Sub
+
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName As String, TableTitle As String)
+    Dim outputWs As Worksheet
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+
+    Dim outputArray() As Variant
+    Dim i As Long
+    Dim totalRows As Long
+    totalRows = BucketDict.Count
+    
+    ' Resize the output array
+    ReDim outputArray(1 To totalRows, 1 To 5)
+    
+    i = 1
+    Dim BucketKey As Variant
+    For Each BucketKey In BucketDict.Keys
+        outputArray(i, 1) = BucketKey ' Bucket Range
+        outputArray(i, 2) = SumBalanceFromBucket(BucketDict.Item(BucketKey))
+        outputArray(i, 3) = outputArray(i, 2) / totalbalance * 100
+        outputArray(i, 4) = BucketDict.Item(BucketKey).Count
+        outputArray(i, 5) = outputArray(i, 4) / loanDict.Count * 100
+        i = i + 1
+    Next BucketKey
+
+    ' Output the data in bulk
+    Dim startRow As Long
+    startRow = FindNextAvailableRow(outputWs)
+    outputWs.Range(outputWs.Cells(startRow, 1), outputWs.Cells(startRow + totalRows - 1, 5)).Value = outputArray
+
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+End Sub
+
+Function SumBalanceFromBucket(bucketItems As Collection) As Double
+    ' ... existing code to calculate sum ...
+End Function
+
+Function FindNextAvailableRow(ws As Worksheet) As Long
+    ' Finds the first empty row in the worksheet
+    FindNextAvailableRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+End Function
