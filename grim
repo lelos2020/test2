@@ -1,0 +1,51 @@
+Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, OutputSheetName As String, TableTitle As String, StratificationMode As String, Optional FieldInfo As CFieldValidationInfo)
+    ' Existing code for stratifying data...
+
+    ' Additional code: Call the chart creation subroutine at the end
+    CreateChartForStratifiedData OutputSheetName, fieldCode, BucketDict
+End Sub
+
+Sub CreateChartForStratifiedData(OutputSheetName As String, fieldCode As String, BucketDict As Object)
+    Dim outputWs As Worksheet
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    Dim chartObj As ChartObject
+    Dim bucketKey As Variant
+    Dim i As Integer
+
+    ' Prepare arrays for chart data
+    Dim bucketLabels() As String
+    Dim percentageData() As Double
+    ReDim bucketLabels(0 To BucketDict.Count - 1)
+    ReDim percentageData(0 To BucketDict.Count - 1)
+    
+    i = 0
+    For Each bucketKey In BucketDict.Keys
+        bucketLabels(i) = bucketKey
+        percentageData(i) = CalculatePercentage(BucketDict.Item(bucketKey))
+        i = i + 1
+    Next bucketKey
+
+    ' Create a chart
+    Set chartObj = outputWs.ChartObjects.Add(Left:=100, Width:=375, Top:=50, Height:=225)
+    With chartObj.Chart
+        .ChartType = xlColumnClustered
+        .SeriesCollection.NewSeries
+        .SeriesCollection(1).Values = percentageData
+        .SeriesCollection(1).XValues = bucketLabels
+        .HasTitle = True
+        .ChartTitle.Text = "Distribution for " & fieldCode
+        ' Additional formatting as needed
+    End With
+End Sub
+
+Function CalculatePercentage(bucketItems As Collection) As Double
+    ' This function calculates the percentage based on your existing logic
+    ' Assuming the second element in each item of the collection is the balance
+    Dim totalBalance As Double
+    totalBalance = 0
+    Dim item As Variant
+    For Each item In bucketItems
+        totalBalance = totalBalance + item(1) ' The balance part of the item
+    Next item
+    CalculatePercentage = totalBalance / totalbalance * 100 ' totalbalance should be the global total balance
+End Function
