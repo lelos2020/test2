@@ -128,10 +128,18 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName A
 End Sub
 
 Function SumBalanceFromBucket(bucketItems As Collection) As Double
-    ' ... existing code to calculate sum ...
+    Dim totalBalance As Double
+    totalBalance = 0
+    Dim item As Variant
+    For Each item In bucketItems
+        totalBalance = totalBalance + item(1) ' Assuming second element is the balance
+    Next item
+    SumBalanceFromBucket = totalBalance
 End Function
 
 Function FindNextAvailableRow(ws As Worksheet) As Long
     ' Finds the first empty row in the worksheet
     FindNextAvailableRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
 End Function
+
+
