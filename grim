@@ -49,3 +49,45 @@ Function CalculatePercentage(bucketItems As Collection) As Double
     Next item
     CalculatePercentage = totalBalance / totalbalance * 100 ' totalbalance should be the global total balance
 End Function
+
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName As String, TableTitle As String)
+    Dim outputWs As Worksheet
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    ' ... existing code to output data ...
+
+    ' Arrays to store data for charting
+    Dim bucketLabels() As String
+    Dim percentageData() As Double
+    ReDim bucketLabels(0 To BucketDict.Count - 1)
+    ReDim percentageData(0 To BucketDict.Count - 1)
+
+    Dim i As Integer
+    i = 0
+    Dim BucketKey As Variant
+    For Each BucketKey In BucketDict.Keys
+        bucketLabels(i) = BucketKey
+        percentageData(i) = CalculatePercentage(BucketDict.Item(BucketKey))
+        i = i + 1
+    Next BucketKey
+
+    ' Create a chart
+    CreateChart outputWs, bucketLabels, percentageData, TableTitle
+End Sub
+
+Function CalculatePercentage(bucketItems As Collection) As Double
+    ' ... existing code to calculate percentage ...
+End Function
+
+Sub CreateChart(outputWs As Worksheet, bucketLabels() As String, percentageData() As Double, chartTitle As String)
+    Dim chartObj As ChartObject
+    Set chartObj = outputWs.ChartObjects.Add(Left:=100, Width:=375, Top:=50, Height:=225)
+    With chartObj.Chart
+        .ChartType = xlColumnClustered
+        .SeriesCollection.NewSeries
+        .SeriesCollection(1).Values = percentageData
+        .SeriesCollection(1).XValues = bucketLabels
+        .HasTitle = True
+        .ChartTitle.Text = chartTitle
+        ' Additional formatting as needed
+    End With
+End Sub
