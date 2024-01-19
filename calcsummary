@@ -1,0 +1,62 @@
+Sub CalculateSummaryStatistics(ws As Worksheet, colDict As Object, fieldCodes As Variant)
+    ' Variable Declarations
+    Dim dataRange As range, data As Variant
+    Dim r As Long, currentBalance As Double
+    Dim currentLTV, originalLTV, currentTerm, originalBal As Double
+    Dim IOBal, AmortisingLoansBal, PartNPartBal, SecondsBal As Double
+    Dim OrigValAmt, MIA, PriorBalance, FirstChargeOLTV As Double
+    Dim OriginationDate, maturityDate As Date
+    Dim weightedLTV, weightedOLTV, weightedCurrBal, weightedOriginalBal As Double
+    Dim weightedTerm, IOpct, AmortisingLoanspct, PartNPartpct As Double
+    Dim weightedFirstChargeOLTV, weightedPriorBalance, TotalRemainingTerm As Double
+    Dim TotalSeasoning, TotalOrigValAmt, TotalTimeToReversion, weightedFinalMargin As Double
+    Dim weightedAvgSeasoning, weightedAvgRemainingTerm, AvgLoanSize As Double
+    Dim OOBal, BTLBal, LondonBal, SouthEastBal, SelfEmployedBal As Double
+    Dim FTBBal, RTBBal, SecondsBalpct, Londonpct, SouthEastpct As Double
+    Dim OneMonthPlusArrearsBal, ThreeMonthPlusArrearsBal, TotalArrearsPrincipalBal, CumArrearsBalance As Double
+    Dim OneMonthPlusArrearspct, ThreeMonthPlusArrearspct, weightedCurrentMargin, weightedCurrentIR As Double
+    Dim weightedTimesinceLastCCJ, IVABal, IVApct, FTBpct, RTBpct As Double
+    Dim TimeToReversion, remainingterm As Long
+    Dim weightedAvgRTimeToReversion, weightedAvgReversionMargin, weightedAvgOrigValAmt As Double
+    Dim CCJsSatisfiedBal, CCJsUnsatisfiedBal, TotalValueofSatCCJs, TotalValueofUnSatCCJs As Double
+    Dim WeightedValueSatCCJs, WeightedValueUnSatCCJs, WAValueSatCCJs, WAValueUnSatCCJs As Double
+    Dim WAvgTimeSinceLastCCJ, OrigFullValBal, OrigDriveByBal, OrigAVMBal, OrigIndexedValBal As Double
+    Dim OrigDesktopValBal, OrigFullValpct, OrigDriveBypct, OrigAVMpct, OrigIndexedValpct As Double
+    Dim OrigDesktopValpct, SelfEmployedpct, CCJSatisfiedpct, CCJUnsatisfiedpct, WAvgCurrBal, WAvgOriginalBal As Double
+    Dim FixedtoFloatingInFixedPeriodBalance, FixedtoFloatingInFixedPeriodpct, EmployedBal, UnemployedBal As Double
+    Dim IOnlyOwnOccBal, IOnlyOwnOccpct, SecondsBalpct, NumCCJsSatisfied, NumCCJsUnsatisfied As Double
+    Dim CCJSatValue, CCJUnSatValue, LastCCJ, TimeSinceLastCCJ As Double
+    Dim secondCharge, CurrentMargin, CurrentIR, OccupancyType, IRType, EmploymentStatus As Variant
+
+    ' Read the required data into an array for efficient processing
+    Set dataRange = ws.range(ws.Cells(StartRow, 1), ws.Cells(lastRow, ws.Columns.Count))
+    data = dataRange.Value
+
+    ' Initialize the summary statistics dictionary
+    Set SummaryStats = CreateObject("Scripting.Dictionary")
+
+    ' Reset necessary variables
+    ' ... (other variable initialization)
+
+    ' Iterate through the array instead of the worksheet for calculations
+    For r = 1 To UBound(data, 1)
+        ' Retrieve values from the array
+        currentBalance = data(r, colDict.item("AR67"))
+        currentLTV = data(r, colDict.item("AR141"))
+        originalLTV = data(r, colDict.item("AR135"))
+        currentTerm = data(r, colDict.item("AR61"))
+        originalBal = data(r, colDict.item("AR66"))
+        ' ... (other data retrievals)
+
+        ' Perform calculations
+        ' ... (all the original logic and calculations)
+
+    Next r
+
+    ' Finalize weighted averages and store them in the SummaryStats dictionary
+    ' ... (final calculations and addition to SummaryStats)
+
+    ' Output or process the summary statistics as required
+    ' ...
+
+End Sub
