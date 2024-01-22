@@ -210,3 +210,69 @@ Function FindNextAvailableRow(ws As Worksheet) As Long
     ' Finds the first empty row in the worksheet
     FindNextAvailableRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
 End Function
+
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName As String, TableTitle As String)
+    Dim outputWs As Worksheet
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+
+    Dim outputList As New Collection
+    Dim rowData() As Variant
+    Dim bucketBalance As Double
+
+    ' Set headers
+    ReDim rowData(1 To 5)
+    rowData(1) = "Bucket Range"
+    rowData(2) = "Total Balance"
+    rowData(3) = "% of Total Balance"
+    rowData(4) = "Number of Loans"
+    rowData(5) = "% of Total Loans"
+    outputList.Add rowData
+
+    Dim BucketKey As Variant
+    For Each BucketKey In BucketDict.Keys
+        bucketBalance = SumBalanceFromBucket(BucketDict.Item(BucketKey))
+
+        ' Skip buckets with zero balance
+        If bucketBalance > 0 Then
+            ReDim rowData(1 To 5)
+            rowData(1) = BucketKey ' Bucket Range
+            rowData(2) = bucketBalance
+            rowData(3) = bucketBalance / totalbalance * 100
+            rowData(4) = BucketDict.Item(BucketKey).Count
+            rowData(5) = rowData(4) / loanDict.Count * 100
+            outputList.Add rowData
+        End If
+    Next BucketKey
+
+    ' Transfer data from collection to array
+    Dim outputArray() As Variant
+    ReDim outputArray(1 To outputList.Count, 1 To 5)
+    Dim i As Long
+    For i = 1 To outputList.Count
+        outputArray(i, 1) = outputList(i)(1)
+        outputArray(i, 2) = outputList(i)(2)
+        outputArray(i, 3) = outputList(i)(3)
+        outputArray(i, 4) = outputList(i)(4)
+        outputArray(i, 5) = outputList(i)(5)
+    Next i
+
+    ' Output the data in bulk
+    Dim startRow As Long
+    startRow = FindNextAvailableRow(outputWs)
+    outputWs.Range(outputWs.Cells(startRow, 1), outputWs.Cells(startRow + outputList.Count - 1, 5)).Value = outputArray
+
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+End Sub
+
+Function SumBalanceFromBucket(bucketItems As Collection) As Double
+    ' ... existing code to calculate sum ...
+End Function
+
+Function FindNextAvailableRow(ws As Worksheet) As Long
+    ' Finds the first empty row in the worksheet
+    FindNextAvailableRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+End Function
