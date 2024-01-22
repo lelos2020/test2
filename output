@@ -55,3 +55,55 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, outputSheetName A
     ' AutoFit columns for readability
     outputWs.Columns.AutoFit
 End Sub
+
+Sub OutputBucketsAndCreateCharts(sourceWs As Worksheet, BucketDict As Object, OutputSheetName As String)
+    Dim outputWs As Worksheet
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+
+    Dim startRow As Long
+    startRow = FindNextAvailableRow(outputWs)
+
+    Dim field As Variant
+    For Each field In BucketDict.Keys
+        ' Output data for each field and get the range
+        Dim dataRange As Range
+        Set dataRange = OutputDataForField(outputWs, BucketDict(field), startRow, field)
+        
+        ' Create chart for the field
+        CreateChartForField(outputWs, dataRange, field)
+
+        ' Update start row for next field's data
+        startRow = FindNextAvailableRow(outputWs)
+    Next field
+
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+End Sub
+
+Function OutputDataForField(outputWs As Worksheet, fieldData As Object, startRow As Long, field As String) As Range
+    ' Outputs data for a specific field and returns the range of the output
+    ' fieldData is expected to be a Dictionary or Collection with bucket data
+    ' ... Implementation for outputting data ...
+    ' Return the range where the data was outputted
+End Function
+
+Sub CreateChartForField(outputWs As Worksheet, dataRange As Range, field As String)
+    ' Create a chart based on the provided data range
+    Dim chartObj As ChartObject
+    Set chartObj = outputWs.ChartObjects.Add(Left:=dataRange.Left, Width:=375, Top:=dataRange.Top, Height:=225)
+    With chartObj.Chart
+        .ChartType = xlColumnClustered
+        .SetSourceData Source:=dataRange
+        .HasTitle = True
+        .ChartTitle.Text = field & " Distribution"
+        ' Additional formatting as needed
+    End With
+End Sub
+
+Function FindNextAvailableRow(ws As Worksheet) As Long
+    ' Finds the first empty row in the worksheet
+    FindNextAvailableRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+End Function
