@@ -1,3 +1,6 @@
+
+
+
 Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, outputSheetName As String, TableTitle As String)
     Dim outputWs As Worksheet
     On Error Resume Next
@@ -107,3 +110,53 @@ Function FindNextAvailableRow(ws As Worksheet) As Long
     ' Finds the first empty row in the worksheet
     FindNextAvailableRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
 End Function
+
+
+Sub CreateChartsForOutputData(outputWs As Worksheet)
+    Dim lastRow As Long
+    lastRow = outputWs.Cells(outputWs.Rows.Count, 1).End(xlUp).Row
+
+    Dim startRow As Long
+    Dim endRow As Long
+    Dim i As Long
+    Dim currentTitle As String
+    Dim chartCount As Integer
+    chartCount = 0
+
+    ' Iterate through the rows to find distinct TableTitles
+    i = 2 ' Assuming row 1 has headers
+    While i <= lastRow
+        startRow = i
+        currentTitle = outputWs.Cells(i, 1).Value
+
+        ' Find the range for the current TableTitle
+        While outputWs.Cells(i, 1).Value = currentTitle And i <= lastRow
+            i = i + 1
+        Wend
+        endRow = i - 1
+
+        ' Create a chart for the identified range
+        Dim chartRange As Range
+        Set chartRange = outputWs.Range(outputWs.Cells(startRow, 2), outputWs.Cells(endRow, 3)) ' Modify as per your data columns
+        Call CreateChart(outputWs, chartRange, currentTitle, chartCount)
+
+        chartCount = chartCount + 1
+    Wend
+End Sub
+
+Sub CreateChart(outputWs As Worksheet, dataRange As Range, title As String, chartIndex As Integer)
+    Dim chartObj As ChartObject
+    Dim leftPosition As Double
+
+    ' Set the left position of the chart (you can customize this)
+    leftPosition = outputWs.Cells(1, 6).Left + (chartIndex * 400) ' Adjust as needed
+
+    Set chartObj = outputWs.ChartObjects.Add(Left:=leftPosition, Width:=375, Top:=50, Height:=225)
+    With chartObj.Chart
+        .ChartType = xlColumnClustered
+        .SetSourceData Source:=dataRange
+        .HasTitle = True
+        .ChartTitle.Text = title & " Distribution"
+        ' Additional formatting as needed
+    End With
+End Sub
