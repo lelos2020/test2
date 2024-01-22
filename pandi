@@ -1,0 +1,62 @@
+Sub AnalyzeLoanPool(ws As Worksheet, colDict As Object)
+    Dim periodAggregates As Object, i As Long, month As Integer, poolstartingBalance As Double
+    Set periodAggregates = CreateObject("Scripting.Dictionary")
+    poolstartingBalance = 0
+    
+    ' Main loop to process each loan
+    For i = startRow To lastRow
+        ProcessLoan ws, colDict, i, periodAggregates, poolstartingBalance
+    Next i
+
+    ' Output results to worksheet
+    OutputResults periodAggregates, poolstartingBalance
+End Sub
+
+Sub ProcessLoan(ws As Worksheet, colDict As Object, i As Long, ByRef periodAggregates As Object, ByRef poolstartingBalance As Double)
+    Dim currentBalance, origTempBalance, interestRate, monthlyPayment, remainingTerm As Double
+    Dim interestRateType As String, repaymentType As Integer
+    Dim currentTerm, OriginationDate, SeasoningMonths, isFixedPeriod As Boolean
+
+    ' Extract loan data
+    ' ... [code to extract loan data] ...
+
+    ' Update pool starting balance
+    poolstartingBalance = poolstartingBalance + ws.Cells(i, colDict("AR67")).Value
+
+    ' Process each payment period
+    For month = 1 To remainingTerm
+        ProcessPaymentPeriod ws, colDict, month, periodAggregates, ...
+    Next month
+End Sub
+
+Sub ProcessPaymentPeriod(ws As Worksheet, colDict As Object, month As Integer, ByRef periodAggregates As Object, ...)
+    ' Initialize or retrieve detailed data for the current period
+    ' ... [code to initialize or retrieve data] ...
+
+    ' Perform calculations
+    ' ... [code for interest and principal calculations] ...
+
+    ' Update aggregates
+    ' ... [code to update aggregates] ...
+End Sub
+
+Sub OutputResults(periodAggregates As Object, poolstartingBalance As Double)
+    Dim outputWs As Worksheet, key As Variant, row As Integer
+    Set outputWs = ThisWorkbook.Sheets("Outputs")
+
+    ' Clear previous data
+    outputWs.Cells.Clear
+
+    ' Write headers and data
+    ' ... [code to write headers and data] ...
+
+    ' Format the output
+    FormatOutput outputWs, row
+End Sub
+
+Sub FormatOutput(outputWs As Worksheet, lastRow As Integer)
+    ' Apply number formats, alignment, and borders
+    ' ... [code to format output worksheet] ...
+End Sub
+
+
