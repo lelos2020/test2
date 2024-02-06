@@ -1,0 +1,17 @@
+Function GetIndexRate(month As Integer, wsControls As Worksheet) As Double
+    ' Calculate row offset based on the month. Assumes month 1 starts at Q3.
+    Dim rowOffset As Integer
+    rowOffset = 2 + month ' Q3 is row 3, so offset starts at 2 for month 1.
+    
+    ' Fetch the index rate from the Controls sheet
+    Dim indexRateCellAddress As String
+    indexRateCellAddress = "Q" & rowOffset
+    
+    ' Read the index rate from the worksheet
+    GetIndexRate = wsControls.Range(indexRateCellAddress).Value
+    
+    ' Error handling for missing or invalid data
+    If IsNumeric(GetIndexRate) = False Then
+        GetIndexRate = 0 ' Default or fallback rate if necessary
+    End If
+End Function
