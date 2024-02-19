@@ -1,0 +1,55 @@
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName As String, TableTitle As String)
+    Dim outputWs As Worksheet
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    On Error GoTo 0
+    
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = OutputSheetName
+    End If
+    
+    Dim firstEmptyRow As Long
+    firstEmptyRow = outputWs.Cells(outputWs.Rows.Count, 1).End(xlUp).Row + 2
+    
+    ' Your existing code to output the buckets starts here
+    ' Output the table title and data as before
+    ' ...
+
+    ' Assuming column A has the bucket labels and column C has the percentage of the current balance
+    Dim lastRow As Long
+    lastRow = outputWs.Cells(outputWs.Rows.Count, 1).End(xlUp).Row
+    
+    ' Calculate the range for the chart data
+    Dim chartRange As String
+    chartRange = "A" & firstEmptyRow & ":C" & lastRow
+    
+    ' Create the chart
+    Dim chartObj As ChartObject
+    Set chartObj = outputWs.ChartObjects.Add(Left:=outputWs.Cells(firstEmptyRow, 4).Left, _
+                                              Width:=375, _
+                                              Top:=outputWs.Cells(firstEmptyRow, 1).Top, _
+                                              Height:=225)
+    
+    ' Set chart data
+    With chartObj.Chart
+        .SetSourceData Source:=outputWs.Range(chartRange)
+        .ChartType = xlColumnClustered
+        
+        ' Optional: Customize the chart
+        .HasTitle = True
+        .ChartTitle.Text = TableTitle & " - % of Current Balance"
+        .Axes(xlCategory, xlPrimary).HasTitle = True
+        .Axes(xlCategory, xlPrimary).AxisTitle.Text = "Buckets"
+        .Axes(xlValue, xlPrimary).HasTitle = True
+        .Axes(xlValue, xlPrimary).AxisTitle.Text = "% of Current Balance"
+        
+        ' Set the X and Y data (assuming buckets are in column A and percentages in column C)
+        .SeriesCollection.NewSeries
+        .SeriesCollection(1).XValues = outputWs.Range("A" & firstEmptyRow & ":A" & lastRow)
+        .SeriesCollection(1).Values = outputWs.Range("C" & firstEmptyRow & ":C" & lastRow)
+    End With
+    
+    ' Adjust column widths and row heights as necessary
+    ' ...
+End Sub
