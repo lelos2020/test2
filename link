@@ -1,0 +1,46 @@
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName As String, TableTitle As String)
+    Dim outputWs As Worksheet
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    On Error GoTo 0
+    
+    ' Create or clear the output worksheet
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = OutputSheetName
+    End If
+    
+    ' Initialize contents page row if not already done
+    Dim contentsRow As Long
+    If outputWs.Range("A1").Value = "" Then
+        contentsRow = 1
+        outputWs.Range("A1").Value = "Contents"
+    Else
+        contentsRow = outputWs.Cells(1, 1).End(xlDown).Row + 1
+    End If
+    
+    ' Assuming totalbalance and other necessary calculations are already done
+    ' Find the first empty row after existing data, leaving a gap of one row
+    Dim firstEmptyRow As Long
+    firstEmptyRow = outputWs.Cells(outputWs.Rows.Count, 1).End(xlUp).Row + 2
+    
+    ' Create a hyperlink in the Contents page to the TableTitle
+    Dim tableTitleRow As String
+    tableTitleRow = CStr(firstEmptyRow)
+    outputWs.Hyperlinks.Add Anchor:=outputWs.Cells(contentsRow, 1), Address:="", SubAddress:="'" & OutputSheetName & "'!A" & tableTitleRow, TextToDisplay:=TableTitle
+    
+    ' Increment contentsRow for next entry
+    contentsRow = contentsRow + 1
+    
+    ' Your existing code to output the buckets starts here
+    ' Note: Remember to adjust the rest of your code to account for the new starting row of the data
+    ' ...
+    
+    ' Example of setting up the table (simplified)
+    outputWs.Cells(firstEmptyRow - 1, 1).Value = TableTitle
+    ' Continue with your table setup and data output
+    ' ...
+    
+    ' After outputting the data, you can resize the column to fit the contents page
+    outputWs.Columns(1).AutoFit
+End Sub
