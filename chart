@@ -112,3 +112,71 @@ Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName A
     ' Adjust column widths and row heights as necessary
     ' ...
 End Sub
+
+======take 3=======
+Sub OutputBuckets(sourceWs As Worksheet, BucketDict As Object, OutputSheetName As String, TableTitle As String)
+    Dim outputWs As Worksheet
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    On Error GoTo 0
+    
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = OutputSheetName
+    Else
+        ' Delete existing charts in the worksheet
+        Dim chartObj As ChartObject
+        For Each chartObj In outputWs.ChartObjects
+            chartObj.Delete
+        Next chartObj
+    End If
+    
+    Dim firstEmptyRow As Long
+    firstEmptyRow = outputWs.Cells(outputWs.Rows.Count, 1).End(xlUp).Row + 2
+    
+    ' Your existing code to output the buckets starts here
+    ' Output the table title and data as before
+    ' ...
+
+    ' Assuming column A has the bucket labels and column C has the percentage of the current balance
+    Dim lastRow As Long
+    lastRow = outputWs.Cells(outputWs.Rows.Count, 1).End(xlUp).Row
+    
+    ' Create the chart
+    Dim chartObj As ChartObject
+    Set chartObj = outputWs.ChartObjects.Add(Left:=outputWs.Cells(firstEmptyRow, 4).Left, _
+                                              Width:=375, _
+                                              Top:=outputWs.Cells(firstEmptyRow, 1).Top, _
+                                              Height:=225)
+                                              
+    With chartObj.Chart
+        .ChartType = xlColumnClustered
+        
+        Dim series As Series
+        Set series = .SeriesCollection.NewSeries
+        
+        With series
+            .XValues = outputWs.Range("A" & firstEmptyRow & ":A" & lastRow)
+            .Values = outputWs.Range("C" & firstEmptyRow & ":C" & lastRow)
+            .Name = "% of Current Balance"
+        End With
+        
+        ' Customize the chart
+        .HasTitle = True
+        .ChartTitle.Text = TableTitle & " - % of Current Balance"
+        .ChartTitle.Format.TextFrame2.TextRange.Font.Size = 8
+        .Axes(xlCategory, xlPrimary).HasTitle = True
+        .Axes(xlCategory, xlPrimary).AxisTitle.Text = "Buckets"
+        .Axes(xlCategory, xlPrimary).AxisTitle.Format.TextFrame2.TextRange.Font.Size = 8
+        .Axes(xlValue, xlPrimary).HasTitle = True
+        .Axes(xlValue, xlPrimary).AxisTitle.Text = "% of Current Balance"
+        .Axes(xlValue, xlPrimary).AxisTitle.Format.TextFrame2.TextRange.Font.Size = 8
+        
+        ' Set font size for axis labels
+        .Axes(xlCategory).TickLabels.Font.Size = 8
+        .Axes(xlValue).TickLabels.Font.Size = 8
+    End With
+    
+    ' Adjust column widths and row heights as necessary
+    ' ...
+End Sub
