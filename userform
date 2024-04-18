@@ -1,75 +1,101 @@
-To integrate an ActiveX form in Excel VBA that can display and allow users to change settings currently held in a "Control" worksheet, you’ll need to create a user interface that fetches existing settings from the worksheet, displays them, allows users to modify them, and then saves those modifications back to the worksheet. Here's a step-by-step guide on how to do this:
+To implement a ComboBox and related functionality in an Excel VBA UserForm for managing swap-related settings and interest rate types for loan amortization, follow these steps to create and code the interface:
 
-### Step 1: Create an ActiveX UserForm
-1. **Open VBA Editor**: Press `ALT + F11` in Excel.
-2. **Insert a UserForm**:
-   - Right-click on `VBAProject (YourWorkbookName)` in the Project Explorer.
-   - Select `Insert` -> `UserForm`.
-3. **Design the UserForm**:
-   - Add Labels, TextBoxes, or ComboBoxes depending on the type of settings you have. For example, if you have a setting for "Interest Rate Type", you might add a ComboBox to select between different types.
-   - Add CommandButtons for actions like "Save", "Cancel", or "Apply".
+### Step 1: Design the UserForm
 
-### Step 2: Populate the Form with Existing Settings
-You'll need to write a subroutine that loads when the form initializes to populate the form controls with values from the "Control" sheet.
+1. **Add ComboBox for Swap Flag**:
+   - Name: `cmbSwap`
+   - Properties: Set `ListFillRange` to have "Yes", "No" or manually add these items in the `UserForm_Initialize` procedure.
+
+2. **Add TextBox for Swap Rate**:
+   - Name: `txtSwapRate`
+   - Properties: Initially set `Visible` to `False`.
+
+3. **Add ComboBox for Interest Rate Type**:
+   - Name: `cmbInterestRateType`
+   - Properties: Populate with options like "Current Interest Rate" or "Index Plus Margin".
+
+4. **Add Labels** for clarity:
+   - For `cmbSwap`: "Swap"
+   - For `txtSwapRate`: "Swap Rate"
+   - For `cmbInterestRateType`: "Interest Rate Type"
+
+5. **Command Buttons** for actions:
+   - Save, Cancel, etc.
+
+### Step 2: Populate and Manage Visibility
+
+In the `UserForm_Initialize` subroutine, populate the ComboBoxes and set the initial visibility based on the swap setting.
 
 ```vba
 Private Sub UserForm_Initialize()
-    ' Assuming settings are in columns A (labels) and B (values) in the Control sheet
-    Dim wsControl As Worksheet
-    Set wsControl = ThisWorkbook.Sheets("Control")
-    Dim lastRow As Long
-    lastRow = wsControl.Cells(wsControl.Rows.Count, 1).End(xlUp).Row
-    Dim i As Integer
+    ' Populate Swap ComboBox
+    With cmbSwap
+        .AddItem "Yes"
+        .AddItem "No"
+    End With
+    
+    ' Populate Interest Rate Type ComboBox
+    With cmbInterestRateType
+        .AddItem "Current Interest Rate"
+        .AddItem "Index Plus Margin"
+    End With
+    
+    ' Assume Swap flag and Swap Rate are stored in cells A1 and A2 respectively
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Control")
+    cmbSwap.Value = ws.Range("A1").Value
+    txtSwapRate.Value = ws.Range("A2").Value
+    cmbInterestRateType.Value = ws.Range("A3").Value
 
-    For i = 2 To lastRow
-        Me.Controls("txt" & wsControl.Cells(i, 1).Value).Value = wsControl.Cells(i, 2).Value
-    Next i
+    ' Manage Swap Rate visibility
+    txtSwapRate.Visible = (cmbSwap.Value = "Yes")
 End Sub
 ```
-In this code, it's assumed that each control on the UserForm has a name that corresponds with the setting names prefixed with "txt" (for TextBoxes). Adjust the prefix and control type accordingly.
 
-### Step 3: Save Changes Back to the Control Worksheet
-Add a subroutine linked to the "Save" button which will save the changes back to the worksheet.
+### Step 3: Code to Toggle Visibility of the Swap Rate Entry
+
+Add event handler code to the `cmbSwap` ComboBox to toggle the visibility of the `txtSwapRate` TextBox based on the user’s selection.
+
+```vba
+Private Sub cmbSwap_Change()
+    txtSwapRate.Visible = (cmbSwap.Value = "Yes")
+End Sub
+```
+
+### Step 4: Saving the Data
+
+When the user presses the "Save" button, you'll want to save these settings back to the worksheet.
 
 ```vba
 Private Sub btnSave_Click()
-    Dim wsControl As Worksheet
-    Set wsControl = ThisWorkbook.Sheets("Control")
-    Dim lastRow As Long
-    lastRow = wsControl.Cells(wsControl.Rows.Count, 1).End(xlUp).Row
-    Dim i As Integer
+    ' Assuming swap settings are stored in Control sheet, cells A1, A2, A3
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Control")
+    ws.Range("A1").Value = cmbSwap.Value
+    ws.Range("A2").Value = IIf(txtSwapRate.Visible, txtSwapRate.Value, "")
+    ws.Range("A3").Value = cmbInterestRateType.Value
 
-    For i = 2 To lastRow
-        wsControl.Cells(i, 2).Value = Me.Controls("txt" & wsControl.Cells(i, 1).Value).Value
-    Next i
-
-    Me.Hide ' Optionally hide or unload the form after saving
-End Sub
-```
-
-### Step 4: Link the UserForm to Excel
-Create a subroutine in a standard module that can open this form, usually triggered by a button on your Excel sheet.
-
-```vba
-Sub OpenSettingsForm()
-    UserForm1.Show
-End Sub
-```
-
-### Step 5: Add Error Handling and Validation
-Consider adding error handling to check for invalid data or exceptions when writing to the worksheet. You might also want to add data validation before saving data back to the worksheet to ensure data integrity.
-
-```vba
-Private Sub btnSave_Click()
-    On Error GoTo ErrorHandler
-    ' Save logic here
+    ' Hide the form
     Me.Hide
-    Exit Sub
+End Sub
+```
 
-ErrorHandler:
-    MsgBox "An error occurred: " & Err.Description
+### Step 5: Add Error Handling and Data Validation
+
+Ensure that your code includes validation, especially for the swap rate input, to handle cases where input might be invalid.
+
+```vba
+Private Sub btnSave_Click()
+    ' Validate swap rate input if visible
+    If txtSwapRate.Visible And Not IsNumeric(txtSwapRate.Value) Then
+        MsgBox "Please enter a valid swap rate.", vbExclamation
+        Exit Sub
+    End If
+
+    ' Save logic as above...
 End Sub
 ```
 
 ### Final Thoughts
-Make sure to adapt the UserForm control names, data types, and error handling according to the specific settings and validation rules that fit your project requirements. This approach gives you a dynamic way to manage configuration settings directly from within an Excel interface, making it user-friendly for non-technical users.
+
+By following these steps, you create a UserForm in Excel VBA that dynamically adjusts its input fields based on user selections, providing a responsive and intuitive interface for managing financial data settings. This setup enhances user experience and data integrity in financial modeling or similar applications.
