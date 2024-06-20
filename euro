@@ -404,6 +404,55 @@ Sub HighlightRareEventPredictions()
     Next i
 End Sub
 
+=#====#====
+predictive power
+
+Sub ScorePredictivePower()
+    Dim i As Integer, j As Integer
+    Dim actualResult As Range
+    Dim topPlayerPrediction As Range
+    Dim ws As Worksheet
+    Dim playerScores(1 To 20) As Integer
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    
+    ' Initialize player scores
+    For j = 1 To 20
+        playerScores(j) = 0
+    Next j
+    
+    ' Iterate through each match
+    For i = 10 To 24 ' Adjust this range according to the number of matches
+    
+        ' Read the actual result from column K
+        Set actualResult = ws.Cells(i, 11) ' Column K
+        
+        ' Iterate through each top player's prediction
+        For j = 1 To 20 ' For each player
+            Set topPlayerPrediction = ws.Cells(i, 12 + j - 1) ' Columns L to AE
+            
+            ' Check if the player's prediction matches the actual result
+            If topPlayerPrediction.Value = actualResult.Value Then
+                ' Increment the player's score
+                playerScores(j) = playerScores(j) + 1
+            End If
+        Next j
+    Next i
+    
+    ' Output the scores to columns AM to BF
+    For j = 1 To 20
+        ws.Cells(10, 38 + j - 1).Value = playerScores(j) ' Columns AM to BF
+    Next j
+    
+    ' Optionally, display the scores
+    Dim scoreMessage As String
+    scoreMessage = "Predictive Power Scores:" & vbCrLf
+    For j = 1 To 20
+        scoreMessage = scoreMessage & "Player " & j & ": " & playerScores(j) & vbCrLf
+    Next j
+    MsgBox scoreMessage
+End Sub
+
 
 
 
