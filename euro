@@ -524,6 +524,96 @@ Sub ScorePredictivePowerWithWeights()
 End Sub
 
 
+=#==========
+
+highlightbincorrect predictions
+Sub HighlightRareEventPredictionsAndScore()
+    Dim i As Integer, j As Integer
+    Dim actualResult As Range
+    Dim top20Prediction As Range
+    Dim communityPrediction As Range
+    Dim topPlayerPrediction As Range
+    Dim ws As Worksheet
+    Dim playerScores(1 To 20) As Double
+    Dim homeWinProb As Double
+    Dim drawProb As Double
+    Dim awayWinProb As Double
+    Dim predictionProb As Double
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    
+    ' Initialize player scores
+    For j = 1 To 20
+        playerScores(j) = 0
+    Next j
+    
+    ' Iterate through each match
+    For i = 10 To 24 ' Adjust this range according to the number of matches
+    
+        ' Read the actual result from column K
+        Set actualResult = ws.Cells(i, 11) ' Column K
+        
+        ' Read the top 20 prediction from column AK
+        Set top20Prediction = ws.Cells(i, 37) ' Column AK
+        
+        ' Read the community prediction from column AL
+        Set communityPrediction = ws.Cells(i, 38) ' Column AL
+        
+        ' Read the probabilities from columns AQ to AS
+        homeWinProb = ws.Cells(i, 43).Value ' Column AQ
+        drawProb = ws.Cells(i, 44).Value ' Column AR
+        awayWinProb = ws.Cells(i, 45).Value ' Column AS
+        
+        ' Iterate through each top player's prediction
+        For j = 1 To 20 ' For each player
+            Set topPlayerPrediction = ws.Cells(i, 12 + j - 1) ' Columns L to AE
+            
+            ' Determine the probability of the prediction
+            Select Case topPlayerPrediction.Value
+                Case 1 ' Home Win
+                    predictionProb = homeWinProb
+                Case 2 ' Away Win
+                    predictionProb = awayWinProb
+                Case 3 ' Draw
+                    predictionProb = drawProb
+                Case Else
+                    predictionProb = 0
+            End Select
+            
+            ' Check if the player's prediction matches the actual result
+            If topPlayerPrediction.Value = actualResult.Value Then
+                ' Increment the player's score by the weighted probability
+                playerScores(j) = playerScores(j) + predictionProb
+                
+                ' Check if the prediction differs from both top 20 and community predictions
+                If topPlayerPrediction.Value <> top20Prediction.Value And _
+                   topPlayerPrediction.Value <> communityPrediction.Value Then
+                   
+                    ' Highlight the cell for rare event prediction
+                    topPlayerPrediction.Interior.Color = RGB(255, 0, 0) ' Highlight in red for rare event
+                End If
+            Else
+                ' Highlight incorrect prediction
+                topPlayerPrediction.Interior.Color = RGB(255, 0, 0) ' Highlight in red for incorrect
+            End If
+        Next j
+    Next i
+    
+    ' Output the scores to columns AV to BO
+    For j = 1 To 20
+        ws.Cells(10, 48 + j - 1).Value = playerScores(j) ' Columns AV to BO
+    Next j
+    
+    ' Optionally, display the scores
+    Dim scoreMessage As String
+    scoreMessage = "Predictive Power Scores with Weights:" & vbCrLf
+    For j = 1 To 20
+        scoreMessage = scoreMessage & "Player " & j & ": " & playerScores(j) & vbCrLf
+    Next j
+    MsgBox scoreMessage
+End Sub
+
+
 
 
 
