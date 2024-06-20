@@ -229,3 +229,33 @@ Sub CalculateProbabilityDistribution()
     Next i
 End Sub
 
+========
+cond formatting
+Sub ApplyConditionalFormatting()
+    Dim i As Integer, j As Integer
+    Dim actualResultsRange As Range
+    Dim topPlayerRange As Range
+    Dim ws As Worksheet
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    
+    ' Define the range for actual results
+    Set actualResultsRange = ws.Range("K10:K24")
+    
+    ' Iterate through each prediction cell and apply conditional formatting
+    For j = 1 To 20 ' For each player
+        Set topPlayerRange = ws.Range(ws.Cells(10, 12 + j - 1), ws.Cells(45, 12 + j - 1)) ' Columns L to AE
+        
+        For i = 10 To 24 ' For each match prediction
+            If ws.Cells(i, 11).Value <> "" Then ' Only consider played matches
+                With ws.Cells(i, 12 + j - 1).FormatConditions
+                    .Delete ' Remove existing conditions
+                    .Add Type:=xlExpression, Formula1:="=AND(" & ws.Cells(i, 12 + j - 1).Address & "<>"""", " & ws.Cells(i, 12 + j - 1).Address & "<>" & ws.Cells(i, 11).Address & ")"
+                    .Item(1).Interior.Color = RGB(255, 0, 0) ' Highlight in red
+                End With
+            End If
+        Next i
+    Next j
+End Sub
+
+
