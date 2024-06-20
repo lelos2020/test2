@@ -1,4 +1,4 @@
-Sub CalculateProbabilityDistribution()
+ Sub CalculateProbabilityDistribution()
     ' Define variables
     Dim topPlayerPredictions(1 To 20, 1 To 35) As String ' Assuming 35 predictions for each of the top 20 players
     Dim winCount As Integer
@@ -257,5 +257,64 @@ Sub ApplyConditionalFormatting()
         Next i
     Next j
 End Sub
+
+======##=#=#=#==###
+
+rare events
+Sub HighlightRareEventPredictions()
+    Dim i As Integer, j As Integer
+    Dim top20Prediction As Range
+    Dim communityProbsRange As Range
+    Dim communityPrediction As Range
+    Dim topPlayerRange As Range
+    Dim ws As Worksheet
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    
+    ' Iterate through each match
+    For i = 10 To 45 ' Adjust this range according to the number of matches
+    
+        ' Read the top 20 prediction from column AK
+        Set top20Prediction = ws.Cells(i, 37) ' Column AK
+        
+        ' Read the community probabilities from columns AQ to AS
+        Set communityProbsRange = ws.Range(ws.Cells(i, 43), ws.Cells(i, 45)) ' Columns AQ to AS
+        
+        ' Read the community prediction from column AL
+        Set communityPrediction = ws.Cells(i, 38) ' Column AL
+        
+        ' Iterate through each top player's prediction
+        For j = 1 To 20 ' For each player
+            Set topPlayerRange = ws.Cells(i, 12 + j - 1) ' Columns L to AE
+            
+            ' Check if the player's prediction is a rare event contrary to the top 20 prediction
+            If topPlayerRange.Value <> "" And topPlayerRange.Value <> top20Prediction.Value Then
+                Dim rareEvent As Boolean
+                rareEvent = False
+                
+                Select Case topPlayerRange.Value
+                    Case 1 ' Home Win
+                        If ws.Cells(i, 43).Value < 0.20 Then ' Assuming <20% probability is considered rare
+                            rareEvent = True
+                        End If
+                    Case 2 ' Away Win
+                        If ws.Cells(i, 45).Value < 0.20 Then ' Assuming <20% probability is considered rare
+                            rareEvent = True
+                        End If
+                    Case 3 ' Draw
+                        If ws.Cells(i, 44).Value < 0.20 Then ' Assuming <20% probability is considered rare
+                            rareEvent = True
+                        End If
+                End Select
+                
+                ' Highlight the cell if it is a rare event contrary to the top 20 prediction
+                If rareEvent Then
+                    topPlayerRange.Interior.Color = RGB(255, 0, 0) ' Highlight in red
+                End If
+            End If
+        Next j
+    Next i
+End Sub
+
 
 
