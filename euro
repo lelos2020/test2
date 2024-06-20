@@ -155,3 +155,77 @@ Sub CalculateProbabilityDistribution()
         End If
     Next i
 End Sub
+
+===================
+Sub CalculateProbabilityDistribution()
+    ' Define variables
+    Dim topPlayerPredictions(1 To 20, 1 To 36) As Integer ' Assuming 36 predictions for each of the top 20 players
+    Dim winCount As Integer
+    Dim drawCount As Integer
+    Dim lossCount As Integer
+    Dim winProb As Double
+    Dim drawProb As Double
+    Dim lossProb As Double
+    Dim i As Integer, j As Integer
+    Dim actualResults(1 To 15) As String ' Assuming results for 15 matches
+    Dim resultRange As Range
+    Dim playerRange As Range
+    Dim resultString As String
+    Dim totalPredictions As Integer
+    
+    ' Read the actual results from K10 to K24
+    Set resultRange = Range("K10:K24")
+    For i = 1 To resultRange.Cells.Count
+        actualResults(i) = resultRange.Cells(i, 1).Value
+    Next i
+    
+    ' Read the predictions of the top 20 players
+    For j = 1 To 20
+        Set playerRange = Range(Cells(10, 12 + j - 1), Cells(45, 12 + j - 1)) ' Columns L to AE (12 + j - 1)
+        For i = 1 To playerRange.Cells.Count
+            topPlayerPredictions(j, i) = playerRange.Cells(i, 1).Value
+        Next i
+    Next j
+    
+    ' Iterate through each game and calculate probabilities
+    For i = 1 To resultRange.Cells.Count
+        If actualResults(i) <> "" Then ' Only consider played matches
+            ' Initialize counts
+            winCount = 0
+            drawCount = 0
+            lossCount = 0
+            
+            ' Count predictions for the current game
+            For j = 1 To 20
+                Select Case topPlayerPredictions(j, i)
+                    Case 1 ' Home win
+                        winCount = winCount + 1
+                    Case 3 ' Draw
+                        drawCount = drawCount + 1
+                    Case 2 ' Away win
+                        lossCount = lossCount + 1
+                End Select
+            Next j
+            
+            ' Calculate probabilities
+            totalPredictions = winCount + drawCount + lossCount
+            
+            If totalPredictions > 0 Then
+                winProb = winCount / totalPredictions
+                drawProb = drawCount / totalPredictions
+                lossProb = lossCount / totalPredictions
+            Else
+                winProb = 0
+                drawProb = 0
+                lossProb = 0
+            End If
+            
+            ' Create result string
+            resultString = "Home Win: " & Format(winProb, "0.00%") & ", Draw: " & Format(drawProb, "0.00%") & ", Away Win: " & Format(lossProb, "0.00%")
+            
+            ' Output the result string to column J
+            Cells(10 + i - 1, 10).Value = resultString
+        End If
+    Next i
+End Sub
+
