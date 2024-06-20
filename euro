@@ -1,3 +1,4 @@
+
  Sub CalculateProbabilityDistribution()
     ' Define variables
     Dim topPlayerPredictions(1 To 20, 1 To 35) As String ' Assuming 35 predictions for each of the top 20 players
@@ -315,6 +316,47 @@ Sub HighlightRareEventPredictions()
         Next j
     Next i
 End Sub
+
+===#=####
+rare event 2
+Sub HighlightRareEventPredictions()
+    Dim i As Integer, j As Integer
+    Dim actualResult As Range
+    Dim top20Prediction As Range
+    Dim communityPrediction As Range
+    Dim topPlayerPrediction As Range
+    Dim ws As Worksheet
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    
+    ' Iterate through each match
+    For i = 10 To 24 ' Adjust this range according to the number of matches
+    
+        ' Read the actual result from column K
+        Set actualResult = ws.Cells(i, 11) ' Column K
+        
+        ' Read the top 20 prediction from column AK
+        Set top20Prediction = ws.Cells(i, 37) ' Column AK
+        
+        ' Read the community prediction from column AL
+        Set communityPrediction = ws.Cells(i, 38) ' Column AL
+        
+        ' Iterate through each top player's prediction
+        For j = 1 To 20 ' For each player
+            Set topPlayerPrediction = ws.Cells(i, 12 + j - 1) ' Columns L to AE
+            
+            ' Check if the player's prediction matches the actual result but differs from both top 20 and community predictions
+            If topPlayerPrediction.Value = actualResult.Value And _
+               topPlayerPrediction.Value <> top20Prediction.Value And _
+               topPlayerPrediction.Value <> communityPrediction.Value Then
+               
+                ' Highlight the cell
+                topPlayerPrediction.Interior.Color = RGB(255, 0, 0) ' Highlight in red
+            End If
+        Next j
+    Next i
+End Sub
+
 
 
 
