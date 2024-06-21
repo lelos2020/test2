@@ -75,3 +75,105 @@ Sub CalculateProbabilityDistribution()
         End If
     Next i
 End Sub
+
+==================
+Sub CalculateProbabilityDistribution()
+    ' Define variables
+    Dim lastRow As Long, lastCol As Long
+    Dim winCount As Integer
+    Dim drawCount As Integer
+    Dim lossCount As Integer
+    Dim winProb As Double
+    Dim drawProb As Double
+    Dim lossProb As Double
+    Dim i As Long, j As Long
+    Dim actualResults As Variant
+    Dim ws As Worksheet
+    Dim playerScores() As Integer
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    
+    ' Find the last row with data in column K
+    lastRow = ws.Cells(ws.Rows.Count, 11).End(xlUp).Row
+    
+    ' Read the actual results from column K
+    actualResults = ws.Range("K10:K" & lastRow).Value
+    
+    ' Find the last column with data in row 9
+    lastCol = ws.Cells(9, ws.Columns.Count).End(xlToLeft).Column
+    
+    ' Define variables for players' predictions
+    Dim topPlayerPredictions() As String
+    ReDim topPlayerPredictions(1 To lastCol - 11, 1 To lastRow - 9) ' Assuming predictions start from column L (12) and row 10
+    
+    ' Initialize player scores
+    ReDim playerScores(1 To lastCol - 11)
+    
+    ' Read the predictions of the top players
+    For j = 1 To lastCol - 11
+        For i = 1 To lastRow - 9
+            topPlayerPredictions(j, i) = ws.Cells(10 + i - 1, 12 + j - 1).Value ' Columns L to lastCol, rows 10 to lastRow
+        Next i
+    Next j
+    
+    ' Iterate through each game and calculate probabilities and scores
+    For i = 1 To lastRow - 9
+        If actualResults(i, 1) <> "" Then ' Only consider played matches
+            ' Initialize counts
+            winCount = 0
+            drawCount = 0
+            lossCount = 0
+            
+            ' Count predictions for the current game
+            For j = 1 To lastCol - 11
+                Select Case topPlayerPredictions(j, i)
+                    Case "1" ' Home win
+                        winCount = winCount + 1
+                    Case "3" ' Draw
+                        drawCount = drawCount + 1
+                    Case "2" ' Away win
+                        lossCount = lossCount + 1
+                End Select
+                
+                ' Check if the player's prediction matches the actual result
+                If topPlayerPredictions(j, i) = actualResults(i, 1) Then
+                    ' Increment the player's score by 2 points
+                    playerScores(j) = playerScores(j) + 2
+                End If
+            Next j
+            
+            ' Calculate probabilities
+            Dim totalPredictions As Integer
+            totalPredictions = winCount + drawCount + lossCount
+            
+            If totalPredictions > 0 Then
+                winProb = winCount / totalPredictions
+                drawProb = drawCount / totalPredictions
+                lossProb = lossCount / totalPredictions
+            Else
+                winProb = 0
+                drawProb = 0
+                lossProb = 0
+            End If
+            
+            ' Create result string
+            resultString = "Home Win: " & Format(winProb, "0.00%") & ", Draw: " & Format(drawProb, "0.00%") & ", Away Win: " & Format(lossProb, "0.00%")
+            
+            ' Output the result string to column J
+            ws.Cells(10 + i - 1, 10).Value = resultString
+        End If
+    Next i
+    
+    ' Output the scores to row 8
+    For j = 1 To lastCol - 11
+        ws.Cells(8, 12 + j - 1).Value = playerScores(j) ' Columns L to lastCol
+    Next j
+    
+    ' Optionally, display the scores
+    Dim scoreMessage As String
+    scoreMessage = "Predictive Power Scores:" & vbCrLf
+    For j = 1 To lastCol - 11
+        scoreMessage = scoreMessage & "Player " & j & ": " & playerScores(j) & vbCrLf
+    Next j
+    MsgBox scoreMessage
+End Sub
