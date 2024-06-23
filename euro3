@@ -623,3 +623,211 @@ For i = 10 To lastRow
 Next i
 end sub
 
+=====##=#######
+Sub HighlightRareEventPredictionsAndScore4()
+    Dim i As Integer, j As Integer
+    Dim actualResult As Range
+    Dim topPrediction As Range
+    Dim communityPrediction As Range
+    Dim topPlayerPrediction As Range
+    Dim ws As Worksheet
+    Dim playerScores() As Double
+    Dim homeWinProb As Double
+    Dim drawProb As Double
+    Dim awayWinProb As Double
+    Dim predictionProb As Double
+    Dim lastRow As Long, lastCol As Long
+    Dim totalPlayers As Integer
+    Dim topPlayers() As Integer
+    Dim tempScores() As Double
+    Dim resultString As String
+    Dim threshold As Double
+    Dim fitAchieved As Boolean
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    lastRow = ws.Cells(ws.Rows.Count, 12).End(xlUp).Row
+    
+    ' Get the number of players from cell K7
+    totalPlayers = ws.Cells(7, 11).Value
+    
+    ReDim playerScores(1 To totalPlayers)
+    
+    ' Initialize player scores
+    For j = 1 To totalPlayers
+        playerScores(j) = 0
+    Next j
+    
+    ' Iterate through each match
+    For i = 10 To lastRow ' Adjust this range according to the number of matches
+        
+        ' Read the actual result from column L
+        Set actualResult = ws.Cells(i, 12) ' Column L
+        
+        ' Read the top prediction from column J
+        Set topPrediction = ws.Cells(i, 10) ' Column J
+        
+        ' Read the community prediction from column I
+        Set communityPrediction = ws.Cells(i, 9) ' Column I
+        
+        ' Read the probabilities from columns AQ to AS
+        homeWinProb = ws.Cells(i, 76).Value ' Column AQ
+        drawProb = ws.Cells(i, 77).Value ' Column AR
+        awayWinProb = ws.Cells(i, 78).Value  ' Column AS
+        
+        ' Iterate through each player's prediction
+        For j = 1 To totalPlayers ' For each player
+            Set topPlayerPrediction = ws.Cells(i, 13 + j - 1) ' Columns M to AE
+            
+            ' Determine the probability of the prediction
+            Select Case topPlayerPrediction.Value
+                Case 1 ' Home Win
+                    predictionProb = homeWinProb
+                Case 2 ' Away Win
+                    predictionProb = awayWinProb
+                Case 3 ' Draw
+                    predictionProb = drawProb
+                Case Else
+                    predictionProb = 0
+            End Select
+            
+            ' Check if the player's prediction matches the actual result
+            If topPlayerPrediction.Value = actualResult.Value Then
+                ' Increment the player's score by the weighted probability
+                playerScores(j) = playerScores(j) + (1 / predictionProb)
+                
+                ' Check if the prediction differs from both top and community predictions
+                If topPlayerPrediction.Value <> topPrediction.Value And _
+                   topPlayerPrediction.Value <> communityPrediction.Value Then
+                   
+                    ' Highlight the cell for rare event prediction
+                    topPlayerPrediction.Interior.Color = RGB(0, 255, 0) ' Highlight in green for rare event
+                End If
+            Else
+                ' Highlight incorrect prediction
+                topPlayerPrediction.Interior.Color = RGB(255, 0, 0) ' Highlight in red for incorrect
+            End If
+        Next j
+    Next i
+    
+    ' Output the scores to row 8 starting from column AV (48)
+    For j = 1 To totalPlayers
+        ws.Cells(8, 48 + j - 1).Value = playerScores(j) ' Columns AV to the end
+    Next j
+    
+    ' Initialize the threshold and fitAchieved flag
+    threshold = 1
+    fitAchieved = False
+    
+    ' Find the top players based on scores, starting with the top 20 and adjusting if needed
+    Do While threshold >= 0.90 And Not fitAchieved
+        Dim playersToConsider As Integer
+        playersToConsider = Application.WorksheetFunction.Min(20, totalPlayers * threshold)
+        
+        ReDim topPlayers(1 To playersToConsider)
+        tempScores = playerScores
+        For i = 1 To playersToConsider
+            Dim maxIndex As Long
+            maxIndex = Application.WorksheetFunction.Match(Application.WorksheetFunction.Max(tempScores), tempScores, 0)
+            topPlayers(i) = maxIndex
+            tempScores(maxIndex) = -1 ' Temporarily set the highest score to -1 to find the next highest
+        Next i
+        
+        ' Calculate probability distribution based on the top players
+        fitAchieved = True
+        For i = 10 To lastRow
+            ' Initialize counts
+            Dim winCount As Integer, drawCount As Integer, lossCount As Integer
+            winCount = 0
+            drawCount = 0
+            lossCount = 0
+            
+            ' Count predictions for the current game from the top players
+            For j = 1 To playersToConsider
+                Dim playerIndex As Integer
+                playerIndex = topPlayers(j)
+                Select Case ws.Cells(i, 13 + playerIndex - 1).Value
+                    Case "1" ' Home win
+                        winCount = winCount + 1
+                    Case "3" ' Draw
+                        drawCount = drawCount + 1
+                    Case "2" ' Away win
+                        lossCount = lossCount + 1
+                End Select
+            Next j
+            
+            ' Calculate probabilities
+            Dim totalPredictions As Integer
+            totalPredictions = winCount + drawCount + lossCount
+            
+            If totalPredictions > 0 Then
+                winProb = winCount / totalPredictions
+                drawProb = drawCount / totalPredictions
+                lossProb = lossCount / totalPredictions
+            Else
+                winProb = 0
+                drawProb = 0
+                lossProb = 0
+            End If
+            
+            ' Check if the probabilities match the actual result
+            Dim mostProbableResult As String
+            If Application.WorksheetFunction.Max(winProb, drawProb, lossProb) = winProb Then
+                mostProbableResult = "1"
+            ElseIf Application.WorksheetFunction.Max(winProb, drawProb, lossProb) = drawProb Then
+                mostProbableResult = "3"
+            Else
+                mostProbableResult = "2"
+            End If
+            
+            If mostProbableResult <> ws.Cells(i, 12).Value Then
+                fitAchieved = False
+                Exit For
+            End If
+        Next i
+        
+        ' Decrease the threshold for the next iteration if the fit is not achieved
+        threshold = threshold - 0.02
+    Loop
+    
+    ' Output the final top players' predictions
+    For i = 10 To lastRow
+        ' Initialize counts
+        Dim winCount As Integer, drawCount As Integer, lossCount As Integer
+        winCount = 0
+        drawCount = 0
+        lossCount = 0
+        
+        ' Count predictions for the current game from the top players
+        For j = 1 To playersToConsider
+            Dim playerIndex As Integer
+            playerIndex = topPlayers(j)
+            Select Case ws.Cells(i, 13 + playerIndex - 1).Value
+                Case "1" ' Home win
+                    winCount = winCount + 1
+                Case "3" ' Draw
+                    drawCount = drawCount + 1
+                Case "2" ' Away win
+                    lossCount = lossCount + 1
+            End Select
+        Next j
+        
+        ' Calculate probabilities
+        Dim totalPredictions As Integer
+        totalPredictions = winCount + drawCount + lossCount
+        
+        If totalPredictions > 0 Then
+            winProb = winCount / totalPredictions
+            drawProb = drawCount / totalPredictions
+            lossProb = lossCount / totalPredictions
+        Else
+            winProb = 0
+            drawProb = 0
+            lossProb = 0
+        End If
+        
+        ' Create result string
+        resultString = "1: " & Format(winProb, "0.00%") & ", X: " & Format(drawProb, "0.00%") & ", 2: " & Format(lossProb, "0.00%")
+        
+        ' Output the
+
+
