@@ -364,3 +364,308 @@ Sub PredictAndCompareMatches()
         ws.Cells(46, 11).Value = "No matches available"
     End If
 End Sub
+
+=======..================
+Sub OptimizePredictions()
+    Dim i As Long, j As Long
+    Dim actualResult As Range
+    Dim topPlayerPrediction As Range
+    Dim ws As Worksheet
+    Dim playerScores() As Double
+    Dim playerCorrectPredictions() As Integer
+    Dim playerRarityScores() As Double
+    Dim homeWinProb As Double
+    Dim drawProb As Double
+    Dim awayWinProb As Double
+    Dim predictionProb As Double
+    Dim lastRow As Long
+    Dim totalPlayers As Integer
+    Dim topPlayers() As Integer
+    Dim tempScores() As Double
+    Dim resultString As String
+    Dim totalMatches As Integer
+    Dim accuratePredictions As Integer
+    Dim communityHomeWinProb As Double
+    Dim communityDrawProb As Double
+    Dim communityAwayWinProb As Double
+    Dim communityWeight As Double
+    Dim playerWeight As Double
+    Dim combinedHomeWinProb As Double
+    Dim combinedDrawProb As Double
+    Dim combinedAwayWinProb As Double
+    Dim maxProb As Double
+    Dim mostProbableResult As String
+    Dim playersToConsider As Integer
+    Dim bestCommunityWeight As Double
+    Dim bestPlayerWeight As Double
+    Dim bestAccuracy As Double
+    Dim weightStep As Double
+    Dim tempCommunityWeight As Double
+    Dim tempPlayerWeight As Double
+    
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust the sheet name as necessary
+    lastRow = ws.Cells(ws.Rows.Count, 12).End(xlUp).Row
+    
+    ' Get the number of players from cell K7
+    totalPlayers = ws.Cells(7, 11).Value
+    
+    ' Get the initial players to consider from cell D5
+    playersToConsider = ws.Cells(5, 4).Value
+    
+    ReDim playerScores(1 To totalPlayers)
+    ReDim playerCorrectPredictions(1 To totalPlayers)
+    ReDim playerRarityScores(1 To totalPlayers)
+    
+    ' Initialize player scores
+    For j = 1 To totalPlayers
+        playerScores(j) = 0
+        playerCorrectPredictions(j) = 0
+        playerRarityScores(j) = 0
+    Next j
+    
+    ' Iterate through each match
+    For i = 10 To lastRow ' Adjust this range according to the number of matches
+        ' Read the actual result from column L
+        Set actualResult = ws.Cells(i, 12) ' Column L
+        
+        ' Read the community probabilities from columns 171, 172, and 173
+        homeWinProb = ws.Cells(i, 171).Value ' Column 171
+        drawProb = ws.Cells(i, 172).Value ' Column 172
+        awayWinProb = ws.Cells(i, 173).Value  ' Column 173
+        
+        ' Iterate through each player's prediction
+        For j = 1 To totalPlayers ' For each player
+            Set topPlayerPrediction = ws.Cells(i, 13 + j - 1) ' Columns M to AE
+            
+            ' Determine the probability of the prediction
+            Select Case topPlayerPrediction.Value
+                Case 1 ' Home Win
+                    predictionProb = homeWinProb
+                Case 2 ' Away Win
+                    predictionProb = awayWinProb
+                Case 3 ' Draw
+                    predictionProb = drawProb
+                Case Else
+                    predictionProb = 0
+            End Select
+            
+            ' Check if the player's prediction matches the actual result
+            If topPlayerPrediction.Value = actualResult.Value Then
+                ' Increment the player's score by the weighted probability
+                playerScores(j) = playerScores(j) + (1 / predictionProb)
+                playerCorrectPredictions(j) = playerCorrectPredictions(j) + 1
+                playerRarityScores(j) = playerRarityScores(j) + (1 / predictionProb)
+                
+                ' Highlight rare event prediction
+                If topPlayerPrediction.Value <> ws.Cells(i, 10).Value And _
+                   topPlayerPrediction.Value <> ws.Cells(i, 9).Value Then
+                    topPlayerPrediction.Interior.Color = RGB(0, 255, 0) ' Highlight in green for rare event
+                End If
+            Else
+                ' Highlight incorrect prediction
+                topPlayerPrediction.Interior.Color = RGB(255, 0, 0) ' Highlight in red for incorrect
+            End If
+        Next j
+    Next i
+    
+    ' Output the scores to row 7 starting from column M
+    For j = 1 To totalPlayers
+        ws.Cells(7, 13 + j - 1).Value = playerScores(j) ' Columns M to the end
+        ws.Cells(8, 13 + j - 1).Value = playerCorrectPredictions(j) ' Total correct predictions
+        ws.Cells(9, 13 + j - 1).Value = playerRarityScores(j) ' Rarity scores
+    Next j
+    
+    ' Optimize weights
+    bestAccuracy = 0
+    weightStep = 0.05
+    
+    For tempCommunityWeight = 0 To 1 Step weightStep
+        tempPlayerWeight = 1 - tempCommunityWeight
+        
+        ' Initialize accuracy metrics
+        totalMatches = 0
+        accuratePredictions = 0
+        
+        ' Initialize top players based on scores
+        playersToConsider = Application.WorksheetFunction.Min(playersToConsider, totalPlayers)
+        ReDim topPlayers(1 To playersToConsider)
+        tempScores = playerScores
+        For i = 1 To playersToConsider
+            Dim maxIndex As Long
+            maxIndex = Application.WorksheetFunction.Match(Application.WorksheetFunction.Max(tempScores), tempScores, 0)
+            topPlayers(i) = maxIndex
+            tempScores(maxIndex) = -1 ' Temporarily set the highest score to -1 to find the next highest
+        Next i
+        
+        ' Iterate through each match to predict and compare results
+        For i = 10 To lastRow
+            ' Initialize counts
+            Dim winCount As Integer, drawCount As Integer, lossCount As Integer
+            winCount = 0
+            drawCount = 0
+            lossCount = 0
+            
+            ' Count predictions for the current game from the top players
+            For j = 1 To playersToConsider
+                Dim playerIndex As Integer
+                playerIndex = topPlayers(j)
+                Select Case ws.Cells(i, 13 + playerIndex - 1).Value
+                    Case "1" ' Home win
+                        winCount = winCount + 1
+                    Case "3" ' Draw
+                        drawCount = drawCount + 1
+                    Case "2" ' Away win
+                        lossCount = lossCount + 1
+                End Select
+            Next j
+            
+            ' Calculate community probabilities
+            communityHomeWinProb = ws.Cells(i, 171).Value ' Column 171
+            communityDrawProb = ws.Cells(i, 172).Value ' Column 172
+            communityAwayWinProb = ws.Cells(i, 173).Value ' Column 173
+            
+            ' Calculate combined probabilities
+            Dim totalPredictions As Integer
+            totalPredictions = winCount + drawCount + lossCount
+            
+            If totalPredictions > 0 Then
+                combinedHomeWinProb = (winCount / totalPredictions) * tempPlayerWeight + communityHomeWinProb * tempCommunityWeight
+                combinedDrawProb = (drawCount / totalPredictions) * tempPlayerWeight + communityDrawProb * tempCommunityWeight
+                combinedAwayWinProb = (lossCount / totalPredictions) * tempPlayerWeight + communityAwayWinProb * tempCommunityWeight
+            Else
+                combinedHomeWinProb = communityHomeWinProb
+                combinedDrawProb = communityDrawProb
+                combinedAwayWinProb = communityAwayWinProb
+            End If
+            
+            ' Determine the most probable result for the current game
+            maxProb = Application.WorksheetFunction.Max(combinedHomeWinProb, combinedDrawProb, combinedAwayWinProb)
+            
+            If maxProb = combinedHomeWinProb Then
+                mostProbableResult = "1"
+            ElseIf maxProb = combinedDrawProb Then
+                mostProbableResult = "3"
+            Else
+                mostProbableResult = "2"
+            End If
+            
+            ' Output the prediction to column K
+            ws.Cells(i, 11).Value = mostProbableResult
+            
+            ' Compare with actual result and count accuracy
+            If ws.Cells(i, 12).Value <> "" Then ' Only consider played matches
+                totalMatches = totalMatches + 1
+                If ws.Cells(i, 11).Value = ws.Cells(i, 12).Value Then
+                    accuratePredictions = accuratePredictions + 1
+                End If
+            End If
+        Next i
+        
+        ' Calculate accuracy
+        Dim accuracy As Double
+        If totalMatches > 0 Then
+            accuracy = accuratePredictions / totalMatches
+        Else
+            accuracy = 0
+        End If
+        
+        ' Check if this is the best accuracy so far
+        If accuracy > bestAccuracy Then
+            bestAccuracy = accuracy
+            bestCommunityWeight = tempCommunityWeight
+            bestPlayerWeight = tempPlayerWeight
+        End If
+    Next tempCommunityWeight
+    
+    ' Output the best weights and accuracy to the spreadsheet
+    ws.Cells(46, 11).Value = "Best Accuracy: " & Format(bestAccuracy, "0.00%")
+    ws.Cells(47, 11).Value = "Community Weight: " & bestCommunityWeight
+    ws.Cells(48, 11).Value = "Player Weight: " & bestPlayerWeight
+    
+    ' Final prediction with the best weights
+    ' Initialize accuracy metrics
+    totalMatches = 0
+    accuratePredictions = 0
+    
+    ' Initialize top players based on scores
+    playersToConsider = Application.WorksheetFunction.Min(playersToConsider, totalPlayers)
+    ReDim topPlayers(1 To playersToConsider)
+    tempScores = playerScores
+    For i = 1 To playersToConsider
+        Dim maxIndex As Long
+        maxIndex = Application.WorksheetFunction.Match(Application.WorksheetFunction.Max(tempScores), tempScores, 0)
+        topPlayers(i) = maxIndex
+        tempScores(maxIndex) = -1 ' Temporarily set the highest score to -1 to find the next highest
+    Next i
+    
+    ' Iterate through each match to predict and compare results
+    For i = 10 To lastRow
+        ' Initialize counts
+        Dim winCount As Integer, drawCount As Integer, lossCount As Integer
+        winCount = 0
+        drawCount = 0
+        lossCount = 0
+        
+        ' Count predictions for the current game from the top players
+        For j = 1 To playersToConsider
+            Dim playerIndex As Integer
+            playerIndex = topPlayers(j)
+            Select Case ws.Cells(i, 13 + playerIndex - 1).Value
+                Case "1" ' Home win
+                    winCount = winCount + 1
+                Case "3" ' Draw
+                    drawCount = drawCount + 1
+                Case "2" ' Away win
+                    lossCount = lossCount + 1
+            End Select
+        Next j
+        
+        ' Calculate community probabilities
+        communityHomeWinProb = ws.Cells(i, 171).Value ' Column 171
+        communityDrawProb = ws.Cells(i, 172).Value ' Column 172
+        communityAwayWinProb = ws.Cells(i, 173).Value ' Column 173
+        
+        ' Calculate combined probabilities
+        Dim totalPredictions As Integer
+        totalPredictions = winCount + drawCount + lossCount
+        
+        If totalPredictions > 0 Then
+            combinedHomeWinProb = (winCount / totalPredictions) * bestPlayerWeight + communityHomeWinProb * bestCommunityWeight
+            combinedDrawProb = (drawCount / totalPredictions) * bestPlayerWeight + communityDrawProb * bestCommunityWeight
+            combinedAwayWinProb = (lossCount / totalPredictions) * bestPlayerWeight + communityAwayWinProb * bestCommunityWeight
+        Else
+            combinedHomeWinProb = communityHomeWinProb
+            combinedDrawProb = communityDrawProb
+            combinedAwayWinProb = communityAwayWinProb
+        End If
+        
+        ' Determine the most probable result for the current game
+        maxProb = Application.WorksheetFunction.Max(combinedHomeWinProb, combinedDrawProb, combinedAwayWinProb)
+        
+        If maxProb = combinedHomeWinProb Then
+            mostProbableResult = "1"
+        ElseIf maxProb = combinedDrawProb Then
+            mostProbableResult = "3"
+        Else
+            mostProbableResult = "2"
+        End If
+        
+        ' Output the prediction to column K
+        ws.Cells(i, 11).Value = mostProbableResult
+        
+        ' Compare with actual result and count accuracy
+        If ws.Cells(i, 12).Value <> "" Then ' Only consider played matches
+            totalMatches = totalMatches + 1
+            If ws.Cells(i, 11).Value = ws.Cells(i, 12).Value Then
+                accuratePredictions = accuratePredictions + 1
+            End If
+        End If
+    Next i
+    
+    ' Output the final accuracy to cell K46
+    If totalMatches > 0 Then
+        ws.Cells(46, 11).Value = "Final Accuracy: " & Format(accuratePredictions / totalMatches, "0.00%")
+    Else
+        ws.Cells(46, 11).Value = "No matches available"
+    End If
+End Sub
