@@ -1,0 +1,63 @@
+Sub ListLoansAndCollaterals()
+    Dim ws As Worksheet
+    Dim wsOutput As Worksheet
+    Dim borrowerRange As Range
+    Dim loanRange As Range
+    Dim collateralRange As Range
+    Dim borrowerDict As Object
+    Dim loanDict As Object
+    Dim cell As Range
+    Dim outputRow As Integer
+
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust sheet name as necessary
+    Set wsOutput = ThisWorkbook.Sheets.Add
+    wsOutput.Name = "BorrowerLoansCollaterals"
+    
+    Set borrowerDict = CreateObject("Scripting.Dictionary")
+    Set loanDict = CreateObject("Scripting.Dictionary")
+    
+    ' Populate borrowerDict with loans
+    Set borrowerRange = ws.Range("A2:A" & ws.Cells(ws.Rows.Count, "A").End(xlUp).Row)
+    For Each cell In borrowerRange
+        If Not borrowerDict.exists(cell.Value) Then
+            borrowerDict.Add cell.Value, ""
+        End If
+        borrowerDict(cell.Value) = borrowerDict(cell.Value) & cell.Offset(0, 1).Value & ","
+    Next cell
+    
+    ' Populate loanDict with collaterals
+    Set loanRange = ws.Range("B2:B" & ws.Cells(ws.Rows.Count, "B").End(xlUp).Row)
+    For Each cell In loanRange
+        If Not loanDict.exists(cell.Value) Then
+            loanDict.Add cell.Value, ""
+        End If
+        loanDict(cell.Value) = loanDict(cell.Value) & cell.Offset(0, 1).Value & ","
+    Next cell
+    
+    ' Write headers to output sheet
+    wsOutput.Cells(1, 1).Value = "Borrower ID"
+    wsOutput.Cells(1, 2).Value = "Loans"
+    wsOutput.Cells(1, 3).Value = "Collaterals"
+    
+    ' Write data to output sheet
+    outputRow = 2
+    For Each key In borrowerDict.keys
+        wsOutput.Cells(outputRow, 1).Value = key
+        wsOutput.Cells(outputRow, 2).Value = borrowerDict(key)
+        
+        Dim loanList As Variant
+        loanList = Split(borrowerDict(key), ",")
+        Dim collaterals As String
+        collaterals = ""
+        For Each loan In loanList
+            If loan <> "" Then
+                If loanDict.exists(loan) Then
+                    collaterals = collaterals & loanDict(loan) & ","
+                End If
+            End If
+        Next loan
+        wsOutput.Cells(outputRow, 3).Value = collaterals
+        
+        outputRow = outputRow + 1
+    Next key
+End Sub
