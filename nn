@@ -1,0 +1,39 @@
+Sub CopyDataFromMultipleSheets()
+    Dim ws As Worksheet
+    Dim newWs As Worksheet
+    Dim lastRow As Long
+    Dim destRow As Long
+    Dim tabNames As Variant
+    Dim i As Integer
+
+    ' Define the names of the 8 tabs in the workbook
+    tabNames = Array("Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6", "Sheet7", "Sheet8") ' Update these sheet names
+    
+    ' Add a new worksheet for the consolidated data
+    Set newWs = ThisWorkbook.Sheets.Add
+    newWs.Name = "ConsolidatedData"
+    
+    ' Set the starting row for the destination sheet
+    destRow = 1
+
+    ' Loop through the 8 sheets
+    For i = LBound(tabNames) To UBound(tabNames)
+        Set ws = ThisWorkbook.Sheets(tabNames(i))
+
+        ' Find the last row in column A (assuming column A has the period and won't be empty)
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+
+        ' Copy the required columns from each sheet
+        ' Col C (Principal), Col D (Interest), Col G (Balance), Col RA (Euribor)
+        ws.Range("C14:C" & lastRow).Copy newWs.Cells(destRow, 1 + (i * 4))
+        ws.Range("D14:D" & lastRow).Copy newWs.Cells(destRow, 2 + (i * 4))
+        ws.Range("G14:G" & lastRow).Copy newWs.Cells(destRow, 3 + (i * 4))
+        ws.Range("RA14:RA" & lastRow).Copy newWs.Cells(destRow, 4 + (i * 4))
+
+        ' Optional: Insert some headers to identify which data belongs to which tab
+        newWs.Cells(1, 1 + (i * 4)).Value = "Principal_" & tabNames(i)
+        newWs.Cells(1, 2 + (i * 4)).Value = "Interest_" & tabNames(i)
+        newWs.Cells(1, 3 + (i * 4)).Value = "Balance_" & tabNames(i)
+        newWs.Cells(1, 4 + (i * 4)).Value = "Euribor_" & tabNames(i)
+    Next i
+End Sub
