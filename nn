@@ -37,3 +37,71 @@ Sub CopyDataFromMultipleSheets()
         newWs.Cells(1, 4 + (i * 4)).Value = "Euribor_" & tabNames(i)
     Next i
 End Sub
+
+Sub CopyDataFromMultipleSheets()
+    Dim ws As Worksheet
+    Dim newWs As Worksheet
+    Dim lastRow As Long
+    Dim destRow As Long
+    Dim tabNames As Variant
+    Dim i As Integer
+    Dim colOffset As Integer
+
+    ' Define the names of the 8 tabs in the workbook as per the screenshot
+    tabNames = Array("DealCF-FrontHighUp", "DealCF-BackHighUp", "DealCF-FrontLowUp", "DealCF-BackLowUp", _
+                     "DealCF-FrontHighDown", "DealCF-BackHighDown", "DealCF-FrontLowDown", "DealCF-BackLowDown")
+    
+    ' Add a new worksheet for the consolidated data
+    Set newWs = ThisWorkbook.Sheets.Add
+    newWs.Name = "ConsolidatedData"
+    
+    ' Set the starting row for the destination sheet
+    destRow = 1
+
+    ' Initialize column offset for each section (C, D, G, RA)
+    colOffset = 0
+
+    ' Copy Column C data for all 8 sheets into first 8 columns
+    For i = LBound(tabNames) To UBound(tabNames)
+        Set ws = ThisWorkbook.Sheets(tabNames(i))
+
+        ' Find the last row in column A (assuming column A has the period and won't be empty)
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+
+        ' Copy Column C (Principal) from each sheet into the next column in new sheet
+        ws.Range("C14:C" & lastRow).Copy newWs.Cells(destRow, 1 + i)
+    Next i
+
+    ' Add a blank column between C and D sections
+    colOffset = colOffset + 9
+
+    ' Copy Column D data for all 8 sheets, starting from the 10th column
+    For i = LBound(tabNames) To UBound(tabNames)
+        Set ws = ThisWorkbook.Sheets(tabNames(i))
+
+        ' Copy Column D (Interest) from each sheet into the next set of columns in the new sheet
+        ws.Range("D14:D" & lastRow).Copy newWs.Cells(destRow, colOffset + i)
+    Next i
+
+    ' Add a blank column between D and G sections
+    colOffset = colOffset + 9
+
+    ' Copy Column G data for all 8 sheets, starting after another blank column
+    For i = LBound(tabNames) To UBound(tabNames)
+        Set ws = ThisWorkbook.Sheets(tabNames(i))
+
+        ' Copy Column G (Balance) from each sheet into the new sheet
+        ws.Range("G14:G" & lastRow).Copy newWs.Cells(destRow, colOffset + i)
+    Next i
+
+    ' Add a blank column between G and RA sections
+    colOffset = colOffset + 9
+
+    ' Copy Column RA data for all 8 sheets, starting after another blank column
+    For i = LBound(tabNames) To UBound(tabNames)
+        Set ws = ThisWorkbook.Sheets(tabNames(i))
+
+        ' Copy Column RA (Euribor) from each sheet into the new sheet
+        ws.Range("RA14:RA" & lastRow).Copy newWs.Cells(destRow, colOffset + i)
+    Next i
+End Sub
