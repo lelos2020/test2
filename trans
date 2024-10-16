@@ -1,0 +1,16 @@
+Sub ApplyTransparencyGradient()
+    Dim chartObj As ChartObject
+    Dim series As Series
+    Dim i As Integer
+    Dim transparencyStep As Double
+    Dim totalSeries As Integer
+
+    Set chartObj = ActiveSheet.ChartObjects(1) 'Assumes your chart is the first chart in the sheet
+    totalSeries = chartObj.Chart.SeriesCollection.Count
+    transparencyStep = 100 / totalSeries 'Divides transparency equally among series
+
+    For i = 1 To totalSeries
+        Set series = chartObj.Chart.SeriesCollection(i)
+        series.Format.Line.Transparency = (i - 1) * transparencyStep / 100
+    Next i
+End Sub
