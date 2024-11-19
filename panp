@@ -70,61 +70,72 @@ Sub LoanWithAmortizingPrincipalAndBulletFixed()
 End Sub
 
 ------adjustment for non bullet to amortise to zero
-# Loan parameters
-total_loan = 150000  # Total loan amount
-bullet_amount = 50000  # Bullet portion (due at maturity)
-annual_rate = 0.03  # Annual interest rate (3%)
-loan_term_months = 240  # Loan term in months (20 years)
+Sub LoanWithNonBulletAmortizationAndBullet()
+    Dim TotalLoan As Double ' Total Loan Amount
+    Dim BulletAmount As Double ' Bullet Portion (due at maturity)
+    Dim AnnualRate As Double ' Annual Interest Rate
+    Dim LoanTermMonths As Long ' Loan Term in Months
+    Dim MonthlyRate As Double ' Monthly Interest Rate
+    Dim MonthlyPaymentNonBullet As Double ' Monthly payment for non-bullet portion
+    Dim InterestPayment As Double ' Monthly interest on full outstanding balance
+    Dim PrincipalPayment As Double ' Monthly principal payment (non-bullet portion)
+    Dim RemainingNonBulletPrincipal As Double ' Non-bullet principal balance
+    Dim TotalPayment As Double ' Total monthly payment
+    Dim i As Long ' Loop Counter
 
-# Monthly interest rate
-monthly_rate = annual_rate / 12
+    ' Initialize loan parameters
+    TotalLoan = 150000 ' Total loan amount
+    BulletAmount = 50000 ' Bullet amount (due at maturity)
+    AnnualRate = 0.03 ' Annual interest rate (3%)
+    LoanTermMonths = 240 ' Loan term in months (20 years)
 
-# Non-bullet portion of the loan
-non_bullet_principal = total_loan - bullet_amount
+    ' Calculate monthly interest rate
+    MonthlyRate = AnnualRate / 12
 
-# Monthly payment for the non-bullet portion
-monthly_payment_non_bullet = non_bullet_principal * (
-    (monthly_rate * (1 + monthly_rate) ** loan_term_months)
-    / ((1 + monthly_rate) ** loan_term_months - 1)
-)
+    ' Non-bullet portion of the loan
+    RemainingNonBulletPrincipal = TotalLoan - BulletAmount
 
-# Initialize variables
-remaining_non_bullet_principal = non_bullet_principal
-results = []
+    ' Monthly payment for non-bullet portion
+    MonthlyPaymentNonBullet = RemainingNonBulletPrincipal * (MonthlyRate * (1 + MonthlyRate) ^ LoanTermMonths) / ((1 + MonthlyRate) ^ LoanTermMonths - 1)
 
-# Loop through each month
-for month in range(1, loan_term_months + 1):
-    # Calculate interest on the total balance
-    interest_payment = (remaining_non_bullet_principal + bullet_amount) * monthly_rate
+    ' Output headers to Excel
+    Range("A1").Value = "Month"
+    Range("B1").Value = "Interest Payment (Full Balance)"
+    Range("C1").Value = "Principal Payment (Non-Bullet)"
+    Range("D1").Value = "Total Monthly Payment"
+    Range("E1").Value = "Remaining Non-Bullet Principal"
+    Range("F1").Value = "Bullet Payment (At Maturity)"
+    Range("G1").Value = "Total Outstanding Balance"
 
-    # Calculate principal payment for non-bullet portion
-    if month == loan_term_months:
-        principal_payment = remaining_non_bullet_principal  # Final repayment of non-bullet portion
-    else:
-        principal_payment = monthly_payment_non_bullet - interest_payment
+    ' Loop through each month to calculate schedule
+    For i = 1 To LoanTermMonths
+        ' Calculate interest on full outstanding balance
+        InterestPayment = (RemainingNonBulletPrincipal + BulletAmount) * MonthlyRate
 
-    # Total payment for the month
-    if month == loan_term_months:
-        total_payment = interest_payment + principal_payment + bullet_amount  # Include bullet in final month
-    else:
-        total_payment = interest_payment + principal_payment
+        ' Calculate principal payment for the non-bullet portion
+        If i = LoanTermMonths Then
+            PrincipalPayment = RemainingNonBulletPrincipal ' Final repayment of non-bullet portion
+        Else
+            PrincipalPayment = MonthlyPaymentNonBullet - InterestPayment
+        End If
 
-    # Append results for the current month
-    results.append({
-        "Month": month,
-        "Interest Payment (Full Balance)": interest_payment,
-        "Principal Payment (Non-Bullet)": principal_payment,
-        "Total Monthly Payment": total_payment,
-        "Remaining Non-Bullet Principal": remaining_non_bullet_principal,
-        "Bullet Payment (At Maturity)": bullet_amount if month == loan_term_months else 0,
-        "Total Outstanding Balance": remaining_non_bullet_principal + bullet_amount,
-    })
+        ' Total payment for the month
+        If i = LoanTermMonths Then
+            TotalPayment = InterestPayment + PrincipalPayment + BulletAmount ' Include bullet in final month
+        Else
+            TotalPayment = InterestPayment + PrincipalPayment
+        End If
 
-    # Update remaining non-bullet principal balance
-    remaining_non_bullet_principal -= principal_payment
+        ' Output results to Excel
+        Range("A" & i + 1).Value = i
+        Range("B" & i + 1).Value = InterestPayment
+        Range("C" & i + 1).Value = PrincipalPayment
+        Range("D" & i + 1).Value = TotalPayment
+        Range("E" & i + 1).Value = RemainingNonBulletPrincipal
+        Range("F" & i + 1).Value = IIf(i = LoanTermMonths, BulletAmount, 0)
+        Range("G" & i + 1).Value = RemainingNonBulletPrincipal + BulletAmount
 
-# Convert results to DataFrame
-df_results = pd.DataFrame(results)
-
-# Display the results
-import ace_tools as tools; tools.display_dataframe_to_user(name="Amortization Schedule for Non-Bullet Principal to Zero with Bullet Payment", dataframe=df_results)
+        ' Update remaining non-bullet principal balance
+        RemainingNonBulletPrincipal = RemainingNonBulletPrincipal - PrincipalPayment
+    Next i
+End Sub
