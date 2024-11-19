@@ -1,0 +1,72 @@
+Sub PartAndPartLoanScheduleWithBullet()
+    Dim LoanIO As Double ' Interest-Only Portion
+    Dim LoanPI As Double ' Principal-and-Interest Portion
+    Dim AnnualRate As Double ' Annual Interest Rate
+    Dim LoanTermMonths As Long ' Loan Term in Months
+    Dim MonthlyRate As Double ' Monthly Interest Rate
+    Dim MonthlyPaymentIO As Double ' Monthly Payment for Interest-Only Portion
+    Dim MonthlyPaymentPI As Double ' Monthly Payment for Principal-and-Interest Portion
+    Dim i As Long ' Loop Counter
+    Dim RemainingBalance As Double ' Remaining Balance for Principal-and-Interest Portion
+    Dim PrincipalPayment As Double
+    Dim InterestPayment As Double
+    Dim BulletPayment As Double ' Final Bullet Payment for Interest-Only Portion
+    
+    ' Initialize loan parameters
+    LoanIO = 100000 ' Set your interest-only portion
+    LoanPI = 200000 ' Set your principal-and-interest portion
+    AnnualRate = 0.03 ' Annual interest rate (3%)
+    LoanTermMonths = 240 ' Loan term in months (20 years)
+    
+    ' Calculate monthly interest rate
+    MonthlyRate = AnnualRate / 12
+    
+    ' Calculate monthly payment for interest-only portion
+    MonthlyPaymentIO = LoanIO * MonthlyRate
+    
+    ' Calculate monthly payment for principal-and-interest portion
+    MonthlyPaymentPI = LoanPI * (MonthlyRate * (1 + MonthlyRate) ^ LoanTermMonths) / ((1 + MonthlyRate) ^ LoanTermMonths - 1)
+    
+    ' Initialize remaining balance for principal-and-interest portion
+    RemainingBalance = LoanPI
+    
+    ' Output headers to Excel
+    Range("A1").Value = "Month"
+    Range("B1").Value = "Principal Payment (PI Portion)"
+    Range("C1").Value = "Interest Payment (PI Portion)"
+    Range("D1").Value = "Interest Payment (IO Portion)"
+    Range("E1").Value = "Total Monthly Payment"
+    Range("F1").Value = "Remaining Balance (PI Portion)"
+    Range("G1").Value = "Bullet Payment (IO Portion)"
+    
+    ' Loop through each month to calculate breakdown
+    For i = 1 To LoanTermMonths
+        ' Calculate interest payment for PI portion
+        InterestPayment = RemainingBalance * MonthlyRate
+        
+        ' Calculate principal payment for PI portion
+        PrincipalPayment = MonthlyPaymentPI - InterestPayment
+        
+        ' Output results to Excel
+        Range("A" & i + 1).Value = i
+        Range("B" & i + 1).Value = PrincipalPayment
+        Range("C" & i + 1).Value = InterestPayment
+        Range("D" & i + 1).Value = MonthlyPaymentIO
+        Range("E" & i + 1).Value = MonthlyPaymentPI + MonthlyPaymentIO
+        
+        ' Add the bullet payment in the final month
+        If i = LoanTermMonths Then
+            BulletPayment = LoanIO ' Full principal repayment of interest-only portion
+            Range("G" & i + 1).Value = BulletPayment
+            Range("E" & i + 1).Value = MonthlyPaymentPI + MonthlyPaymentIO + BulletPayment
+        Else
+            Range("G" & i + 1).Value = 0
+        End If
+        
+        ' Output remaining balance for PI portion
+        Range("F" & i + 1).Value = RemainingBalance - PrincipalPayment
+        
+        ' Update remaining balance
+        RemainingBalance = RemainingBalance - PrincipalPayment
+    Next i
+End Sub
