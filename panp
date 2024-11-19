@@ -1,4 +1,4 @@
-Sub Sub LoanWithAmortizingPrincipalAndBulletFixed()
+Sub LoanWithAmortizingPrincipalAndBulletFixed()
     Dim TotalLoan As Double ' Total Loan Amount
     Dim BulletAmount As Double ' Bullet Portion (due at maturity)
     Dim AnnualRate As Double ' Annual Interest Rate
@@ -66,72 +66,5 @@ Sub Sub LoanWithAmortizingPrincipalAndBulletFixed()
 
         ' Update amortizing principal balance
         AmortizingPrincipal = AmortizingPrincipal - PrincipalPayment
-    Next i
-End Sub  Dim TotalLoan As Double ' Total Loan Amount
-    Dim BulletAmount As Double ' Bullet Portion (due at maturity)
-    Dim AnnualRate As Double ' Annual Interest Rate
-    Dim LoanTermMonths As Long ' Loan Term in Months
-    Dim MonthlyRate As Double ' Monthly Interest Rate
-    Dim MonthlyPaymentPrincipal As Double ' Principal repayment (excluding bullet)
-    Dim MonthlyPaymentInterest As Double ' Interest on total outstanding balance
-    Dim TotalMonthlyPayment As Double ' Total Monthly Payment
-    Dim PrincipalOutstanding As Double ' Principal balance (excluding bullet)
-    Dim i As Long ' Loop Counter
-    Dim BulletPayment As Double ' Final bullet payment
-    
-    ' Initialize loan parameters
-    TotalLoan = 150000 ' Total outstanding balance
-    BulletAmount = 50000 ' Bullet amount (due at maturity)
-    AnnualRate = 0.03 ' Annual interest rate (3%)
-    LoanTermMonths = 240 ' Loan term in months (20 years)
-    
-    ' Calculate monthly interest rate
-    MonthlyRate = AnnualRate / 12
-    
-    ' Calculate principal portion to be amortized (excluding bullet)
-    PrincipalOutstanding = TotalLoan - BulletAmount
-    
-    ' Calculate monthly principal payment (excluding bullet)
-    MonthlyPaymentPrincipal = PrincipalOutstanding * (MonthlyRate * (1 + MonthlyRate) ^ LoanTermMonths) / ((1 + MonthlyRate) ^ LoanTermMonths - 1)
-    
-    ' Output headers to Excel
-    Range("A1").Value = "Month"
-    Range("B1").Value = "Interest Payment (Total Balance)"
-    Range("C1").Value = "Principal Payment (Excluding Bullet)"
-    Range("D1").Value = "Total Monthly Payment"
-    Range("E1").Value = "Remaining Balance (Excluding Bullet)"
-    Range("F1").Value = "Bullet Payment (At Maturity)"
-    
-    ' Loop through each month to calculate breakdown
-    For i = 1 To LoanTermMonths
-        ' Calculate interest payment on total outstanding balance
-        MonthlyPaymentInterest = (PrincipalOutstanding + BulletAmount) * MonthlyRate
-        
-        ' Prevent negative balance in last period
-        If i = LoanTermMonths Then
-            MonthlyPaymentPrincipal = PrincipalOutstanding ' Final principal repayment
-        End If
-        
-        ' Calculate total monthly payment (without bullet in normal months)
-        TotalMonthlyPayment = MonthlyPaymentInterest + MonthlyPaymentPrincipal
-        
-        ' Output results to Excel
-        Range("A" & i + 1).Value = i
-        Range("B" & i + 1).Value = MonthlyPaymentInterest
-        Range("C" & i + 1).Value = MonthlyPaymentPrincipal
-        Range("D" & i + 1).Value = TotalMonthlyPayment
-        Range("E" & i + 1).Value = PrincipalOutstanding
-        
-        ' Add the bullet payment in the final month
-        If i = LoanTermMonths Then
-            BulletPayment = BulletAmount ' Full bullet payment at maturity
-            Range("F" & i + 1).Value = BulletPayment
-            Range("D" & i + 1).Value = TotalMonthlyPayment + BulletPayment ' Include bullet in final total
-        Else
-            Range("F" & i + 1).Value = 0
-        End If
-        
-        ' Update principal outstanding balance (excluding bullet)
-        PrincipalOutstanding = PrincipalOutstanding - (MonthlyPaymentPrincipal)
     Next i
 End Sub
