@@ -68,3 +68,63 @@ Sub LoanWithAmortizingPrincipalAndBulletFixed()
         AmortizingPrincipal = AmortizingPrincipal - PrincipalPayment
     Next i
 End Sub
+
+------adjustment for non bullet to amortise to zero
+# Loan parameters
+total_loan = 150000  # Total loan amount
+bullet_amount = 50000  # Bullet portion (due at maturity)
+annual_rate = 0.03  # Annual interest rate (3%)
+loan_term_months = 240  # Loan term in months (20 years)
+
+# Monthly interest rate
+monthly_rate = annual_rate / 12
+
+# Non-bullet portion of the loan
+non_bullet_principal = total_loan - bullet_amount
+
+# Monthly payment for the non-bullet portion
+monthly_payment_non_bullet = non_bullet_principal * (
+    (monthly_rate * (1 + monthly_rate) ** loan_term_months)
+    / ((1 + monthly_rate) ** loan_term_months - 1)
+)
+
+# Initialize variables
+remaining_non_bullet_principal = non_bullet_principal
+results = []
+
+# Loop through each month
+for month in range(1, loan_term_months + 1):
+    # Calculate interest on the total balance
+    interest_payment = (remaining_non_bullet_principal + bullet_amount) * monthly_rate
+
+    # Calculate principal payment for non-bullet portion
+    if month == loan_term_months:
+        principal_payment = remaining_non_bullet_principal  # Final repayment of non-bullet portion
+    else:
+        principal_payment = monthly_payment_non_bullet - interest_payment
+
+    # Total payment for the month
+    if month == loan_term_months:
+        total_payment = interest_payment + principal_payment + bullet_amount  # Include bullet in final month
+    else:
+        total_payment = interest_payment + principal_payment
+
+    # Append results for the current month
+    results.append({
+        "Month": month,
+        "Interest Payment (Full Balance)": interest_payment,
+        "Principal Payment (Non-Bullet)": principal_payment,
+        "Total Monthly Payment": total_payment,
+        "Remaining Non-Bullet Principal": remaining_non_bullet_principal,
+        "Bullet Payment (At Maturity)": bullet_amount if month == loan_term_months else 0,
+        "Total Outstanding Balance": remaining_non_bullet_principal + bullet_amount,
+    })
+
+    # Update remaining non-bullet principal balance
+    remaining_non_bullet_principal -= principal_payment
+
+# Convert results to DataFrame
+df_results = pd.DataFrame(results)
+
+# Display the results
+import ace_tools as tools; tools.display_dataframe_to_user(name="Amortization Schedule for Non-Bullet Principal to Zero with Bullet Payment", dataframe=df_results)
