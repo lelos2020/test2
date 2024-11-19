@@ -1,4 +1,4 @@
-Sub LoanWithAmortizingPrincipalAndBullet()
+Sub LoanWithAmortizingPrincipalAndBulletCorrected()
     Dim TotalLoan As Double ' Total Loan Amount
     Dim BulletAmount As Double ' Bullet Portion (due at maturity)
     Dim AnnualRate As Double ' Annual Interest Rate
@@ -38,6 +38,11 @@ Sub LoanWithAmortizingPrincipalAndBullet()
     For i = 1 To LoanTermMonths
         ' Calculate interest payment on total outstanding balance
         MonthlyPaymentInterest = (PrincipalOutstanding + BulletAmount) * MonthlyRate
+        
+        ' Prevent negative balance in last period
+        If i = LoanTermMonths Then
+            MonthlyPaymentPrincipal = PrincipalOutstanding ' Final principal repayment
+        End If
         
         ' Calculate total monthly payment (without bullet in normal months)
         TotalMonthlyPayment = MonthlyPaymentInterest + MonthlyPaymentPrincipal
