@@ -1,4 +1,4 @@
-Sub LoanWithBulletPayment()
+Sub LoanWithAmortizingPrincipalAndBullet()
     Dim TotalLoan As Double ' Total Loan Amount
     Dim BulletAmount As Double ' Bullet Portion (due at maturity)
     Dim AnnualRate As Double ' Annual Interest Rate
@@ -8,7 +8,6 @@ Sub LoanWithBulletPayment()
     Dim MonthlyPaymentInterest As Double ' Interest on total outstanding balance
     Dim TotalMonthlyPayment As Double ' Total Monthly Payment
     Dim PrincipalOutstanding As Double ' Principal balance (excluding bullet)
-    Dim TotalOutstanding As Double ' Total balance including bullet
     Dim i As Long ' Loop Counter
     Dim BulletPayment As Double ' Final bullet payment
     
@@ -21,9 +20,8 @@ Sub LoanWithBulletPayment()
     ' Calculate monthly interest rate
     MonthlyRate = AnnualRate / 12
     
-    ' Initialize outstanding balances
-    PrincipalOutstanding = TotalLoan - BulletAmount ' Principal balance to be amortized
-    TotalOutstanding = TotalLoan ' Total outstanding balance (including bullet)
+    ' Calculate principal portion to be amortized (excluding bullet)
+    PrincipalOutstanding = TotalLoan - BulletAmount
     
     ' Calculate monthly principal payment (excluding bullet)
     MonthlyPaymentPrincipal = PrincipalOutstanding * (MonthlyRate * (1 + MonthlyRate) ^ LoanTermMonths) / ((1 + MonthlyRate) ^ LoanTermMonths - 1)
@@ -39,9 +37,9 @@ Sub LoanWithBulletPayment()
     ' Loop through each month to calculate breakdown
     For i = 1 To LoanTermMonths
         ' Calculate interest payment on total outstanding balance
-        MonthlyPaymentInterest = TotalOutstanding * MonthlyRate
+        MonthlyPaymentInterest = (PrincipalOutstanding + BulletAmount) * MonthlyRate
         
-        ' Calculate total monthly payment
+        ' Calculate total monthly payment (without bullet in normal months)
         TotalMonthlyPayment = MonthlyPaymentInterest + MonthlyPaymentPrincipal
         
         ' Output results to Excel
@@ -60,7 +58,7 @@ Sub LoanWithBulletPayment()
             Range("F" & i + 1).Value = 0
         End If
         
-        ' Update principal outstanding balance
-        PrincipalOutstanding = PrincipalOutstanding - (MonthlyPaymentPrincipal - MonthlyPaymentInterest / MonthlyRate)
+        ' Update principal outstanding balance (excluding bullet)
+        PrincipalOutstanding = PrincipalOutstanding - (MonthlyPaymentPrincipal)
     Next i
 End Sub
