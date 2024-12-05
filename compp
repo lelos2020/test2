@@ -1,0 +1,111 @@
+Public Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, OutputSheetName As String, TableTitle As String, StratificationMode As String, Optional FieldInfo As CFieldValidationInfo)
+
+    Dim IsCalculatedField As Boolean
+    Dim IsListField As Boolean
+    Dim uniqueItems As Scripting.Dictionary
+    Dim fieldValue As Variant
+    Dim buckets() As Double
+    Dim range As Double, stepInterval As Double
+    Dim BucketDict As Object
+    Dim colnumber As Integer
+    Dim colCurrentBalance As Integer
+    Dim colInterestRateType As Integer
+    Dim BucketKey As String
+    Dim IsFloatingLoan As Boolean
+
+    ' Initialize variables and dictionary
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    colCurrentBalance = colDict.item("AR67")
+    colnumber = colDict.item(fieldCode)
+    colInterestRateType = colDict.item("AR107") ' Assuming AR107 contains interest rate type
+
+    IsCalculatedField = (fieldCode = "Remaining Term" Or fieldCode = "Seasoning" Or fieldCode = "Year of Origination" Or fieldCode = "Time to Reversion")
+
+    ' If AR110 field code, proceed with additional functionality
+    If fieldCode = "AR110" Then
+        ' Normal stratification process for AR110
+        ' Prepare buckets for AR110 stratification
+        Dim WAvg As Double
+        Dim i As Long, r As Long, j As Long
+        Dim currentBalance As Double
+
+        WAvg = SummaryStats(fieldCode & "_WAvg")
+        range = WAvg
+        If range = 0 Then Exit Sub
+
+        stepInterval = CRUp(range)
+        Dim numbuckets As Integer
+        numbuckets = Int(range / stepInterval) + 5
+        ReDim buckets(0 To numbuckets)
+        For j = 0 To numbuckets
+            buckets(j) = 0 + (j * stepInterval)
+        Next j
+
+        ' Add buckets to dictionary
+        Dim underflowBucketKey As String
+        underflowBucketKey = "<" & buckets(LBound(buckets))
+        BucketDict.Add underflowBucketKey, New collection
+        For i = LBound(buckets) To UBound(buckets) - 1
+            BucketKey = buckets(i) & "-" & buckets(i + 1)
+            BucketDict.Add BucketKey, New collection
+        Next i
+        Dim overflowBucketKey As String
+        overflowBucketKey = ">" & buckets(UBound(buckets))
+        BucketDict.Add overflowBucketKey, New collection
+
+        ' Stratify AR110 data into buckets
+        For r = startRow To lastRow
+            If filter = True And ws.Rows(r).EntireRow.Hidden Then GoTo ContinueLoop
+
+            currentBalance = ws.Cells(r, colCurrentBalance).Value
+            fieldValue = ws.Cells(r, colnumber).Value
+
+            ' Determine appropriate bucket for AR110
+            Dim bucketFound As Boolean
+            bucketFound = False
+            If fieldValue < buckets(LBound(buckets)) Then
+                BucketDict.item(underflowBucketKey).Add Array(r, currentBalance)
+                bucketFound = True
+            Else
+                For i = LBound(buckets) To UBound(buckets) - 1
+                    If fieldValue >= buckets(i) And fieldValue < buckets(i + 1) Then
+                        BucketKey = buckets(i) & "-" & buckets(i + 1)
+                        BucketDict.item(BucketKey).Add Array(r, currentBalance)
+                        bucketFound = True
+                        Exit For
+                    End If
+                Next i
+            End If
+            If Not bucketFound And fieldValue >= buckets(UBound(buckets)) Then
+                BucketDict.item(overflowBucketKey).Add Array(r, currentBalance)
+            End If
+
+            ' Check if the loan is floating or fixed-to-floating (fixed period)
+            Dim interestRateType As Integer
+            interestRateType = ws.Cells(r, colInterestRateType).Value
+            IsFloatingLoan = (interestRateType = 1 Or (interestRateType = 5 And fieldValue <= WAvg)) ' Adjust conditions as needed
+
+            ' If floating loan, include it in a new stratification table
+            If IsFloatingLoan Then
+                ' Populate a separate dictionary for floating loans
+                Dim FloatingBucketDict As Object
+                Set FloatingBucketDict = CreateObject("Scripting.Dictionary")
+
+                ' Add floating loan data to floating bucket dictionary
+                If Not FloatingBucketDict.Exists(BucketKey) Then
+                    FloatingBucketDict.Add BucketKey, New collection
+                End If
+                FloatingBucketDict.item(BucketKey).Add Array(r, currentBalance)
+            End If
+ContinueLoop:
+        Next r
+
+        ' Output the normal stratification table for AR110
+        Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
+
+        ' Output the stratification table for floating loans on a new sheet
+        If IsFloatingLoan Then
+            Call OutputMod.OutputBuckets(ws, FloatingBucketDict, "FloatingLoanStrat", "Floating Loans - " & TableTitle)
+        End If
+    End If
+End Sub
