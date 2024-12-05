@@ -1,0 +1,16 @@
+Public Sub SortDictionaryKeysDescending(ByRef keys() As Variant)
+    Dim i As Long, j As Long
+    Dim temp As Variant
+    
+    ' Bubble sort to sort keys in descending order
+    For i = LBound(keys) To UBound(keys) - 1
+        For j = i + 1 To UBound(keys)
+            If Val(keys(i)) < Val(keys(j)) Then
+                ' Swap values
+                temp = keys(i)
+                keys(i) = keys(j)
+                keys(j) = temp
+            End If
+        Next j
+    Next i
+End Sub
