@@ -565,3 +565,181 @@ Function IsLoanInFloatingPeriod(ws As Worksheet, row As Long, colDict As Object)
     IsLoanInFloatingPeriod = reversionDate <= pcd
 End Function
 
+----------v4---------
+
+
+
+
+
+
+
+
+
+Public Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, OutputSheetName As String, TableTitle As String, StratificationMode As String, Optional FieldInfo As CFieldValidationInfo)
+
+    Dim IsCalculatedField As Boolean
+    Dim uniqueItems As Scripting.Dictionary
+    Dim fieldValue As Variant
+    Dim buckets() As Double
+    Dim range As Double, stepInterval As Double
+    Dim i As Long, r As Long
+    Dim BucketDict As Object
+    Dim currentBalance As Double
+    Dim cpr As Double, hyShare As Double
+    Dim totalFloatingBalance As Double
+    Dim floatingLoans As Collection
+
+    ' Initialize variables
+    IsCalculatedField = (fieldCode = "Remaining Term" Or fieldCode = "Seasoning" Or fieldCode = "Year of Origination" Or fieldCode = "Time to Reversion")
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+
+    ' Special logic for AR110 (Margin Field)
+    If fieldCode = "AR110" Then
+        ' CPR and HY Share inputs from Control tab
+        cpr = ThisWorkbook.Sheets("Control").Cells(1, 9).Value
+        hyShare = ThisWorkbook.Sheets("Control").Cells(1, 10).Value
+
+        ' Collection to store floating loans
+        Set floatingLoans = New Collection
+
+        ' Loop through loans to filter floating-rate loans
+        For r = startRow To lastRow
+            currentBalance = ws.Cells(r, colDict("AR67")).Value
+            fieldValue = ws.Cells(r, colDict(fieldCode)).Value
+            Dim interestRateType As Integer
+            interestRateType = ws.Cells(r, colDict("AR107")).Value
+
+            Dim isFloatingPeriod As Boolean
+            isFloatingPeriod = False
+
+            ' Check for fixed-to-floating loans currently in floating period
+            If interestRateType = 5 Then
+                Dim reversionDate As Date
+                reversionDate = ws.Cells(r, colDict("AR121")).Value
+                isFloatingPeriod = (reversionDate <> "00/01/1900" And reversionDate <= pcd)
+            End If
+
+            ' Include floating loans or fixed-to-floating in floating period
+            If interestRateType = 1 Or isFloatingPeriod Then
+                totalFloatingBalance = totalFloatingBalance + currentBalance
+                floatingLoans.Add Array(fieldValue, currentBalance, r) ' Store margin, balance, and row
+            End If
+        Next r
+
+        ' Apply compression logic if CPR and HY Share are provided
+        If cpr > 0 And hyShare > 0 Then
+            Call CompressMargins(floatingLoans, totalFloatingBalance, cpr, hyShare, ws, colDict("AR67"))
+        End If
+
+        ' Output floating loans post-compression to the "Compression" tab
+        Call OutputFloatingLoans(ws, floatingLoans, OutputSheetName, "Post-Compression Floating Loans")
+        Exit Sub
+    End If
+
+    ' (Continue with normal StratifyData logic for other fields)
+    ' Stratification logic goes here...
+End Sub
+
+Private Sub CompressMargins(floatingLoans As Collection, totalFloatingBalance As Double, cpr As Double, hyShare As Double, ws As Worksheet, balanceCol As Integer)
+
+    Dim totalPrepayAmount As Double
+    Dim loan As Variant
+    Dim remainingPrepayAmount As Double
+    Dim sortedLoans As Collection
+    Dim reduction As Double
+
+    ' Total amount to prepay
+    totalPrepayAmount = cpr * hyShare * totalFloatingBalance
+    remainingPrepayAmount = totalPrepayAmount
+
+    ' Sort loans by margin in descending order
+    Set sortedLoans = SortFloatingLoans(floatingLoans)
+
+    ' Apply prepayment
+    For Each loan In sortedLoans
+        If remainingPrepayAmount <= 0 Then Exit For
+
+        Dim loanRow As Long
+        Dim loanBalance As Double
+
+        loanBalance = loan(1) ' Current balance
+        loanRow = loan(2)     ' Row number in source data
+
+        ' Determine reduction for this loan
+        reduction = Application.Min(loanBalance, remainingPrepayAmount)
+
+        ' Update balance in worksheet
+        ws.Cells(loanRow, balanceCol).Value = loanBalance - reduction
+
+        ' Update remaining prepayment amount
+        remainingPrepayAmount = remainingPrepayAmount - reduction
+    Next loan
+End Sub
+
+Private Function SortFloatingLoans(floatingLoans As Collection) As Collection
+
+    Dim sorted As Collection
+    Dim i As Long, j As Long
+    Dim temp As Variant
+
+    ' Clone the floatingLoans collection
+    Set sorted = New Collection
+    For Each temp In floatingLoans
+        sorted.Add temp
+    Next temp
+
+    ' Sort using bubble sort (or replace with a more efficient sorting method)
+    For i = 1 To sorted.Count - 1
+        For j = i + 1 To sorted.Count
+            If sorted(i)(0) < sorted(j)(0) Then
+                ' Swap
+                Set temp = sorted(i)
+                Set sorted(i) = sorted(j)
+                Set sorted(j) = temp
+            End If
+        Next j
+    Next i
+
+    Set SortFloatingLoans = sorted
+End Function
+
+
+Private Sub OutputFloatingLoans(ws As Worksheet, floatingLoans As Collection, OutputSheetName As String, TableTitle As String)
+
+    Dim outputWs As Worksheet
+    Dim rowCounter As Long
+    Dim loan As Variant
+
+    ' Create or clear the output worksheet
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = OutputSheetName
+    Else
+        outputWs.Cells.Clear
+    End If
+    On Error GoTo 0
+
+    ' Write headers
+    outputWs.Cells(1, 1).Value = "Margin"
+    outputWs.Cells(1, 2).Value = "Balance"
+    outputWs.Cells(1, 3).Value = "% of Total Floating Balance"
+
+    ' Write loan data
+    rowCounter = 2
+    For Each loan In floatingLoans
+        outputWs.Cells(rowCounter, 1).Value = loan(0) ' Margin
+        outputWs.Cells(rowCounter, 2).Value = loan(1) ' Balance
+        outputWs.Cells(rowCounter, 3).Value = loan(1) / totalFloatingBalance ' % of total floating balance
+        rowCounter = rowCounter + 1
+    Next loan
+
+    ' Add formatting
+    outputWs.Columns.AutoFit
+End Sub
+
+
+
+
+
