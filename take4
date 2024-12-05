@@ -270,3 +270,169 @@ ContinueLoop:
         .Columns("B:C").NumberFormat = "#,##0.00"
     End With
 End Sub
+
+
+---------v5
+
+
+
+Sub AnalyzeLoanData()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("LLD")
+    Dim controlWs As Worksheet
+    Set controlWs = ThisWorkbook.Sheets("Control")
+    Dim compressionWs As Worksheet
+    Dim colDict As Object
+    Dim i As Long
+    Dim totalPreCompressionBalance As Double
+    Dim totalPostCompressionBalance As Double
+    Dim waMarginPreCompression As Double
+    Dim waMarginPostCompression As Double
+    Dim compressionImpact As Double
+    Dim cpr As Double
+    Dim hyPercentage As Double
+    
+    ' Read CPR and HY input values from the Control tab
+    cpr = controlWs.Cells(1, 9).Value
+    hyPercentage = controlWs.Cells(1, 10).Value
+
+    ' Create or clear Compression tab
+    On Error Resume Next
+    Set compressionWs = ThisWorkbook.Sheets("Compression")
+    On Error GoTo 0
+    If compressionWs Is Nothing Then
+        Set compressionWs = ThisWorkbook.Sheets.Add
+        compressionWs.Name = "Compression"
+    Else
+        compressionWs.Cells.Clear
+    End If
+
+    ' Header for compression data
+    compressionWs.Cells(1, 1).Value = "Row Index"
+    compressionWs.Cells(1, 2).Value = "Pre-Compression Balance"
+    compressionWs.Cells(1, 3).Value = "Pre-Compression Margin"
+    compressionWs.Cells(1, 4).Value = "Post-Compression Balance"
+    compressionWs.Cells(1, 5).Value = "Post-Compression Margin"
+
+    ' Get field mappings
+    Set colDict = GetColumnNumbersByFieldCodes(ws, Array("AR67", "AR110", "AR107"))
+    Dim marginCol As Integer, balanceCol As Integer, rateTypeCol As Integer
+    balanceCol = colDict("AR67")
+    marginCol = colDict("AR110")
+    rateTypeCol = colDict("AR107")
+
+    Dim loanData() As Variant
+    Dim floatingLoans() As Variant
+    Dim floatingIndex As Long
+    Dim currentRow As Long
+    Dim preCompressionBalance As Double
+    Dim preCompressionMargin As Double
+
+    ' Store loan data in an array for processing
+    loanData = ws.Range(ws.Cells(2, 1), ws.Cells(ws.UsedRange.Rows.Count, ws.UsedRange.Columns.Count)).Value
+    ReDim floatingLoans(1 To UBound(loanData, 1), 1 To 3)
+
+    ' Extract floating and Fixed-to-Floating loans in the floating period
+    floatingIndex = 1
+    For i = 1 To UBound(loanData, 1)
+        If loanData(i, rateTypeCol) = 1 Or (loanData(i, rateTypeCol) = 5 And IsInFloatingPeriod(ws, i, colDict)) Then
+            floatingLoans(floatingIndex, 1) = i
+            floatingLoans(floatingIndex, 2) = loanData(i, balanceCol)
+            floatingLoans(floatingIndex, 3) = loanData(i, marginCol)
+            floatingIndex = floatingIndex + 1
+        End If
+    Next i
+    ReDim Preserve floatingLoans(1 To floatingIndex - 1, 1 To 3)
+
+    ' Sort floating loans by margin in descending order
+    Call SortArrayDescendingByColumn(floatingLoans, 3)
+
+    ' Calculate pre-compression WA margin
+    totalPreCompressionBalance = 0
+    preCompressionBalance = 0
+    preCompressionMargin = 0
+    For i = LBound(floatingLoans, 1) To UBound(floatingLoans, 1)
+        preCompressionBalance = preCompressionBalance + floatingLoans(i, 2)
+        preCompressionMargin = preCompressionMargin + (floatingLoans(i, 2) * floatingLoans(i, 3))
+    Next i
+    waMarginPreCompression = preCompressionMargin / preCompressionBalance
+
+    ' Apply compression logic
+    Dim compressibleBalance As Double
+    compressibleBalance = cpr * hyPercentage * preCompressionBalance
+    Dim remainingBalance As Double
+    remainingBalance = preCompressionBalance - compressibleBalance
+
+    totalPostCompressionBalance = 0
+    Dim postCompressionMargin As Double
+    Dim adjustedBalance As Double
+
+    For i = LBound(floatingLoans, 1) To UBound(floatingLoans, 1)
+        Dim loanBalance As Double, loanMargin As Double
+        loanBalance = floatingLoans(i, 2)
+        loanMargin = floatingLoans(i, 3)
+
+        If compressibleBalance > 0 Then
+            If compressibleBalance >= loanBalance Then
+                ' Fully prepaid
+                compressibleBalance = compressibleBalance - loanBalance
+                loanBalance = 0
+            Else
+                ' Partially prepaid
+                loanBalance = loanBalance - compressibleBalance
+                compressibleBalance = 0
+            End If
+        End If
+
+        ' Update totals and margin
+        postCompressionMargin = postCompressionMargin + (loanBalance * loanMargin)
+        totalPostCompressionBalance = totalPostCompressionBalance + loanBalance
+
+        ' Write to Compression tab
+        currentRow = i + 1
+        compressionWs.Cells(currentRow, 1).Value = floatingLoans(i, 1)
+        compressionWs.Cells(currentRow, 2).Value = floatingLoans(i, 2)
+        compressionWs.Cells(currentRow, 3).Value = floatingLoans(i, 3)
+        compressionWs.Cells(currentRow, 4).Value = loanBalance
+        compressionWs.Cells(currentRow, 5).Value = loanMargin
+    Next i
+
+    ' Calculate WA post-compression margin
+    waMarginPostCompression = postCompressionMargin / totalPostCompressionBalance
+    compressionImpact = waMarginPreCompression - waMarginPostCompression
+
+    ' Write summary statistics
+    Dim summaryStart As Integer
+    summaryStart = UBound(floatingLoans, 1) + 3
+    compressionWs.Cells(summaryStart, 7).Value = "Summary Statistics"
+    compressionWs.Cells(summaryStart + 1, 7).Value = "WA Margin Pre-Compression"
+    compressionWs.Cells(summaryStart + 1, 8).Value = waMarginPreCompression
+    compressionWs.Cells(summaryStart + 2, 7).Value = "WA Margin Post-Compression"
+    compressionWs.Cells(summaryStart + 2, 8).Value = waMarginPostCompression
+    compressionWs.Cells(summaryStart + 3, 7).Value = "Compression Impact"
+    compressionWs.Cells(summaryStart + 3, 8).Value = compressionImpact
+
+    MsgBox "Compression analysis complete.", vbInformation
+End Sub
+
+' Helper Functions
+Function IsInFloatingPeriod(ws As Worksheet, row As Long, colDict As Object) As Boolean
+    Dim reversionDate As Date
+    reversionDate = ws.Cells(row, colDict("AR121")).Value
+    IsInFloatingPeriod = (reversionDate <= pcd And reversionDate <> 0)
+End Function
+
+Sub SortArrayDescendingByColumn(ByRef dataArray As Variant, sortColumn As Long)
+    Dim i As Long, j As Long
+    Dim temp As Variant
+
+    For i = LBound(dataArray, 1) To UBound(dataArray, 1) - 1
+        For j = i + 1 To UBound(dataArray, 1)
+            If dataArray(i, sortColumn) < dataArray(j, sortColumn) Then
+                temp = dataArray(i, 1 To UBound(dataArray, 2))
+                dataArray(i, 1 To UBound(dataArray, 2)) = dataArray(j, 1 To UBound(dataArray, 2))
+                dataArray(j, 1 To UBound(dataArray, 2)) = temp
+            End If
+        Next j
+    Next i
+End Sub
