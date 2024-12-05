@@ -1,0 +1,74 @@
+Private Sub ApplyMarginCompression(ws As Worksheet, colDict As Object, BucketDict As Object, OutputSheetName As String, TableTitle As String)
+
+    Dim FloatingBucketDict As Object
+    Set FloatingBucketDict = CreateObject("Scripting.Dictionary")
+
+    ' Initialize variables
+    Dim i As Long, rowIndex As Long, bucketKey As String
+    Dim currentBalance As Double, interestRateType As Integer, reversionDate As Date
+    Dim isFloating As Boolean, totalPrepayBalance As Double
+    Dim cpr As Double, hyShare As Double
+
+    ' Read CPR and HY share inputs from the Control sheet
+    Dim controlWs As Worksheet
+    Set controlWs = ThisWorkbook.Sheets("Control")
+    cpr = controlWs.Cells(2, 9).Value ' CPR input
+    hyShare = controlWs.Cells(1, 9).Value ' HY share input
+
+    ' Process each bucket in the dictionary
+    For Each bucketKey In BucketDict.Keys
+        Dim totalCurrentBalance As Double, totalCompressedBalance As Double
+        totalCurrentBalance = 0
+        totalCompressedBalance = 0
+
+        ' Loop through loans in the current bucket
+        For i = 1 To BucketDict(bucketKey).Count
+            rowIndex = BucketDict(bucketKey)(i)(0)
+            currentBalance = BucketDict(bucketKey)(i)(1)
+            interestRateType = ws.Cells(rowIndex, colDict("AR107")).Value
+            reversionDate = ws.Cells(rowIndex, colDict("AR121")).Value
+
+            ' Determine if the loan is floating
+            isFloating = (interestRateType = 1) Or (interestRateType = 5 And IsDate(reversionDate) And reversionDate <= pcd)
+
+            ' Update total balances and compressed balances
+            totalCurrentBalance = totalCurrentBalance + currentBalance
+            If isFloating Then
+                totalCompressedBalance = totalCompressedBalance + currentBalance * (1 - cpr) * (1 - hyShare)
+            End If
+        Next i
+
+        ' Store the results in the FloatingBucketDict
+        FloatingBucketDict.Add bucketKey, Array(totalCurrentBalance, totalCompressedBalance)
+    Next bucketKey
+
+    ' Output the results
+    Dim outputWs As Worksheet
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        outputWs.Name = OutputSheetName
+    End If
+    outputWs.Cells.Clear
+
+    ' Write headers
+    outputWs.Cells(1, 1).Value = "Bucket"
+    outputWs.Cells(1, 2).Value = "Total Balance"
+    outputWs.Cells(1, 3).Value = "Compressed Balance"
+    outputWs.Cells(1, 4).Value = "% Compression"
+
+    ' Write data
+    Dim rowCounter As Long
+    rowCounter = 2
+    For Each bucketKey In FloatingBucketDict.Keys
+        outputWs.Cells(rowCounter, 1).Value = bucketKey
+        outputWs.Cells(rowCounter, 2).Value = FloatingBucketDict(bucketKey)(0)
+        outputWs.Cells(rowCounter, 3).Value = FloatingBucketDict(bucketKey)(1)
+        outputWs.Cells(rowCounter, 4).Value = 1 - (FloatingBucketDict(bucketKey)(1) / FloatingBucketDict(bucketKey)(0))
+        rowCounter = rowCounter + 1
+    Next bucketKey
+
+    ' Format output
+    outputWs.Columns.AutoFit
+
+End Sub
