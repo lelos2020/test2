@@ -1,0 +1,168 @@
+Public Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, OutputSheetName As String, TableTitle As String, StratificationMode As String, Optional FieldInfo As CFieldValidationInfo)
+
+    Dim IsCalculatedField As Boolean
+    Dim BucketDict As Object
+    Dim fieldValue As Variant
+    Dim buckets() As Double
+    Dim i As Long, j As Long, r As Long
+    Dim bucketKey As String
+    Dim currentBalance As Double
+    Dim remainingTerm As Double, seasoning As Double
+    Dim underflowBucketKey As String, overflowBucketKey As String
+
+    ' New Variables for Compression Filtering
+    Dim filteredDict As Object
+    Dim loanData As Variant
+    Dim loanBalance As Double, loanMargin As Double
+    Dim interestRateType As Integer, reversionDate As Date
+    Dim outputWs As Worksheet
+    Dim rowCounter As Long, totalBalance As Double, weightedMarginSum As Double
+
+    ' Initialize Dictionaries
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    Set filteredDict = CreateObject("Scripting.Dictionary")
+    
+    totalBalance = 0
+    weightedMarginSum = 0
+
+    IsCalculatedField = (fieldCode = "Remaining Term" Or fieldCode = "Seasoning" Or fieldCode = "Year of Origination" Or fieldCode = "Time to Reversion")
+
+    ' Handle Calculated Fields or Data Validation
+    If Not IsCalculatedField Then
+        If Not colDict.Exists(fieldCode) Then
+            MsgBox "Field code " & fieldCode & " not found in the dataset."
+            Exit Sub
+        End If
+    End If
+
+    ' Get Column Numbers
+    Dim colnumber As Integer
+    colnumber = colDict(fieldCode)
+    Dim colCurrentBalance As Integer
+    colCurrentBalance = colDict("AR67") ' Current Balance Column
+
+    ' Initialize Buckets for Stratification
+    If StratificationMode = "Numerical" Then
+        Dim WAvg As Double, stepInterval As Double, numbuckets As Integer
+        WAvg = SummaryStats(fieldCode & "_WAvg")
+        stepInterval = CRUp(WAvg)
+        numbuckets = Int(WAvg / stepInterval) + 5
+        ReDim buckets(0 To numbuckets)
+        For j = 0 To numbuckets
+            buckets(j) = 0 + (j * stepInterval)
+        Next j
+    End If
+
+    ' Prepare Buckets
+    If StratificationMode = "Numerical" Then
+        underflowBucketKey = "<" & buckets(LBound(buckets))
+        overflowBucketKey = ">" & buckets(UBound(buckets))
+        BucketDict.Add underflowBucketKey, New Collection
+        For i = LBound(buckets) To UBound(buckets) - 1
+            bucketKey = buckets(i) & "-" & buckets(i + 1)
+            BucketDict.Add bucketKey, New Collection
+        Next i
+        BucketDict.Add overflowBucketKey, New Collection
+    End If
+
+    ' Loop Through Data to Assign Buckets
+    For r = startRow To lastRow
+        If filter = True And ws.Rows(r).EntireRow.Hidden Then GoTo ContinueLoop
+
+        currentBalance = ws.Cells(r, colCurrentBalance).Value
+
+        If IsCalculatedField Then
+            Select Case fieldCode
+                Case "Remaining Term"
+                    remainingTerm = DateDiff("m", pcd, ws.Cells(r, colDict("AR56")).Value)
+                    fieldValue = remainingTerm
+                Case "Seasoning"
+                    seasoning = DateDiff("yyyy", ws.Cells(r, colDict("AR55")).Value, pcd)
+                    fieldValue = seasoning
+                ' Add other calculated fields here if needed
+            End Select
+        Else
+            fieldValue = ws.Cells(r, colnumber).Value
+        End If
+
+        ' Assign to Buckets
+        If StratificationMode = "Numerical" Then
+            If fieldValue < buckets(LBound(buckets)) Then
+                BucketDict(underflowBucketKey).Add Array(r, currentBalance)
+            ElseIf fieldValue >= buckets(UBound(buckets)) Then
+                BucketDict(overflowBucketKey).Add Array(r, currentBalance)
+            Else
+                For i = LBound(buckets) To UBound(buckets) - 1
+                    If fieldValue >= buckets(i) And fieldValue < buckets(i + 1) Then
+                        bucketKey = buckets(i) & "-" & buckets(i + 1)
+                        BucketDict(bucketKey).Add Array(r, currentBalance)
+                        Exit For
+                    End If
+                Next i
+            End If
+        End If
+
+ContinueLoop:
+    Next r
+
+    ' New Logic for AR110 Field (Floating Loan Filtering)
+    If fieldCode = "AR110" Then
+        For Each bucketKey In BucketDict.Keys
+            For Each loanData In BucketDict(bucketKey)
+                loanBalance = loanData(1)
+                loanMargin = ws.Cells(loanData(0), colDict("AR110")).Value
+                interestRateType = ws.Cells(loanData(0), colDict("AR107")).Value
+                reversionDate = ws.Cells(loanData(0), colDict("AR121")).Value
+
+                ' Floating Loans or Fixed-to-Floating in Floating Period
+                If (interestRateType = 1) Or (interestRateType = 5 And IsDate(reversionDate) And reversionDate <= pcd) Then
+                    If Not filteredDict.Exists(bucketKey) Then
+                        filteredDict.Add bucketKey, New Collection
+                    End If
+                    filteredDict(bucketKey).Add Array(loanData(0), loanBalance, loanMargin)
+                End If
+            Next loanData
+        Next bucketKey
+
+        ' Output Filtered Loans to "Compression" Tab
+        Set outputWs = ThisWorkbook.Sheets("Compression")
+        outputWs.Cells.Clear
+        rowCounter = 1
+
+       ' Headers
+        outputWs.Cells(rowCounter, 1).Value = "Loan ID"
+        outputWs.Cells(rowCounter, 2).Value = "Loan Balance"
+        outputWs.Cells(rowCounter, 3).Value = "Loan Margin"
+        rowCounter = rowCounter + 1
+
+        ' Populate Data
+        For Each bucketKey In filteredDict.Keys
+            For Each loanData In filteredDict(bucketKey)
+                outputWs.Cells(rowCounter, 1).Value = loanData(0) ' Loan ID (row index in this case)
+                outputWs.Cells(rowCounter, 2).Value = loanData(1) ' Loan Balance
+                outputWs.Cells(rowCounter, 3).Value = loanData(2) ' Loan Margin
+                totalBalance = totalBalance + loanData(1)
+                weightedMarginSum = weightedMarginSum + (loanData(1) * loanData(2))
+                rowCounter = rowCounter + 1
+            Next loanData
+        Next bucketKey
+
+        ' Summary Section
+        rowCounter = rowCounter + 2
+        outputWs.Cells(rowCounter, 1).Value = "Summary"
+        outputWs.Cells(rowCounter + 1, 1).Value = "Total Balance"
+        outputWs.Cells(rowCounter + 1, 2).Value = totalBalance
+        outputWs.Cells(rowCounter + 2, 1).Value = "Weighted Average Margin"
+        If totalBalance > 0 Then
+            outputWs.Cells(rowCounter + 2, 2).Value = weightedMarginSum / totalBalance
+        Else
+            outputWs.Cells(rowCounter + 2, 2).Value = 0
+        End If
+
+        ' Format Output
+        outputWs.Columns.AutoFit
+    End If
+
+    ' Original Stratification Output (for AR110 and other fields)
+    Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
+End Sub
