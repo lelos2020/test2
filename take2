@@ -1,0 +1,157 @@
+' File: LoanAnalysis.vb
+' Paths to modules are in separate categories for clarity.
+
+Option Explicit
+
+'----------------------- GLOBAL VARIABLES ---------------------------
+
+Public ConfigDict As Object
+Public ErrorLog As Object
+Public SummaryStats As Object
+Public LoanData As Variant ' Array for efficient data handling
+Public StartRow As Long, LastRow As Long, StartTime As Double
+
+'----------------------- INITIAL SETUP ------------------------------
+
+Sub AnalyzeLoanData()
+    On Error GoTo ErrorHandler
+
+    ' Initialize variables and settings
+    InitializeConfig "Config"
+    InitializeErrorLog
+    InitializeSummaryStats
+
+    ' Load loan data into memory for processing
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("LoanData") ' Change to your actual sheet name
+    LoanData = LoadWorksheetData(ws)
+    StartRow = FindStartRow(ws, "AR1") ' Update "AR1" based on the config
+    
+    ' Determine LastRow
+    LastRow = FindLastRow(ws)
+
+    ' Perform data validation
+    If Not ValidateLoanData(LoanData) Then
+        MsgBox "Validation failed. Check ErrorLog sheet.", vbCritical
+        Exit Sub
+    End If
+
+    ' Calculate summary statistics
+    CalculateSummaryStatistics ws
+    
+    ' Perform stratification for all fields
+    Dim FieldCode As String
+    For Each FieldCode In ConfigDict.Keys
+        StratifyField FieldCode
+    Next FieldCode
+    
+    ' Output results
+    OutputSummaryStatistics ThisWorkbook.Sheets("Summary")
+    
+    MsgBox "Analysis complete!", vbInformation
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "An error occurred: " & Err.Description, vbCritical
+
+End Sub
+
+'---------------------- CONFIGURATION MODULE ------------------------
+
+Sub InitializeConfig(ConfigSheetName As String)
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets(ConfigSheetName)
+    
+    Dim ConfigData As Variant
+    ConfigData = ws.UsedRange.Value ' Load config sheet into an array
+
+    Set ConfigDict = CreateObject("Scripting.Dictionary")
+    Dim i As Long
+    For i = 2 To UBound(ConfigData, 1) ' Skip header row
+        ConfigDict.Add ConfigData(i, 1), Array(ConfigData(i, 2), ConfigData(i, 3), _
+                                               ConfigData(i, 4), ConfigData(i, 5), _
+                                               ConfigData(i, 6))
+    Next i
+End Sub
+
+'---------------------- ERROR LOGGING MODULE ------------------------
+
+Sub InitializeErrorLog()
+    Set ErrorLog = CreateObject("Scripting.Dictionary")
+    ThisWorkbook.Sheets("ErrorLog").Cells.Clear
+    ThisWorkbook.Sheets("ErrorLog").Range("A1:D1").Value = Array("Row", "Column", "Field Code", "Error Description")
+End Sub
+
+Sub LogError(Row As Long, Column As String, FieldCode As String, Description As String)
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("ErrorLog")
+    Dim NextRow As Long
+    NextRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+    ws.Cells(NextRow, 1).Value = Row
+    ws.Cells(NextRow, 2).Value = Column
+    ws.Cells(NextRow, 3).Value = FieldCode
+    ws.Cells(NextRow, 4).Value = Description
+End Sub
+
+'---------------------- DATA VALIDATION MODULE ----------------------
+
+Function ValidateLoanData(DataArray As Variant) As Boolean
+    Dim FieldCode As String, i As Long, ColIndex As Long
+    Dim ValidationRules As Variant
+    ValidateLoanData = True
+    
+    For Each FieldCode In ConfigDict.Keys
+        ValidationRules = ConfigDict(FieldCode)
+        ColIndex = FindColumnIndex(FieldCode, LoanData)
+
+        If ColIndex = 0 Then
+            LogError -1, FieldCode, "N/A", "Field not found in dataset."
+            ValidateLoanData = False
+            Exit Function
+        End If
+
+        For i = StartRow To LastRow
+            If Not ValidateCell(DataArray(i, ColIndex), ValidationRules(3)) Then
+                LogError i, ColIndex, FieldCode, "Invalid data."
+                ValidateLoanData = False
+            End If
+        Next i
+    Next FieldCode
+End Function
+
+Function ValidateCell(Value As Variant, Rule As String) As Boolean
+    Select Case Rule
+        Case ">0"
+            ValidateCell = IsNumeric(Value) And Value > 0
+        Case ">=0"
+            ValidateCell = IsNumeric(Value) And Value >= 0
+        Case Else
+            ValidateCell = False
+    End Select
+End Function
+
+'---------------------- SUMMARY STATISTICS --------------------------
+
+Sub CalculateSummaryStatistics(ws As Worksheet)
+    ' Populate the SummaryStats dictionary
+    ' Example: Calculate WA LTV, WA term, etc.
+End Sub
+
+'---------------------- STRATIFICATION MODULE -----------------------
+
+Sub StratifyField(FieldCode As String)
+    ' Create buckets based on StratificationMode
+    ' Output results to designated sheet
+End Sub
+
+'---------------------- OUTPUT MODULE -------------------------------
+
+Sub OutputSummaryStatistics(ws As Worksheet)
+    Dim StatKey As String, Row As Long
+    Row = 1
+    For Each StatKey In SummaryStats.Keys
+        ws.Cells(Row, 1).Value = StatKey
+        ws.Cells(Row, 2).Value = SummaryStats(StatKey)
+        Row = Row + 1
+    Next StatKey
+End Sub
