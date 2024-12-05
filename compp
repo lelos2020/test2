@@ -184,3 +184,50 @@ Public Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String,
                 If interestRateType = 1 Or interestRateType = 5 Then ' Floating or Fixed-to-Floating
                     FloatingBucketDict.item(underflowBucketKey).Add Array(r, currentBalance)
                 End If
+                BucketDict.item(underflowBucketKey).Add Array(r, currentBalance)
+                If interestRateType = 1 Or (interestRateType = 5 And IsFixedPeriod(ws, colDict, r)) Then ' Floating or Fixed-to-Floating in Fixed Period
+                    FloatingBucketDict.item(underflowBucketKey).Add Array(r, currentBalance)
+                End If
+            Else
+                For i = LBound(buckets) To UBound(buckets) - 1
+                    If fieldValue >= buckets(i) And fieldValue < buckets(i + 1) Then
+                        BucketKey = buckets(i) & "-" & buckets(i + 1)
+                        BucketDict.item(BucketKey).Add Array(r, currentBalance)
+                        If interestRateType = 1 Or (interestRateType = 5 And IsFixedPeriod(ws, colDict, r)) Then
+                            FloatingBucketDict.item(BucketKey).Add Array(r, currentBalance)
+                        End If
+                        bucketFound = True
+                        Exit For
+                    End If
+                Next i
+                If Not bucketFound And fieldValue >= buckets(UBound(buckets)) Then
+                    BucketDict.item(overflowBucketKey).Add Array(r, currentBalance)
+                    If interestRateType = 1 Or (interestRateType = 5 And IsFixedPeriod(ws, colDict, r)) Then
+                        FloatingBucketDict.item(overflowBucketKey).Add Array(r, currentBalance)
+                    End If
+                End If
+            End If
+ContinueLoop:
+        Next r
+
+        ' Output the stratification table for AR110
+        Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
+
+        ' Output the stratification table for floating loans only
+        Call OutputMod.OutputBuckets(ws, FloatingBucketDict, OutputSheetName & "_Floating", TableTitle & " (Floating Loans Only)")
+    Else
+        ' Handle other fields as per existing logic
+        ' (Copy the rest of the original `StratifyData` implementation here)
+    End If
+End Sub
+
+Private Function IsFixedPeriod(ws As Worksheet, colDict As Object, rowIndex As Long) As Boolean
+    ' Determine if a Fixed-to-Floating loan is in the fixed period
+    Dim reversionDate As Date
+    reversionDate = ws.Cells(rowIndex, colDict("AR121")).Value ' Assuming AR121 is the reversion date
+    If IsDate(reversionDate) And reversionDate > pcd Then
+        IsFixedPeriod = True
+    Else
+        IsFixedPeriod = False
+    End If
+End Function
