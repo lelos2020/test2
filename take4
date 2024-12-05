@@ -144,3 +144,129 @@ Private Sub OutputCompressionResults(ws As Worksheet, compressionResults As Coll
     ' Autofit columns for readability
     outputWs.Columns.AutoFit
 End Sub
+
+------v2-------
+
+Sub AnalyzeCompression(ws As Worksheet, colDict As Object)
+    Dim compressionWs As Worksheet
+    Dim loanData As Collection
+    Dim cpr As Double, hyShare As Double
+    Dim totalBalance As Double, totalWeightedMargin As Double
+    Dim preCompressionWA As Double, postCompressionWA As Double, compression As Double
+    Dim remainingReduction As Double
+    Dim i As Long, rowCounter As Long
+    
+    ' Retrieve CPR and HY share from Control tab
+    cpr = ThisWorkbook.Sheets("Control").Cells(1, 9).value
+    hyShare = ThisWorkbook.Sheets("Control").Cells(1, 10).value
+
+    ' Initialize Compression worksheet
+    On Error Resume Next
+    Set compressionWs = ThisWorkbook.Sheets("Compression")
+    On Error GoTo 0
+    If compressionWs Is Nothing Then
+        Set compressionWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        compressionWs.Name = "Compression"
+    Else
+        compressionWs.Cells.Clear
+    End If
+
+    ' Initialize loan data collection
+    Set loanData = New Collection
+    totalBalance = 0
+    totalWeightedMargin = 0
+
+    ' Extract floating rate loans and pre-compression data
+    For i = startRow To lastRow
+        If ws.Rows(i).EntireRow.Hidden Then GoTo ContinueLoop
+
+        Dim interestRateType As Double
+        Dim currentBalance As Double, margin As Double
+        Dim reversionDate As Date, remainingMonthsToReversion As Double
+
+        ' Get interest rate type and loan details
+        interestRateType = ws.Cells(i, colDict("AR107")).value
+        currentBalance = ws.Cells(i, colDict("AR67")).value
+        margin = ws.Cells(i, colDict("AR110")).value
+        reversionDate = ws.Cells(i, colDict("AR121")).value
+        remainingMonthsToReversion = DateDiff("m", pcd, reversionDate)
+
+        ' Check if the loan is floating or fixed-to-floating currently in floating period
+        If interestRateType = 1 Or (interestRateType = 5 And remainingMonthsToReversion <= 0) Then
+            ' Add loan data to collection
+            Dim loan As Variant
+            loan = Array(i, currentBalance, margin) ' Store row index, balance, margin
+            loanData.Add loan
+
+            ' Calculate total balance and weighted margin for pre-compression stats
+            totalBalance = totalBalance + currentBalance
+            totalWeightedMargin = totalWeightedMargin + (margin * currentBalance)
+        End If
+
+ContinueLoop:
+    Next i
+
+    ' Calculate WA Margin Pre-Compression
+    If totalBalance > 0 Then
+        preCompressionWA = totalWeightedMargin / totalBalance
+    Else
+        preCompressionWA = 0
+    End If
+
+    ' Perform margin compression
+    remainingReduction = cpr * hyShare * totalBalance
+    For Each loan In loanData
+        Dim reduction As Double
+        reduction = Application.Min(remainingReduction, loan(1)) ' Reduce the loan balance by available reduction
+        remainingReduction = remainingReduction - reduction
+        loan(1) = loan(1) - reduction ' Update balance post-compression
+    Next loan
+
+    ' Calculate WA Margin Post-Compression
+    totalBalance = 0
+    totalWeightedMargin = 0
+    For Each loan In loanData
+        totalBalance = totalBalance + loan(1)
+        totalWeightedMargin = totalWeightedMargin + (loan(2) * loan(1))
+    Next loan
+
+    If totalBalance > 0 Then
+        postCompressionWA = totalWeightedMargin / totalBalance
+    Else
+        postCompressionWA = 0
+    End If
+
+    ' Calculate Compression
+    compression = preCompressionWA - postCompressionWA
+
+    ' Output Loan Data and Summary Stats to Compression Tab
+    rowCounter = 1
+    compressionWs.Cells(rowCounter, 1).value = "Loan Data Pre-Compression"
+    rowCounter = rowCounter + 1
+    compressionWs.Cells(rowCounter, 1).value = "Row Index"
+    compressionWs.Cells(rowCounter, 2).value = "Loan Balance"
+    compressionWs.Cells(rowCounter, 3).value = "Margin"
+
+    For Each loan In loanData
+        rowCounter = rowCounter + 1
+        compressionWs.Cells(rowCounter, 1).value = loan(0) ' Row index
+        compressionWs.Cells(rowCounter, 2).value = loan(1) ' Loan balance
+        compressionWs.Cells(rowCounter, 3).value = loan(2) ' Margin
+    Next loan
+
+    ' Output Summary Stats
+    rowCounter = rowCounter + 2
+    compressionWs.Cells(rowCounter, 1).value = "Summary Statistics"
+    compressionWs.Cells(rowCounter + 1, 1).value = "WA Margin Pre-Compression"
+    compressionWs.Cells(rowCounter + 1, 2).value = preCompressionWA
+    compressionWs.Cells(rowCounter + 2, 1).value = "WA Margin Post-Compression"
+    compressionWs.Cells(rowCounter + 2, 2).value = postCompressionWA
+    compressionWs.Cells(rowCounter + 3, 1).value = "Compression (bps)"
+    compressionWs.Cells(rowCounter + 3, 2).value = compression * 100 ' Convert to basis points
+
+    ' Format Compression Tab
+    With compressionWs
+        .Columns("A:C").AutoFit
+        .Columns("B:C").NumberFormat = "#,##0.00"
+    End With
+End Sub
