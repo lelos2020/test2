@@ -166,3 +166,152 @@ ContinueLoop:
     ' Original Stratification Output (for AR110 and other fields)
     Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
 End Sub
+
+----------------v2----------------
+
+
+
+
+
+
+
+Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, OutputSheetName As String, TableTitle As String, StratificationMode As String, Optional FieldInfo As CFieldValidationInfo)
+    Dim IsCalculatedField As Boolean
+    Dim IsListField As Boolean
+    Dim uniqueItems As Scripting.Dictionary
+    Dim fieldValue As Variant
+    Dim buckets() As Double
+    Dim range As Double, stepInterval As Double
+    Dim totalBalance, weightedMarginSum As Double
+    Dim loanData As Collection
+    Dim filteredDict As Object
+    Dim prepayBalance, prepayTarget As Double
+    Dim remainingBalance, remainingMarginSum As Double
+    Dim floatingLoans As Collection
+    Dim loanRow As Variant
+    Dim loanBalance, loanMargin As Double
+    Dim outputWs As Worksheet
+    Dim ControlWs As Worksheet
+    Dim CPR As Double, HYShare As Double
+    Dim rowCounter As Long
+
+    ' Initialize Variables
+    Set filteredDict = CreateObject("Scripting.Dictionary")
+    Set floatingLoans = New Collection
+    totalBalance = 0
+    weightedMarginSum = 0
+    remainingBalance = 0
+    remainingMarginSum = 0
+
+    ' Inputs from Control Tab
+    Set ControlWs = ThisWorkbook.Sheets("Control")
+    CPR = ControlWs.Cells(1, 9).Value
+    HYShare = ControlWs.Cells(1, 10).Value
+
+    ' Only process AR110
+    If fieldCode = "AR110" Then
+        ' Filter for floating loans
+        For Each bucketKey In BucketDict.Keys
+            For Each loanData In BucketDict(bucketKey)
+                loanRow = loanData(0)
+                loanBalance = loanData(1)
+                loanMargin = loanData(2)
+
+                ' Check if loan is floating or fixed-to-floating in floating period
+                If ws.Cells(loanRow, colDict("AR107")).Value = 1 Or _
+                   (ws.Cells(loanRow, colDict("AR107")).Value = 5 And _
+                    ws.Cells(loanRow, colDict("AR121")).Value < pcd) Then
+                    floatingLoans.Add Array(loanRow, loanBalance, loanMargin)
+                End If
+            Next loanData
+        Next bucketKey
+
+        ' Sort floating loans by margin (descending)
+        Dim tempLoan As Variant, i As Long, j As Long
+        For i = 1 To floatingLoans.Count - 1
+            For j = i + 1 To floatingLoans.Count
+                If floatingLoans(i)(2) < floatingLoans(j)(2) Then
+                    Set tempLoan = floatingLoans(i)
+                    floatingLoans(i) = floatingLoans(j)
+                    floatingLoans(j) = tempLoan
+                End If
+            Next j
+        Next i
+
+        ' Calculate prepayment target
+        totalBalance = 0
+        For Each loanData In floatingLoans
+            totalBalance = totalBalance + loanData(1)
+        Next loanData
+
+        prepayTarget = CPR * HYShare * totalBalance
+
+        ' Prepay highest-yielding loans
+        For Each loanData In floatingLoans
+            loanBalance = loanData(1)
+            loanMargin = loanData(2)
+
+            If prepayTarget > 0 Then
+                If loanBalance <= prepayTarget Then
+                    ' Prepay entire loan
+                    prepayTarget = prepayTarget - loanBalance
+                Else
+                    ' Partial prepayment
+                    loanBalance = loanBalance - prepayTarget
+                    prepayTarget = 0
+                End If
+            End If
+
+            ' Add remaining balance to new pool
+            If loanBalance > 0 Then
+                remainingBalance = remainingBalance + loanBalance
+                remainingMarginSum = remainingMarginSum + (loanBalance * loanMargin)
+            End If
+        Next loanData
+
+        ' Output to "Compression" Tab
+        On Error Resume Next
+        Set outputWs = ThisWorkbook.Sheets("Compression")
+        On Error GoTo 0
+        If outputWs Is Nothing Then
+            Set outputWs = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+            outputWs.Name = "Compression"
+        Else
+            outputWs.Cells.Clear
+        End If
+
+        ' Headers
+        rowCounter = 1
+        outputWs.Cells(rowCounter, 1).Value = "Loan ID"
+        outputWs.Cells(rowCounter, 2).Value = "Loan Balance"
+        outputWs.Cells(rowCounter, 3).Value = "Loan Margin"
+        rowCounter = rowCounter + 1
+
+        ' Populate Remaining Pool
+        For Each loanData In floatingLoans
+            outputWs.Cells(rowCounter, 1).Value = loanData(0) ' Loan ID
+            outputWs.Cells(rowCounter, 2).Value = loanData(1) ' Remaining Loan Balance
+            outputWs.Cells(rowCounter, 3).Value = loanData(2) ' Loan Margin
+            rowCounter = rowCounter + 1
+        Next loanData
+
+        ' Summary
+        rowCounter = rowCounter + 2
+        outputWs.Cells(rowCounter, 1).Value = "Summary"
+        outputWs.Cells(rowCounter + 1, 1).Value = "Total Remaining Balance"
+        outputWs.Cells(rowCounter + 1, 2).Value = remainingBalance
+        outputWs.Cells(rowCounter + 2, 1).Value = "Post-Compression WA Margin"
+        If remainingBalance > 0 Then
+            outputWs.Cells(rowCounter + 2, 2).Value = remainingMarginSum / remainingBalance
+        Else
+            outputWs.Cells(rowCounter + 2, 2).Value = 0
+        End If
+
+        ' Format Output
+        outputWs.Columns.AutoFit
+    End If
+
+    ' Call original stratification routine
+    Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
+End Sub
+
