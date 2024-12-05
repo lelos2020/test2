@@ -231,3 +231,144 @@ Private Function IsFixedPeriod(ws As Worksheet, colDict As Object, rowIndex As L
         IsFixedPeriod = False
     End If
 End Function
+
+
+---v3----
+Public Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, OutputSheetName As String, TableTitle As String, StratificationMode As String, Optional FieldInfo As CFieldValidationInfo)
+
+    Dim IsCalculatedField As Boolean
+    Dim IsListField As Boolean
+    Dim uniqueItems As Scripting.Dictionary
+    Dim fieldValue As Variant
+    Dim buckets() As Double
+    Dim range As Double, stepInterval As Double
+    
+    IsCalculatedField = (fieldCode = "Remaining Term" Or fieldCode = "Seasoning" Or fieldCode = "Year of Origination" Or fieldCode = "Time to Reversion")
+
+    If FieldInfo.DataType = "List" Then
+        Set uniqueItems = CreateObject("Scripting.Dictionary")
+        IsListField = True
+    End If
+
+    If Not IsCalculatedField Then
+        ' Check if the field code is in the dictionary
+        If Not colDict.Exists(fieldCode) Then
+            MsgBox "Field code " & fieldCode & " not found in the dataset."
+            Exit Sub
+        End If
+    End If
+    
+    ' Get the column number for the field
+    Dim colnumber As Integer
+    colnumber = colDict.item(fieldCode)
+
+    ' Get the column number for the current balance
+    Dim colCurrentBalance As Integer
+    colCurrentBalance = colDict.item("AR67")
+    Dim remainingTerm As Double
+    Dim seasoning As Double
+
+    ' Initialize BucketDict and FloatingBucketDict
+    Dim BucketDict As Object
+    Dim FloatingBucketDict As Object
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    Set FloatingBucketDict = CreateObject("Scripting.Dictionary")
+    
+    Dim i As Long
+    Dim BucketKey As String
+    
+    ' Prepare buckets for numerical data
+    If FieldInfo.DataType = "Numeric" And StratificationMode = "Numerical" Then
+        range = SummaryStats(fieldCode & "_WAvg")
+        stepInterval = CRUp(range)
+        Dim numbuckets As Integer
+        numbuckets = Int(range / stepInterval) + 5
+        ReDim buckets(0 To numbuckets)
+        
+        For i = 0 To numbuckets
+            buckets(i) = 0 + (i * stepInterval)
+        Next i
+        
+        ' Create the buckets
+        Dim underflowBucketKey As String, overflowBucketKey As String
+        underflowBucketKey = "<" & buckets(LBound(buckets))
+        overflowBucketKey = ">" & buckets(UBound(buckets))
+        BucketDict.Add underflowBucketKey, New Collection
+        FloatingBucketDict.Add underflowBucketKey, New Collection
+
+        For i = LBound(buckets) To UBound(buckets) - 1
+            BucketKey = buckets(i) & "-" & buckets(i + 1)
+            BucketDict.Add BucketKey, New Collection
+            FloatingBucketDict.Add BucketKey, New Collection
+        Next i
+        
+        BucketDict.Add overflowBucketKey, New Collection
+        FloatingBucketDict.Add overflowBucketKey, New Collection
+
+    End If
+
+    ' Loop through the data to assign balances to buckets
+    Dim currentBalance As Double, interestRateType As Integer
+    For i = startRow To lastRow
+        If filter = True And ws.Rows(i).EntireRow.Hidden Then GoTo ContinueLoop
+
+        fieldValue = ws.Cells(i, colnumber).Value
+        currentBalance = ws.Cells(i, colCurrentBalance).Value
+        interestRateType = ws.Cells(i, colDict("AR107")).Value ' Interest rate type
+        
+        Dim bucketFound As Boolean
+        bucketFound = False
+        
+        If StratificationMode = "Numerical" Then
+            ' Assign balance to the appropriate bucket
+            If fieldValue < buckets(LBound(buckets)) Then
+                BucketDict(underflowBucketKey).Add Array(i, currentBalance)
+                If interestRateType = 1 Or IsFloatingPeriod(ws, colDict, i) Then
+                    FloatingBucketDict(underflowBucketKey).Add Array(i, currentBalance)
+                End If
+            Else
+                For j = LBound(buckets) To UBound(buckets) - 1
+                    If fieldValue >= buckets(j) And fieldValue < buckets(j + 1) Then
+                        BucketKey = buckets(j) & "-" & buckets(j + 1)
+                        BucketDict(BucketKey).Add Array(i, currentBalance)
+                        If interestRateType = 1 Or IsFloatingPeriod(ws, colDict, i) Then
+                            FloatingBucketDict(BucketKey).Add Array(i, currentBalance)
+                        End If
+                        bucketFound = True
+                        Exit For
+                    End If
+                Next j
+                If Not bucketFound And fieldValue >= buckets(UBound(buckets)) Then
+                    BucketDict(overflowBucketKey).Add Array(i, currentBalance)
+                    If interestRateType = 1 Or IsFloatingPeriod(ws, colDict, i) Then
+                        FloatingBucketDict(overflowBucketKey).Add Array(i, currentBalance)
+                    End If
+                End If
+            End If
+        End If
+ContinueLoop:
+    Next i
+
+    ' Output the results
+    Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
+    Call OutputMod.OutputBuckets(ws, FloatingBucketDict, OutputSheetName & "_Floating", TableTitle & " (Floating Loans Only)")
+    
+End Sub
+
+Private Function IsFloatingPeriod(ws As Worksheet, colDict As Object, rowIndex As Long) As Boolean
+    ' Determine if a loan is in its floating period
+    Dim reversionDate As Date, interestRateType As Integer
+    interestRateType = ws.Cells(rowIndex, colDict("AR107")).Value ' Interest rate type
+    reversionDate = ws.Cells(rowIndex, colDict("AR121")).Value ' Reversion date
+    
+    ' Check if it's a Fixed-to-Floating loan and currently in the floating period
+    If interestRateType = 5 And IsDate(reversionDate) And reversionDate <= pcd Then
+        IsFloatingPeriod = True
+    ElseIf interestRateType = 1 Then
+        IsFloatingPeriod = True
+    Else
+        IsFloatingPeriod = False
+    End If
+End Function
+
+
