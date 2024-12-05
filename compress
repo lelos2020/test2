@@ -790,4 +790,162 @@ ContinueLoop:
 
 End Sub
 
+----v6-----
+
+Public Sub StratifyDataWithCompression(ws As Worksheet, colDict As Object, OutputSheetName As String)
+
+    Dim BucketDict As Object
+    Dim totalBalance As Double, totalCompressedBalance As Double
+    Dim remainingReduction As Double, totalPreCompression As Double, totalPostCompression As Double
+    Dim BucketKey As Variant, sortedKeys() As Variant, i As Long
+    Dim outputWs As Worksheet, rowCounter As Long
+    Dim preCompressionPct As Double, postCompressionPct As Double
+
+    ' Initialize the BucketDict and totals
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    totalBalance = 0
+    totalCompressedBalance = 0
+    totalPreCompression = 0
+    totalPostCompression = 0
+
+    ' Retrieve compression parameters from Control tab
+    Dim HYLoanPrepayPct As Double, CPR As Double
+    HYLoanPrepayPct = ThisWorkbook.Sheets("Control").Cells(1, 9).Value ' High-yield prepay %
+    CPR = ThisWorkbook.Sheets("Control").Cells(2, 9).Value ' CPR %
+
+    ' Retrieve column numbers
+    Dim colInterestRate As Integer, colCurrentBalance As Integer
+    colInterestRate = colDict.Item("AR110")
+    colCurrentBalance = colDict.Item("AR67")
+
+    ' Step 1: Populate BucketDict with loan data
+    For r = startRow To lastRow
+        If filter = True And ws.Rows(r).EntireRow.Hidden Then GoTo ContinueLoop
+
+        Dim currentBalance As Double, currentMargin As Double, fieldValue As Double
+        currentBalance = ws.Cells(r, colCurrentBalance).Value
+        currentMargin = ws.Cells(r, colInterestRate).Value
+
+        ' Use the interest rate (fieldValue) as the key for buckets
+        fieldValue = currentMargin
+        If Not BucketDict.Exists(fieldValue) Then
+            Set BucketDict(fieldValue) = CreateObject("Scripting.Dictionary")
+            BucketDict(fieldValue).Add "PreBalance", 0
+            BucketDict(fieldValue).Add "PostBalance", 0
+            BucketDict(fieldValue).Add "MarginTotal", 0
+        End If
+
+        ' Update bucket data
+        BucketDict(fieldValue)("PreBalance") = BucketDict(fieldValue)("PreBalance") + currentBalance
+        BucketDict(fieldValue)("MarginTotal") = BucketDict(fieldValue)("MarginTotal") + (currentBalance * currentMargin)
+
+        ' Accumulate total balance
+        totalBalance = totalBalance + currentBalance
+        totalPreCompression = totalPreCompression + (currentMargin * currentBalance)
+
+ContinueLoop:
+    Next r
+
+    ' Step 2: Apply compression starting from the highest bucket
+    remainingReduction = totalBalance * CPR * HYLoanPrepayPct
+    sortedKeys = BucketDict.Keys
+    Call SortDictionaryKeysDescending(sortedKeys)
+
+    For i = LBound(sortedKeys) To UBound(sortedKeys)
+        BucketKey = sortedKeys(i)
+
+        ' Get pre-compression balance
+        Dim bucketBalance As Double
+        bucketBalance = BucketDict(BucketKey)("PreBalance")
+
+        ' Apply reduction
+        If remainingReduction > 0 Then
+            If bucketBalance <= remainingReduction Then
+                ' Fully reduce the bucket
+                remainingReduction = remainingReduction - bucketBalance
+                BucketDict(BucketKey)("PostBalance") = 0
+            Else
+                ' Partially reduce the bucket
+                BucketDict(BucketKey)("PostBalance") = bucketBalance - remainingReduction
+                remainingReduction = 0
+            End If
+        Else
+            ' No reduction needed
+            BucketDict(BucketKey)("PostBalance") = bucketBalance
+        End If
+
+        ' Accumulate total post-compression balance
+        totalCompressedBalance = totalCompressedBalance + BucketDict(BucketKey)("PostBalance")
+        If BucketDict(BucketKey)("PostBalance") > 0 Then
+            totalPostCompression = totalPostCompression + BucketDict(BucketKey)("MarginTotal")
+        End If
+    Next i
+
+    ' Normalize pre- and post-compression margins
+    If totalBalance > 0 Then
+        totalPreCompression = totalPreCompression / totalBalance
+    End If
+    If totalCompressedBalance > 0 Then
+        totalPostCompression = totalPostCompression / totalCompressedBalance
+    Else
+        totalPostCompression = 0
+    End If
+
+    ' Step 3: Output the results to a new worksheet
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    Set outputWs = ThisWorkbook.Sheets(OutputSheetName)
+    If Not outputWs Is Nothing Then outputWs.Delete
+    Application.DisplayAlerts = True
+    On Error GoTo 0
+
+    Set outputWs = ThisWorkbook.Sheets.Add
+    outputWs.Name = OutputSheetName
+
+    ' Write headers
+    rowCounter = 1
+    outputWs.Cells(rowCounter, 1).Value = "Bucket (Rate)"
+    outputWs.Cells(rowCounter, 2).Value = "Pre-Compression Balance"
+    outputWs.Cells(rowCounter, 3).Value = "% of Total Pool (Pre-Compression)"
+    outputWs.Cells(rowCounter, 4).Value = "Post-Compression Balance"
+    outputWs.Cells(rowCounter, 5).Value = "% of Total Pool (Post-Compression)"
+    rowCounter = rowCounter + 1
+
+    ' Write bucket data from highest to lowest
+    For i = LBound(sortedKeys) To UBound(sortedKeys)
+        BucketKey = sortedKeys(i)
+        With BucketDict(BucketKey)
+            preCompressionPct = .Item("PreBalance") / totalBalance
+            If totalCompressedBalance > 0 Then
+                postCompressionPct = .Item("PostBalance") / totalCompressedBalance
+            Else
+                postCompressionPct = 0
+            End If
+
+            outputWs.Cells(rowCounter, 1).Value = BucketKey & "%"
+            outputWs.Cells(rowCounter, 2).Value = .Item("PreBalance")
+            outputWs.Cells(rowCounter, 3).Value = preCompressionPct
+            outputWs.Cells(rowCounter, 4).Value = .Item("PostBalance")
+            outputWs.Cells(rowCounter, 5).Value = postCompressionPct
+        End With
+        rowCounter = rowCounter + 1
+    Next i
+
+    ' Write summary
+    rowCounter = rowCounter + 1
+    outputWs.Cells(rowCounter, 1).Value = "Total Balance (Pre-Compression)"
+    outputWs.Cells(rowCounter, 2).Value = totalBalance
+    rowCounter = rowCounter + 1
+    outputWs.Cells(rowCounter, 1).Value = "Total Balance (Post-Compression)"
+    outputWs.Cells(rowCounter, 2).Value = totalCompressedBalance
+    rowCounter = rowCounter + 1
+    outputWs.Cells(rowCounter, 1).Value = "Margin Compression (bps)"
+    outputWs.Cells(rowCounter, 2).Value = (totalPreCompression - totalPostCompression) * 10000
+
+    ' Format output
+    outputWs.Columns("A:E").AutoFit
+    outputWs.Range("A1:E1").Font.Bold = True
+    outputWs.Range("A1:E1").Interior.Color = RGB(211, 211, 211)
+
+End Sub
 
