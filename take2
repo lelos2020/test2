@@ -155,3 +155,26 @@ Sub OutputSummaryStatistics(ws As Worksheet)
         Row = Row + 1
     Next StatKey
 End Sub
+
+
+Sub InitializeSummaryStats()
+    ' Create a dictionary to store summary statistics
+    Set SummaryStats = CreateObject("Scripting.Dictionary")
+    
+    ' Add placeholders for each statistic
+    SummaryStats.Add "Portfolio Balance", 0
+    SummaryStats.Add "Number of Loans", 0
+    SummaryStats.Add "Average Loan Size", 0
+    SummaryStats.Add "WA Original LTV", 0
+    SummaryStats.Add "WA Current LTV", 0
+    SummaryStats.Add "WA Original Term", 0
+    SummaryStats.Add "WA Remaining Term", 0
+    SummaryStats.Add "WA Interest Rate Margin", 0
+    SummaryStats.Add "WA Interest Rate", 0
+    SummaryStats.Add "Loans in Arrears (1+ Months)", 0
+    SummaryStats.Add "Loans in Arrears (3+ Months)", 0
+    SummaryStats.Add "Fixed Portfolio %", 0
+    SummaryStats.Add "Floating Portfolio %", 0
+    SummaryStats.Add "Portfolio Yield", 0
+    SummaryStats.Add "Stressed Portfolio Yield", 0
+End Sub
