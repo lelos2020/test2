@@ -1,0 +1,146 @@
+Public Sub AnalyzeCompression(ws As Worksheet, colDict As Object)
+
+    ' Inputs from the Control tab
+    Dim CPR As Double, HYShare As Double
+    CPR = ThisWorkbook.Sheets("Control").Cells(1, 9).Value
+    HYShare = ThisWorkbook.Sheets("Control").Cells(1, 10).Value
+
+    If CPR <= 0 Or HYShare <= 0 Then
+        MsgBox "Invalid CPR or HY Loans percentage. Please check the Control tab inputs.", vbCritical
+        Exit Sub
+    End If
+
+    ' Define loan parameters
+    Dim floatingLoans As Collection
+    Dim currentBalance As Double, interestRateType As Double, margin As Double
+    Dim isFixedToFloating As Boolean, reversionDate As Date
+    Dim floatingLoan As Variant
+    Dim i As Long
+
+    ' Initialize collection
+    Set floatingLoans = New Collection
+
+    ' Loop through loans and filter floating loans and F2F loans in floating period
+    For i = startRow To lastRow
+        currentBalance = ws.Cells(i, colDict("AR67")).Value
+        interestRateType = ws.Cells(i, colDict("AR107")).Value ' Interest Rate Type
+        margin = ws.Cells(i, colDict("AR110")).Value ' Margin
+
+        ' Identify fixed-to-floating loans currently in the floating period
+        isFixedToFloating = (interestRateType = 5)
+        If isFixedToFloating Then
+            reversionDate = ws.Cells(i, colDict("AR121")).Value
+            If DateDiff("d", reversionDate, pcd) >= 0 Then
+                interestRateType = 1 ' Treat as floating
+            End If
+        End If
+
+        ' Add floating loans or floating F2F loans to collection
+        If interestRateType = 1 And currentBalance > 0 Then
+            floatingLoans.Add Array(margin, currentBalance, i) ' Store margin, balance, row index
+        End If
+    Next i
+
+    ' Sort loans by margin in descending order
+    Set floatingLoans = SortFloatingLoans(floatingLoans)
+
+    ' Apply compression logic
+    Dim totalReduction As Double
+    totalReduction = CPR * HYShare * totalBalance
+
+    Dim remainingReduction As Double
+    remainingReduction = totalReduction
+
+    Dim compressionResults As Collection
+    Set compressionResults = New Collection
+
+    For Each floatingLoan In floatingLoans
+        margin = floatingLoan(0)
+        currentBalance = floatingLoan(1)
+        i = floatingLoan(2)
+
+        If remainingReduction > 0 Then
+            Dim reduction As Double
+            reduction = WorksheetFunction.Min(currentBalance, remainingReduction)
+            currentBalance = currentBalance - reduction
+            remainingReduction = remainingReduction - reduction
+        End If
+
+        ' Store the compressed results
+        compressionResults.Add Array(margin, currentBalance, i)
+    Next floatingLoan
+
+    ' Output results to a new tab
+    Call OutputCompressionResults(ws, compressionResults, totalReduction)
+
+End Sub
+
+Private Function SortFloatingLoans(floatingLoans As Collection) As Collection
+    Dim loanArray() As Variant
+    Dim i As Long, j As Long
+    Dim temp As Variant
+    Dim sorted As Collection
+
+    ' Transfer collection to array for sorting
+    ReDim loanArray(1 To floatingLoans.Count)
+    For i = 1 To floatingLoans.Count
+        loanArray(i) = floatingLoans(i)
+    Next i
+
+    ' Sort array by margin (descending)
+    For i = LBound(loanArray) To UBound(loanArray) - 1
+        For j = i + 1 To UBound(loanArray)
+            If loanArray(i)(0) < loanArray(j)(0) Then
+                temp = loanArray(i)
+                loanArray(i) = loanArray(j)
+                loanArray(j) = temp
+            End If
+        Next j
+    Next i
+
+    ' Transfer sorted array back to collection
+    Set sorted = New Collection
+    For i = LBound(loanArray) To UBound(loanArray)
+        sorted.Add loanArray(i)
+    Next i
+
+    Set SortFloatingLoans = sorted
+End Function
+
+Private Sub OutputCompressionResults(ws As Worksheet, compressionResults As Collection, totalReduction As Double)
+    Dim outputWs As Worksheet
+    Dim i As Long, rowCounter As Long
+
+    ' Create or clear the Compression tab
+    On Error Resume Next
+    Set outputWs = ThisWorkbook.Sheets("Compression")
+    On Error GoTo 0
+
+    If outputWs Is Nothing Then
+        Set outputWs = ThisWorkbook.Sheets.Add
+        outputWs.Name = "Compression"
+    End If
+    outputWs.Cells.Clear
+
+    ' Write headers
+    rowCounter = 1
+    outputWs.Cells(rowCounter, 1).Value = "Margin"
+    outputWs.Cells(rowCounter, 2).Value = "Balance After Compression"
+    outputWs.Cells(rowCounter, 3).Value = "Loan Row Index"
+    outputWs.Cells(rowCounter, 4).Value = "Total Reduction Applied"
+    outputWs.Cells(2, 4).Value = totalReduction
+
+    rowCounter = rowCounter + 1
+
+    ' Write results
+    Dim result As Variant
+    For Each result In compressionResults
+        outputWs.Cells(rowCounter, 1).Value = result(0) ' Margin
+        outputWs.Cells(rowCounter, 2).Value = result(1) ' Balance After Compression
+        outputWs.Cells(rowCounter, 3).Value = result(2) ' Loan Row Index
+        rowCounter = rowCounter + 1
+    Next result
+
+    ' Autofit columns for readability
+    outputWs.Columns.AutoFit
+End Sub
