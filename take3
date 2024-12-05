@@ -315,3 +315,253 @@ Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, Output
     Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
 End Sub
 
+
+
+----------v3 full---------
+
+Public Sub StratifyData(ws As Worksheet, colDict As Object, fieldCode As String, OutputSheetName As String, TableTitle As String, StratificationMode As String, Optional FieldInfo As CFieldValidationInfo)
+    Dim IsCalculatedField As Boolean
+    Dim IsListField As Boolean
+    Dim uniqueItems As Scripting.Dictionary
+    Dim fieldValue As Variant
+    Dim buckets() As Double
+    Dim range As Double, stepInterval As Double
+    Dim floatingLoans As Collection
+    Dim compressionWs As Worksheet
+    
+    IsCalculatedField = (fieldCode = "Remaining Term" Or fieldCode = "Seasoning" Or fieldCode = "Year of Origination" Or fieldCode = "Time to Reversion")
+    
+    If FieldInfo.DataType = "List" Then
+        Set uniqueItems = CreateObject("Scripting.Dictionary")
+        IsListField = True
+    End If
+
+    If Not IsCalculatedField Then
+        If Not colDict.Exists(fieldCode) Then
+            MsgBox "Field code " & fieldCode & " not found in the dataset."
+            Exit Sub
+        End If
+    End If
+    
+    Dim colnumber As Integer
+    colnumber = colDict.item(fieldCode)
+    Dim colCurrentBalance As Integer
+    colCurrentBalance = colDict.item("AR67")
+    Dim remainingTerm As Double
+    Dim seasoning As Double
+    
+    Dim BucketDict As Object
+    Set BucketDict = CreateObject("Scripting.Dictionary")
+    
+    Dim i As Long, j As Long, r As Long
+    Dim BucketKey As String
+
+    If FieldInfo.DataType = "Numeric" And StratificationMode <> "Categorical" And fieldCode <> "AR170" Then
+        Dim WAvg As Double
+        Dim IsPct As Boolean
+        IsPct = False
+        
+        WAvg = SummaryStats(fieldCode & "_WAvg")
+        
+        If WAvg < 1 And WAvg > 0 Then
+           IsPct = True
+        End If
+        
+        range = WAvg
+        
+        If range = 0 Then Exit Sub
+        
+        stepInterval = CRUp(range)
+        numbuckets = Int(range / stepInterval) + 5
+        ReDim buckets(0 To numbuckets)
+        
+        For j = 0 To numbuckets
+            buckets(j) = 0 + (j * stepInterval)
+        Next j
+        
+    ElseIf IsListField Then
+        On Error Resume Next
+        For r = startRow To lastRow
+            fieldValue = ws.Cells(r, colnumber).value
+            If Not uniqueItems.Exists(fieldValue) Then
+                uniqueItems.Add fieldValue, CStr(fieldValue)
+            End If
+        Next r
+        On Error GoTo 0
+        
+        For Each item In uniqueItems
+            BucketDict.Add CStr(item), New collection
+        Next item
+        numbuckets = uniqueItems.Count
+        ReDim buckets(0 To numbuckets)
+        
+    ElseIf StratificationMode = "Date" And fieldCode = "Year of Origination" Then
+        Set uniqueItems = CreateObject("Scripting.Dictionary")
+        On Error Resume Next
+        For r = startRow To lastRow
+            OriginationDate = ws.Cells(r, colDict.item("AR55")).value
+            fieldValue = Year(OriginationDate)
+            If Not uniqueItems.Exists(fieldValue) Then
+                uniqueItems.Add fieldValue, CStr(fieldValue)
+            End If
+        Next r
+        On Error GoTo 0
+        
+        For Each item In uniqueItems
+            BucketDict.Add CStr(item), New collection
+        Next item
+        numbuckets = uniqueItems.Count
+        ReDim buckets(0 To numbuckets)
+    End If
+
+    If fieldCode = "AR170" Or fieldCode = "AR31" Or fieldCode = "AR33" Then
+        numbuckets = 10
+        ReDim buckets(0 To numbuckets)
+        For j = 0 To numbuckets
+            buckets(j) = 0 + j
+        Next j
+    End If
+
+    If StratificationMode = "Categorical" And Not IsListField Then
+        For i = LBound(buckets) To UBound(buckets)
+            BucketKey = CStr(buckets(i))
+            BucketDict.Add BucketKey, New collection
+        Next i
+    ElseIf StratificationMode = "Numerical" Then
+        Dim underflowBucketKey As String
+        underflowBucketKey = "<" & buckets(LBound(buckets))
+        BucketDict.Add underflowBucketKey, New collection
+        
+        For i = LBound(buckets) To UBound(buckets) - 1
+            BucketKey = buckets(i) & "-" & buckets(i + 1)
+            BucketDict.Add BucketKey, New collection
+        Next i
+        
+        Dim overflowBucketKey As String
+        overflowBucketKey = ">" & buckets(UBound(buckets))
+        BucketDict.Add overflowBucketKey, New collection
+    End If
+
+    Dim currentBalance As Double
+    
+    For r = startRow To lastRow
+        If filter = True And ws.Rows(r).EntireRow.Hidden Then GoTo ContinueLoop
+        currentBalance = ws.Cells(r, colCurrentBalance).value
+        If IsCalculatedField Then
+            Select Case fieldCode
+            Case "Remaining Term"
+                maturityDate = ws.Cells(r, colDict.item("AR56")).value
+                remainingTerm = DateDiff("m", pcd, maturityDate)
+                fieldValue = remainingTerm
+            Case "Seasoning"
+                OriginationDate = ws.Cells(r, colDict.item("AR55")).value
+                seasoning = DateDiff("yyyy", OriginationDate, pcd)
+                fieldValue = seasoning
+            Case "Year of Origination"
+                OriginationDate = ws.Cells(r, colDict.item("AR55")).value
+                fieldValue = Year(OriginationDate)
+            Case "Time to Reversion"
+                reversionDate = ws.Cells(r, colDict.item("AR121")).value
+                If reversionDate <> "00/01/1900" And reversionDate <> "" Then
+                    TimeToReversion = DateDiff("yyyy", pcd, reversionDate)
+                    fieldValue = TimeToReversion
+                Else
+                    fieldValue = 0
+                End If
+            End Select
+        Else
+            fieldValue = ws.Cells(r, colnumber).value
+        End If
+
+        Dim bucketFound As Boolean
+        bucketFound = False
+        
+        Select Case StratificationMode
+        Case "Categorical"
+            Dim stringvalue As String
+            stringvalue = CStr(fieldValue)
+            If BucketDict.Exists(stringvalue) Then
+                BucketDict.item(stringvalue).Add Array(r, currentBalance)
+                bucketFound = True
+            End If
+        Case "Numerical"
+            If StratificationMode = "Date" And IsDate(fieldValue) And fieldCode <> "Year of Origination" Then
+                fieldValue = Year(fieldValue)
+            End If
+            If BucketDict.Exists(fieldValue) Then
+                BucketDict.item(fieldValue).Add Array(r, currentBalance)
+                bucketFound = True
+            End If
+            If Not bucketFound And fieldValue < buckets(LBound(buckets)) Then
+                BucketDict.item(underflowBucketKey).Add Array(r, currentBalance)
+            End If
+            For i = LBound(buckets) To UBound(buckets) - 1
+                If fieldValue >= buckets(i) And fieldValue < buckets(i + 1) Then
+                    BucketKey = buckets(i) & "-" & buckets(i + 1)
+                    BucketDict.item(BucketKey).Add Array(r, currentBalance)
+                    bucketFound = True
+                    Exit For
+                End If
+            Next i
+            If Not bucketFound And fieldValue >= buckets(UBound(buckets)) Then
+                BucketDict.item(overflowBucketKey).Add Array(r, currentBalance)
+            End If
+        End Select
+ContinueLoop:
+    Next r
+
+    Call OutputMod.OutputBuckets(ws, BucketDict, OutputSheetName, TableTitle)
+
+    If fieldCode = "AR110" Then
+        Call ProcessFloatingLoans(ws, colDict)
+    End If
+End Sub
+
+Sub ProcessFloatingLoans(ws As Worksheet, colDict As Object)
+    Dim floatingLoans As Collection
+    Dim compressionWs As Worksheet
+    Dim rowCounter As Integer
+    Dim totalBalance As Double
+    Dim totalMargin As Double
+    Dim currentLoanBalance As Double
+    Dim currentMargin As Double
+    Dim interestRateType As Integer
+
+    Set floatingLoans = New Collection
+    Set compressionWs = ThisWorkbook.Sheets.Add
+    compressionWs.Name = "Compression"
+
+    rowCounter = 1
+
+    compressionWs.Cells(rowCounter, 1).Value = "Loan Balance"
+    compressionWs.Cells(rowCounter, 2).Value = "Loan Margin"
+
+    totalBalance = 0
+    totalMargin = 0
+
+    For i = startRow To lastRow
+        interestRateType = ws.Cells(i, colDict("AR107")).Value
+        currentLoanBalance = ws.Cells(i, colDict("AR67")).Value
+        currentMargin = ws.Cells(i, colDict("AR110")).Value
+
+        If interestRateType = 1 Or (interestRateType = 5 And IsLoanInFloatingPeriod(ws, i, colDict)) Then
+            floatingLoans.Add Array(currentLoanBalance, currentMargin)
+            compressionWs.Cells(rowCounter + 1, 1).Value = currentLoanBalance
+            compressionWs.Cells(rowCounter + 1, 2).Value = currentMargin
+
+            totalBalance = totalBalance + currentLoanBalance
+            totalMargin = totalMargin + (currentLoanBalance * currentMargin)
+            rowCounter = rowCounter + 1
+        End If
+    Next i
+
+    compressionWs.Cells(rowCounter + 2, 1).Value = "WA Margin"
+    compressionWs.Cells(rowCounter + 2, 2).Value = totalMargin / totalBalance
+End Sub
+
+Function IsLoanInFloatingPeriod(ws As Worksheet, row As Long, colDict As Object) As Boolean
+    Dim reversionDate As Date
+    reversionDate = ws.Cells(row, colDict("AR121")).Value
+    IsLoanInFloatingPeriod = reversionDate <= pcd
+End Function
+
