@@ -774,3 +774,39 @@ Private Function SortFloatingLoans(floatingLoans As Collection) As Collection
 
     Set SortFloatingLoans = sorted
 End Function
+
+
+
+Private Function SortFloatingLoans(floatingLoans As Collection) As Collection
+    Dim loanArray() As Object
+    Dim i As Long, j As Long
+    Dim temp As Object
+    Dim sorted As Collection
+
+    ' Initialize array for sorting
+    ReDim loanArray(1 To floatingLoans.Count)
+    For i = 1 To floatingLoans.Count
+        Set loanArray(i) = floatingLoans(i) ' Transfer collection elements to array
+    Next i
+
+    ' Sort the array using bubble sort (or replace with another sorting algorithm)
+    For i = LBound(loanArray) To UBound(loanArray) - 1
+        For j = i + 1 To UBound(loanArray)
+            ' Compare based on margin, assuming loanArray(i)(0) holds the margin
+            If loanArray(i)(0) < loanArray(j)(0) Then
+                ' Swap elements
+                Set temp = loanArray(i)
+                Set loanArray(i) = loanArray(j)
+                Set loanArray(j) = temp
+            End If
+        Next j
+    Next i
+
+    ' Convert sorted array back to collection
+    Set sorted = New Collection
+    For i = LBound(loanArray) To UBound(loanArray)
+        sorted.Add loanArray(i)
+    Next i
+
+    Set SortFloatingLoans = sorted
+End Function
