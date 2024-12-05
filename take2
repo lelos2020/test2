@@ -396,3 +396,246 @@ Sub OutputSummaryStatistics(ws As Worksheet)
         Row = Row + 1
     Next StatKey
 End Sub
+
+
+
+
+
+
+
+
+' Main module: LoanAnalysis.vb
+
+Option Explicit
+
+'----------------------- GLOBAL VARIABLES ---------------------------
+
+Public ConfigDict As Object
+Public ErrorLog As Object
+Public SummaryStats As Object
+Public LoanData As Variant ' Array for efficient data handling
+Public StartRow As Long, LastRow As Long, StartTime As Double
+
+'----------------------- MAIN PROCEDURE -----------------------------
+
+Sub AnalyzeLoanData()
+    On Error GoTo ErrorHandler
+
+    ' Initialize settings and data
+    StartTime = Timer
+    InitializeConfig "Config"
+    InitializeErrorLog
+    InitializeSummaryStats
+
+    ' Load loan data into memory
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("LoanData") ' Change "LoanData" to your sheet name
+    LoanData = LoadWorksheetData(ws)
+
+    ' Find start and end rows for analysis
+    StartRow = FindStartRow(ws, "AR1") ' Change "AR1" if needed
+    LastRow = FindLastRow(ws)
+
+    ' Validate the data
+    If Not ValidateLoanData(LoanData) Then
+        MsgBox "Validation failed. Check ErrorLog sheet.", vbCritical
+        Exit Sub
+    End If
+
+    ' Calculate summary statistics
+    CalculateSummaryStatistics ws
+
+    ' Perform stratification for all fields in Config
+    Dim FieldCode As String
+    For Each FieldCode In ConfigDict.Keys
+        StratifyField FieldCode
+    Next FieldCode
+
+    ' Output summary statistics
+    OutputSummaryStatistics ThisWorkbook.Sheets("Summary")
+
+    MsgBox "Analysis complete!", vbInformation
+    Debug.Print "Total Execution Time: " & Timer - StartTime & " seconds"
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "An error occurred: " & Err.Description, vbCritical
+End Sub
+
+'---------------------- CONFIGURATION MODULE ------------------------
+
+Sub InitializeConfig(ConfigSheetName As String)
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets(ConfigSheetName)
+    
+    Dim ConfigData As Variant
+    ConfigData = ws.UsedRange.Value ' Load config sheet into an array
+
+    Set ConfigDict = CreateObject("Scripting.Dictionary")
+    Dim i As Long
+    For i = 2 To UBound(ConfigData, 1) ' Skip header row
+        ConfigDict.Add ConfigData(i, 1), Array(ConfigData(i, 2), ConfigData(i, 3), _
+                                               ConfigData(i, 4), ConfigData(i, 5), _
+                                               ConfigData(i, 6))
+    Next i
+End Sub
+
+'---------------------- ERROR LOGGING MODULE ------------------------
+
+Sub InitializeErrorLog()
+    Set ErrorLog = CreateObject("Scripting.Dictionary")
+    ThisWorkbook.Sheets("ErrorLog").Cells.Clear
+    ThisWorkbook.Sheets("ErrorLog").Range("A1:D1").Value = Array("Row", "Column", "Field Code", "Error Description")
+End Sub
+
+Sub LogError(Row As Long, Column As String, FieldCode As String, Description As String)
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("ErrorLog")
+    Dim NextRow As Long
+    NextRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+    ws.Cells(NextRow, 1).Value = Row
+    ws.Cells(NextRow, 2).Value = Column
+    ws.Cells(NextRow, 3).Value = FieldCode
+    ws.Cells(NextRow, 4).Value = Description
+End Sub
+
+'---------------------- DATA LOADING MODULE -------------------------
+
+Function LoadWorksheetData(ws As Worksheet) As Variant
+    ' Load the entire worksheet data into an array for efficient processing
+    Dim LastRow As Long, LastCol As Long
+    LastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    LastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+    LoadWorksheetData = ws.Range(ws.Cells(1, 1), ws.Cells(LastRow, LastCol)).Value
+End Function
+
+Function FindStartRow(ws As Worksheet, FieldName As String) As Long
+    ' Finds the row where data starts based on FieldName
+    Dim FoundCell As Range
+    Set FoundCell = ws.Cells.Find(What:=FieldName, LookIn:=xlValues, LookAt:=xlWhole)
+    If Not FoundCell Is Nothing Then
+        FindStartRow = FoundCell.Row + 1 ' Data starts after the header
+    Else
+        MsgBox "Field '" & FieldName & "' not found.", vbCritical
+        End
+    End If
+End Function
+
+Function FindLastRow(ws As Worksheet) As Long
+    ' Finds the last row with data in the worksheet
+    FindLastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+End Function
+
+'---------------------- DATA VALIDATION MODULE ----------------------
+
+Function ValidateLoanData(DataArray As Variant) As Boolean
+    Dim FieldCode As String, i As Long, ColIndex As Long
+    Dim ValidationRules As Variant
+    ValidateLoanData = True
+    
+    For Each FieldCode In ConfigDict.Keys
+        ValidationRules = ConfigDict(FieldCode)
+        ColIndex = FindColumnIndex(FieldCode, LoanData)
+
+        If ColIndex = 0 Then
+            LogError -1, FieldCode, "N/A", "Field not found in dataset."
+            ValidateLoanData = False
+            Exit Function
+        End If
+
+        For i = StartRow To LastRow
+            If Not ValidateCell(DataArray(i, ColIndex), ValidationRules(3)) Then
+                LogError i, ColIndex, FieldCode, "Invalid data."
+                ValidateLoanData = False
+            End If
+        Next i
+    Next FieldCode
+End Function
+
+Function ValidateCell(Value As Variant, Rule As String) As Boolean
+    Select Case Rule
+        Case ">0"
+            ValidateCell = IsNumeric(Value) And Value > 0
+        Case ">=0"
+            ValidateCell = IsNumeric(Value) And Value >= 0
+        Case Else
+            ValidateCell = False
+    End Select
+End Function
+
+'---------------------- SUMMARY STATISTICS MODULE -------------------
+
+Sub InitializeSummaryStats()
+    Set SummaryStats = CreateObject("Scripting.Dictionary")
+    SummaryStats.Add "Portfolio Balance", 0
+    SummaryStats.Add "Number of Loans", 0
+    SummaryStats.Add "Average Loan Size", 0
+    SummaryStats.Add "WA Original LTV", 0
+    SummaryStats.Add "WA Current LTV", 0
+    SummaryStats.Add "WA Original Term", 0
+    SummaryStats.Add "WA Remaining Term", 0
+    SummaryStats.Add "WA Interest Rate Margin", 0
+    SummaryStats.Add "WA Interest Rate", 0
+    SummaryStats.Add "Loans in Arrears (1+ Months)", 0
+    SummaryStats.Add "Loans in Arrears (3+ Months)", 0
+    SummaryStats.Add "Fixed Portfolio %", 0
+    SummaryStats.Add "Floating Portfolio %", 0
+    SummaryStats.Add "Portfolio Yield", 0
+    SummaryStats.Add "Stressed Portfolio Yield", 0
+End Sub
+
+Sub CalculateSummaryStatistics(ws As Worksheet)
+    Dim TotalBalance As Double, TotalLoans As Long
+    Dim WeightedOriginalLTV As Double, WeightedCurrentLTV As Double
+    Dim WeightedRemainingTerm As Double, i As Long
+
+    TotalBalance = 0: TotalLoans = 0
+    WeightedOriginalLTV = 0: WeightedCurrentLTV = 0: WeightedRemainingTerm = 0
+
+    For i = StartRow To LastRow
+        Dim CurrentBalance As Double, OriginalLTV As Double
+        Dim CurrentLTV As Double, RemainingTerm As Double
+        
+        CurrentBalance = LoanData(i, ConfigDict("AR67")(1))
+        OriginalLTV = LoanData(i, ConfigDict("AR135")(1))
+        CurrentLTV = LoanData(i, ConfigDict("AR141")(1))
+        RemainingTerm = LoanData(i, ConfigDict("AR61")(1))
+        
+        If CurrentBalance > 0 Then
+            TotalBalance = TotalBalance + CurrentBalance
+            TotalLoans = TotalLoans + 1
+            WeightedOriginalLTV = WeightedOriginalLTV + (OriginalLTV * CurrentBalance)
+            WeightedCurrentLTV = WeightedCurrentLTV + (CurrentLTV * CurrentBalance)
+            WeightedRemainingTerm = WeightedRemainingTerm + (RemainingTerm * CurrentBalance)
+        End If
+    Next i
+
+    If TotalBalance > 0 Then
+        SummaryStats("Portfolio Balance") = TotalBalance
+        SummaryStats("Number of Loans") = TotalLoans
+        SummaryStats("Average Loan Size") = TotalBalance / TotalLoans
+        SummaryStats("WA Original LTV") = WeightedOriginalLTV / TotalBalance
+        SummaryStats("WA Current LTV") = WeightedCurrentLTV / TotalBalance
+        SummaryStats("WA Remaining Term") = WeightedRemainingTerm / TotalBalance
+    End If
+End Sub
+
+'---------------------- STRATIFICATION MODULE -----------------------
+
+Sub StratifyField(FieldCode As String)
+    ' Logic for stratification based on ConfigDict settings
+    ' Example: Numerical, Categorical, etc.
+End Sub
+
+'---------------------- OUTPUT MODULE -------------------------------
+
+Sub OutputSummaryStatistics(ws As Worksheet)
+    Dim StatKey As String, Row As Long
+    Row = 1
+    For Each StatKey In SummaryStats.Keys
+        ws.Cells(Row, 1).Value = StatKey
+        ws.Cells(Row, 2).Value = SummaryStats(StatKey)
+        Row = Row + 1
+    Next StatKey
+End Sub
+
