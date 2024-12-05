@@ -949,3 +949,118 @@ ContinueLoop:
 
 End Sub
 
+-----v7 change in Analysedata
+Sub AnalyzeLoanData()
+    Dim ws As Worksheet
+    Dim cell As Range
+    Dim response As VbMsgBoxResult
+    Dim validationInfo As CFieldValidationInfo
+    Dim colDict As Object
+    Dim colnumber As Integer
+    Dim i As Integer
+    Dim outputWsName As String
+    Dim compressionOutputWsName As String
+
+    filter = False
+    startTime = Timer
+
+    ' Define input and output worksheet names
+    Set ws = ThisWorkbook.Sheets("LLD")
+    outputWsName = "BalanceBucket"
+    compressionOutputWsName = "Compression Results"
+
+    ' ---------------------Variable Initialization-------------------
+    startRow = 0
+    AR1FieldCol = 0
+    ARFieldRow = 0
+
+    ' ------------------Starting Variable Definition----------------------------------
+    ' Searches to find which column contains the AR1 field and then the row with the AR fields
+    Set ARFieldRange = ws.Cells.Find(What:="AR1", LookIn:=xlValues, Lookat:=xlWhole)
+
+    If Not ARFieldRange Is Nothing Then
+        AR1FieldCol = ARFieldRange.Column
+        ARFieldRow = ARFieldRange.Row
+    Else
+        MsgBox "AR1 field not found"
+        Exit Sub
+    End If
+
+    ' Determine the row where the data starts
+    For i = ARFieldRow To 20
+        If IsDate(ws.Cells(i, AR1FieldCol)) Then
+            startRow = ws.Cells(i, AR1FieldCol).Row
+            Exit For
+        End If
+    Next i
+
+    ' Check if there's a filter on tab LLD
+    If ws.AutoFilterMode And ws.FilterMode Then
+        filter = (MsgBox("You have filters on the Loan Data. Do you want to run the strats only on the filtered data?", vbYesNo, "Filter Confirmation") = vbYes)
+    End If
+
+    fieldCodes = Array("AR1", "AR3", "AR5", "AR7", "AR8", "AR16", "AR19", "AR21", "AR22", "AR23", "AR31", "AR32", "AR33", "AR34", "AR35", "AR36", "AR47", "AR55", "AR56", "AR59", "AR61", "AR66", "AR67", "AR69", "AR71", "AR72", "AR80", "AR84", "AR107", "AR108", "AR109", "AR110", "AR118", "AR120", "AR121", "AR122", "AR128", "AR129", "AR130", "AR135", "AR136", "AR137", "AR138", "AR141", "AR143", "AR145", "AR166", "AR169", "AR170", "AR174")
+    
+    ' Initialization of dictionary with column numbers for each field
+    Set colDict = GetColumnNumbersByFieldCodes(ws, fieldCodes)
+
+    ' Ensure relevant column fields given above exist in the data
+    For Each fieldCode In fieldCodes
+        If colDict.Item(fieldCode) = 0 Then
+            MsgBox "One or more field codes not found in the dataset."
+            Exit Sub
+        End If
+    Next fieldCode
+
+    ' Find last row and pool-cut date
+    lastRow = ws.Cells(ws.Rows.Count, colDict.Item("AR67")).End(xlUp).Row
+    pcd = ws.Cells(startRow, AR1FieldCol).Value
+
+    ' -----------------Data Validation Section-----------------------------
+    Set templateWs = ThisWorkbook.Sheets("Template")
+    Set fieldValidations = GetFieldValidationInfo(templateWs, fieldCodes)
+
+    If Not ValidationMod.ValidateData(ws, i, colnumber, validationInfo) Then
+        Exit Sub
+    End If
+
+    ' Clear the output tab
+    Set outputWs = ThisWorkbook.Sheets(outputWsName)
+    If Not outputWs Is Nothing Then
+        outputWs.Cells.Clear
+        Call Clearall
+    End If
+
+    ' Call summary statistics calculation
+    Call StatsMod.CalculateSummaryStatistics(ws, colDict, fieldCodes)
+
+    ' -------------------Stratifications-----------------------------------
+    Dim fieldConfigs As Object
+    Set fieldConfigs = CreateObject("Scripting.Dictionary")
+    Dim configAR110 As New FieldConfig
+
+    ' AR110 - Current Interest Rate
+    configAR110.OutputSheetName = outputWsName
+    configAR110.TableTitle = "Current Interest Rate"
+    configAR110.StratificationMode = "Numerical"
+    Set configAR110.validationInfo = fieldValidations("AR110")
+    fieldConfigs.Add "AR110", configAR110
+
+    ' Call StratifyData for standard stratification
+    Call StratMod.StratifyData(ws, colDict, "AR110", configAR110.OutputSheetName, configAR110.TableTitle, configAR110.StratificationMode, configAR110.validationInfo)
+
+    ' -------------------Compression Analysis-----------------------------------
+    ' Perform compression analysis
+    Call StratifyDataWithCompression(ws, colDict, compressionOutputWsName)
+
+    ' -------------------Logging and Completion-----------------------------------
+    endTime = Timer
+    duration = endTime - startTime
+
+    ThisWorkbook.Sheets("Control").Cells(1, 1).Value = duration
+    ThisWorkbook.Sheets("Control").Cells(1, 2).Value = "All steps completed"
+
+    MsgBox "Analysis and compression completed in " & Format(duration, "0.00") & " seconds.", vbInformation
+End Sub
+
+
