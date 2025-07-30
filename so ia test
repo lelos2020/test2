@@ -1,0 +1,50 @@
+Sub FetchSONIARates()
+    Dim startDate As Date, endDate As Date
+    Dim url As String
+    Dim ws As Worksheet
+    Dim http As Object
+    Dim csvData As String
+    Dim lines As Variant, line As Variant
+    Dim i As Long, outputRow As Long
+
+    ' Prompt user for date range
+    startDate = InputBox("Enter start date (yyyy-mm-dd):", "Start Date")
+    endDate = InputBox("Enter end date (yyyy-mm-dd):", "End Date")
+
+    ' Prepare worksheet
+    Set ws = ThisWorkbook.Sheets(1)
+    ws.Cells.ClearContents
+    ws.Cells(1, 1).Value = "Date"
+    ws.Cells(1, 2).Value = "SONIA Rate"
+    outputRow = 2
+
+    ' Download CSV from Bank of England
+    url = "https://www.bankofengland.co.uk/boeapps/database/Rates.asp?Travel=NIxIRx&into=GBP&Rate=IUMAAZQ&csv.x=44&csv.y=18"
+
+    Set http = CreateObject("MSXML2.XMLHTTP")
+    http.Open "GET", url, False
+    http.Send
+
+    If http.Status = 200 Then
+        csvData = http.ResponseText
+        lines = Split(csvData, vbCrLf)
+        
+        For i = 1 To UBound(lines) ' skip header (line 0)
+            If Trim(lines(i)) <> "" Then
+                line = Split(lines(i), ",")
+                If UBound(line) >= 1 Then
+                    Dim currentDate As Date
+                    currentDate = CDate(line(0))
+                    If currentDate >= startDate And currentDate <= endDate Then
+                        ws.Cells(outputRow, 1).Value = currentDate
+                        ws.Cells(outputRow, 2).Value = line(1)
+                        outputRow = outputRow + 1
+                    End If
+                End If
+            End If
+        Next i
+        MsgBox "Data fetch complete!"
+    Else
+        MsgBox "Failed to retrieve data. Status: " & http.Status
+    End If
+End Sub
