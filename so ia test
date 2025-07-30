@@ -48,3 +48,12 @@ Sub FetchSONIARates()
         MsgBox "Failed to retrieve data. Status: " & http.Status
     End If
 End Sub
+
+If IsDate(Trim(line(0))) Then
+    currentDate = DateValue(Trim(line(0)))
+    If currentDate >= startDate And currentDate <= endDate Then
+        ws.Cells(outputRow, 1).Value = currentDate
+        ws.Cells(outputRow, 2).Value = line(1)
+        outputRow = outputRow + 1
+    End If
+End If
