@@ -1,0 +1,21 @@
+from bql import Request, BqlService
+import pandas as pd
+
+bq = BqlService()
+
+# Define your universe: all European ABS/RMBS/CMBS new issues in last 30d
+rq = Request(
+    universes=["NEW_ISSUE_UNIVERSE(EUR,30)"],
+    fields=[
+        "SECURITY_NAME",
+        "ISSUE_DT",
+        "AMT_OUTSTND",         # Outstanding amount
+        "OAS_SPREAD",         # OAS to benchmark
+        "YLD_YTW_MID",        # Yield-to-worst
+        "MEDIAN_SPREAD",      # Market‐adjusted spread
+        "CRR_SPREAD_CHG",     # Change since announcement
+        "RATING_SPLIT",       # Rating buckets
+        "MATURITY_DT"
+    ]
+)
+resp = bq.execute(rq)[0].df()
