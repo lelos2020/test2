@@ -14,3 +14,6 @@ Sub ApplyTransparencyGradient()
         series.Format.Line.Transparency = (i - 1) * transparencyStep / 100
     Next i
 End Sub
+
+
+=IF(AND(Sheet1!A2=Sheet2!A2, Sheet1!B2=Sheet2!B2, Sheet1!A2=Sheet3!A2, Sheet1!B2=Sheet3!B2, Sheet1!A2=Sheet4!A2, Sheet1!B2=Sheet4!B2, Sheet1!A2=Sheet5!A2, Sheet1!B2=Sheet5!B2), "MATCH", "MISMATCH")
