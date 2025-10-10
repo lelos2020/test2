@@ -1,0 +1,168 @@
+Excellent — that’s a really useful clarification.
+If you’re using Copilot Chat exclusively through Microsoft Teams, then your setup and optimisation approach changes significantly — you’re operating in the “central Copilot Chat experience” rather than the app-specific copilots (Word/Excel).
+
+Let’s adapt everything precisely for your case:
+you’ll get (a) a Teams-specific setup sheet you can keep in OneDrive or pin as a chat message, and (b) a walk-through for how to enhance Teams-based Copilot Chat to work effectively for securitisation workflows.
+
+⸻
+
+🧾 1. COPILOT CHAT (TEAMS) SETUP SHEET
+
+(This is the version to save or pin inside Teams — ready for copy-paste)
+
+⸻
+
+🧠 Context
+
+You are assisting an Executive Director in Structured Finance / Securitised Products at a major investment bank.
+You support data analysis, credit structuring, modelling, and legal review for securitised transactions across EMEA.
+Always respond as a technical, sceptical, data-driven expert banker using concise British English and structured formatting.
+
+⸻
+
+🧩 Teams Copilot Prompt Anchors
+
+Paste one of these at the top of a chat each time you start a new conversation thread (Copilot resets context between sessions).
+
+General Context Anchor
+
+You are my structured-finance Copilot.
+Your task is to assist with securitisation analytics, credit memos, legal summaries, and transaction coordination.
+Prioritise factual accuracy, analytical clarity, and professional tone.
+
+Sub-anchors you can reuse depending on task:
+
+Task Type	Anchor Text
+Data / Modelling	Focus on securitisation modelling and loan-level analytics. Provide formulas, Python-in-Excel snippets, and logic explanations that can be copied into MS365 models.
+Legal / Docs	Focus on reviewing transaction documentation (Master Definitions, Servicing Agreement, etc.). Identify triggers, covenants, and risk implications clearly.
+Credit / Rating Agency	Focus on comparing or explaining rating-agency criteria (S&P, Fitch, Moody’s, DBRS, KBRA). Present key PD/LGD or CE differences concisely.
+Internal Memo / Email	Draft a short, precise note suitable for senior management or legal counsel. Use formal tone, avoid speculation, and summarise implications clearly.
+
+
+⸻
+
+🧩 Reusable Prompt Library (Teams Edition)
+
+Credit & Structuring
+	•	“Summarise the OC build-up logic during the revolving period and what triggers a switch to pro-rata.”
+	•	“Create a short table comparing Fitch vs S&P base case PDs for UK prime RMBS.”
+	•	“Explain how the CCA contributes to credit enhancement in a warehouse structure.”
+
+Modelling
+	•	“List quality checks to confirm tab consistency between ‘Balances,’ ‘PayDue,’ and ‘Arrears’ tabs.”
+	•	“Draft pseudocode for computing cumulative defaults by static pool vintage.”
+	•	“Explain formula logic for WA CE given target OC and haircut-adjusted purchase price.”
+
+Legal
+	•	“Summarise the PDL definition and its operational impact.”
+	•	“Compare the cure period clauses across the last two draft Servicing Agreements.”
+	•	“Identify borrower notification obligations under the Assignment of Receivables section.”
+
+Execution & Communication
+	•	“Summarise this Teams thread into three bullet points for management update.”
+	•	“Write a short paragraph for an internal credit memo describing the deal structure and risk mitigants.”
+	•	“Draft a closing checklist summary grouped by party (issuer, servicer, counsel).”
+
+⸻
+
+🧠 Tone & Output Style
+	•	Use structured, factual, and concise language.
+	•	Default to bullet lists or short tables for clarity.
+	•	If context is unclear, state assumptions explicitly.
+	•	Avoid contrast framing (“on the one hand…”) and vague commentary.
+	•	Always assume you are addressing experienced professionals.
+
+⸻
+
+✅ Pinned Quick Commands for Teams Chat
+
+(You can pin these in your Copilot chat sidebar)
+
+Command	Function
+/context	Inserts your general structured-finance persona block
+/summarise	Summarise Teams thread or meeting
+/memo	Create short executive memo (2–3 paragraphs)
+/compare	Compare two documents, drafts, or structures
+/formula	Generate or explain Excel / Python logic
+
+(These aren’t literal commands but short messages you can pin or type quickly — Teams Copilot interprets them as instructions.)
+
+⸻
+
+🧭 2. WALK-THROUGH — ENHANCING TEAMS COPILOT CHAT
+
+⸻
+
+A. Pin and Reuse Context
+	1.	Open Copilot Chat in Teams (left sidebar → “Chat with Copilot”).
+	2.	At the top, paste your General Context Anchor and pin it (hover → three dots → “Pin”).
+	3.	Copilot will remember pinned messages during the current session.
+	4.	When starting new chats, re-paste or use /context.
+
+⸻
+
+B. Use Document Context
+
+You can attach files to Copilot in Teams:
+	1.	In a Copilot chat, click the paperclip icon → upload your file (Word, Excel, PDF).
+	2.	Copilot can now read that file’s contents within your tenant boundary.
+	3.	Then type prompts like:
+	•	“Summarise key triggers in this file.”
+	•	“List differences from previous version of the same agreement.”
+	•	“Extract numeric thresholds and section references.”
+
+(All processing remains inside your enterprise environment.)
+
+⸻
+
+C. Enable Meeting and Chat Context
+
+If your admin has allowed it:
+	1.	Go to Teams Settings → Privacy → Allow Copilot to access meeting recaps and chat history.
+	2.	After a meeting, open Copilot in the meeting chat → type “Summarise key actions by party.”
+	3.	It will generate a follow-up summary you can refine into your closing email or tracker.
+
+⸻
+
+D. Build a OneNote “Prompt Library”
+	1.	Open OneNote (Teams integrated) → create section “Copilot Prompts.”
+	2.	Copy the “Reusable Prompt Library” table above.
+	3.	You can then copy-paste any line into Copilot when needed.
+Tip: Add tags (⭐ “Frequently Used”, 🔍 “Credit”, ⚖️ “Legal”).
+
+⸻
+
+E. Create a Quick-Access Workflow
+
+Here’s how you can use Copilot efficiently day to day:
+
+Scenario	Action
+Reviewing a draft Servicing Agreement	Upload doc → run Legal Anchor + “Summarise PDL and trigger sections.”
+Preparing for internal credit call	Paste context + “Create 5-bullet executive summary from the attached memo.”
+Reconciling modelling notes	Copy model summary → “Explain how CE builds from OC using haircut and discounted purchase price.”
+Writing internal update	“Summarise last 10 messages in this thread and produce clean summary for senior management.”
+
+
+⸻
+
+F. Stay Organised
+	•	Create a Teams tab called “Copilot Resources” → link to your OneNote prompt library and setup sheet.
+	•	Keep attachments minimal per session (Copilot context resets each chat).
+	•	Use @Copilot in team channels to summarise discussions or documents directly.
+	•	If allowed, request Copilot for Excel / Word preview for deeper modelling and doc support — the chat version integrates smoothly once enabled.
+
+⸻
+
+📎 Summary
+
+Enhancement	What to Do	Benefit
+Pinned Context Block	Paste & pin your general persona	Ensures expert-level tone
+File Attachments	Upload docs to Copilot chat	Allows contextual analysis
+Meeting Context	Enable recap integration	Automatic structured summaries
+OneNote Prompt Library	Store & reuse best prompts	Efficiency and consistency
+Anchors per Task	Use task-specific micro-contexts	Keeps responses targeted
+
+
+⸻
+
+Would you like me to produce a Word version of this “Teams Copilot Setup & Usage Guide” — fully formatted with tables, headings, and a checklist section you can share internally or keep pinned in Teams? It will include a short executive summary and a step-by-step appendix.
