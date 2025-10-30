@@ -749,3 +749,395 @@ Requires **ALL noteholder consent** to amend:
 **Analysis complete. Structure is robust for senior lender participation, subject to ongoing monitoring of revolving portfolio composition, trigger compliance, and AUTO1 credit profile. Borrowing base discipline and multiple CE layers provide substantial protection, though dependency on AUTO1 recourse (while solvent) and zero asset yield create tail risk if AUTO1 defaults during revolving period.**
 
 **Ready for follow-up questions or deeper analysis on specific aspects.**
+----------------------------------------------
+**PRIORITY 5 WATERFALL ANALYSIS: "JUNIOR VOLUNTARY PREPAYMENTS + RESERVES"**
+
+Excellent question. This is a **structurally unusual feature** that warrants careful scrutiny. Let me break down the mechanics, rationale, and senior lender risk implications.
+
+---
+
+## **(A) FACTS: WHAT IS PRIORITY 5?**
+
+**Waterfall Position:**
+```
+Priority 4: Account bank fees
+Priority 5: Junior voluntary prepayments + Junior Reserve Proceeds [CONDITIONAL: "only if no senior/mezz shortfalls"]
+Priority 6: Senior notes interest
+Priority 7: Replenish senior reserve
+Priority 8: Senior notes mandatory redemption
+```
+
+**Components of Priority 5:**
+1. **Voluntary Prepayments:** AUTO1 (as junior noteholder) can voluntarily prepay junior notes
+2. **Junior Reserve Proceeds:** Release of excess cash held in junior reserve
+
+**Source:** MDCTA Schedule 4 Priority 5 states:
+- *"Proceeds from ineligible vehicle trading to junior noteholders, as long as no senior or mezzanine shortfalls"*
+- Also covers voluntary prepayments under Junior Loan Agreement Clause 7.2(b)
+- Also covers Junior Reserve Proceeds per MDCTA Clause 2.3(c)(iv)
+
+---
+
+## **(B) ECONOMIC RATIONALE: WHY DOES THIS EXIST?**
+
+**Purpose - Sponsor Cash Management:**
+
+1. **Ineligible Vehicle Proceeds:** 
+   - Vehicles that become **ineligible** (exceed 300 days, lose insurance, retention of title issues) drop out of Net Borrowing Base
+   - These vehicles still have value and can be sold
+   - Proceeds from ineligible vehicle sales go to **juniors** (not seniors/mezz) because seniors/mezz only financed eligible vehicles
+   - **Logic:** Senior lenders never financed these vehicles, so proceeds shouldn't go to seniors
+
+2. **Junior Voluntary Prepayment:**
+   - AUTO1 (junior holder) may want to **reduce exposure** if transaction is over-collateralized
+   - Allows AUTO1 to **recycle capital** into business rather than trap it in the structure
+   - **Benefit to seniors:** Keeps AUTO1 liquid and able to honour recourse obligations
+
+3. **Junior Reserve Release:**
+   - Junior reserve holds excess cash for junior protection
+   - If transaction is performing well and reserve is overfunded, release back to AUTO1
+   - **Avoids dead capital** sitting idle in reserve earning minimal return
+
+**Market Precedent:**
+- Common in **sponsor-retained junior** structures where sponsor provides recourse support
+- Allows sponsor to manage junior position dynamically
+- Incentivizes sponsor to keep transaction performing (rewards good performance with cash release)
+
+---
+
+## **(C) RISK ANALYSIS: THE CRITICAL ISSUE**
+
+**The Problem: Priority 5 Sits ABOVE Senior Interest**
+
+**Normal Expectation:**
+```
+SAFE STRUCTURE:
+1. Taxes/fees
+2. Transaction expenses
+3. Senior interest ← Pay seniors first
+4. Senior reserve ← Then protect liquidity
+5. Junior prepayments ← Then pay juniors if excess
+```
+
+**Actual Structure:**
+```
+ACTUAL (AUTO1):
+1. Taxes/fees
+2. Transaction expenses  
+3. Junior prepayments [if no shortfalls] ← Junior gets paid...
+4. Senior interest ← ...BEFORE senior interest
+5. Senior reserve ← ...and BEFORE senior reserve replenishment
+```
+
+**Why This Matters:**
+
+| **Scenario** | **Collections Available** | **Priority 5 Payment** | **Impact on Seniors** |
+|---|---|---|---|
+| **Strong performance** | EUR 60m | EUR 5m to juniors | No impact - seniors still paid EUR 55m interest ✓ |
+| **Tight liquidity** | EUR 55m | EUR 5m to juniors? | **Seniors get EUR 50m vs EUR 54.6m needed** ✗ |
+| **Distress** | EUR 50m | Skipped (shortfall test) | Seniors get full EUR 50m available ✓ |
+
+**The Key Question:** What is the **definition of "no senior/mezz shortfalls"** and **when is it tested**?
+
+---
+
+## **(D) SAFEGUARD ANALYSIS: DOES THE "NO SHORTFALLS" TEST WORK?**
+
+**CRITICAL: The effectiveness of Priority 5 depends entirely on HOW "no shortfalls" is defined.**
+
+**OPTION A: PROSPECTIVE TEST (Protective)**
+```
+Test: "Are there sufficient funds to pay Priorities 6-9 IN FULL 
+       AFTER deducting Priority 5 payment?"
+
+Calculation:
+- Collections available: EUR 55m
+- Priority 5 proposed: EUR 5m  
+- Remaining for P6-9: EUR 50m
+- Required for P6-9: EUR 54.6m (senior interest + reserves + mandatory redemption)
+- Test result: FAIL (EUR 50m < EUR 54.6m)
+- Action: SKIP Priority 5, apply full EUR 55m to senior obligations
+```
+**Outcome:** Senior lenders fully protected ✓
+
+**OPTION B: RETROSPECTIVE TEST (Dangerous)**
+```
+Test: "Were there any shortfalls on PRIOR settlement dates?"
+
+Calculation:
+- Prior month: No arrears (all paid in full)
+- Test result: PASS (no historical shortfalls)
+- Action: Pay Priority 5 EUR 5m to juniors
+- Remaining: EUR 50m for senior obligations
+- Required: EUR 54.6m
+- Result: SENIOR SHORTFALL of EUR 4.6m this month
+```
+**Outcome:** Senior lenders subordinated to junior voluntary prepayments ✗
+
+---
+
+## **(E) CONTRACTUAL LANGUAGE REVIEW**
+
+**What I Found in Documents:**
+
+**From Scope Rating Report (Section 4.7):**
+- Priority 2: "Proceeds from ineligible vehicle trading to junior noteholders, **as long as no senior or mezzanine shortfalls**"
+
+**From MDCTA Schedule 4 (Waterfall):**
+- Priority 5 language references:
+  - Junior Loan Agreement Clause 7.2(b) (Voluntary Prepayment)
+  - MDCTA Clause 2.3(c)(iv) (Junior Reserve release conditions)
+
+**CRITICAL GAP:** The documents provided do NOT contain the **precise calculation methodology** for the "no shortfalls" test.
+
+**WHAT SENIOR LENDERS MUST VERIFY:**
+
+1. **Test Timing:** Is it calculated **pro forma** (after deducting P5) or **ex post** (historical only)?
+
+2. **Test Scope:** Does "no shortfalls" mean:
+   - Sufficient to pay P6-9 in full? ✓ (protective)
+   - No arrears from prior periods? ✗ (insufficient)
+   - Sufficient to pay just P6 (senior interest)? ✗ (inadequate - ignores reserves)
+
+3. **Calculation Agent Discretion:** Can the Calculation Agent **refuse** Priority 5 payment if it believes a shortfall would result?
+
+4. **Reserve Inclusion:** Does the test require funding of:
+   - Senior reserve replenishment (P7)? (should be YES)
+   - Mezzanine reserve replenishment (P13)? (should be YES)
+   - Mandatory redemptions (P8-9)? (should be YES)
+
+---
+
+## **(F) SPECIFIC RISKS WITH EUR 1,150M UPSIZE**
+
+**Materiality Increases:**
+
+**Pre-Upsize (EUR 875m):**
+- Annual senior interest: EUR 41.6m (at Euribor 3% + 175bps)
+- Monthly senior interest: EUR 3.5m
+- If Priority 5 pays EUR 2m to juniors when EUR 60m available → 3.3% of collections
+- **Low risk:** EUR 2m junior payment unlikely to impair EUR 3.5m senior interest
+
+**Post-Upsize (EUR 1,150m):**
+- Annual senior interest: EUR 54.6m (at Euribor 3% + 175bps)
+- Monthly senior interest: EUR 4.6m
+- If Priority 5 pays EUR 5m to juniors when EUR 60m available → 8.3% of collections
+- **HIGHER RISK:** EUR 5m junior payment more material relative to EUR 4.6m senior interest
+
+**Stress Scenario (Post-Upsize):**
+```
+Assumptions:
+- EUR 1,150m drawn
+- Cash trading margin falls to 7% (still above 5% trigger)
+- Collections slow due to inventory ageing
+- Monthly collections: EUR 50m
+
+Waterfall:
+P1-4: Taxes/fees/expenses: EUR 2m
+P5: Junior voluntary prepayment: EUR 5m [QUESTION: Is this paid?]
+P6: Senior interest: EUR 4.6m
+P7: Senior reserve replenishment: EUR 1m  
+P8: Mandatory redemption: EUR 37.4m (to stay within BB)
+
+Total required (P6-8): EUR 43m
+Available after P1-4: EUR 48m
+
+If P5 PAID: EUR 48m - EUR 5m = EUR 43m → EXACT MATCH (no cushion)
+If P5 SKIPPED: EUR 48m available → EUR 5m cushion for senior obligations
+
+SENIOR RISK: In tight liquidity, Priority 5 payments could eliminate safety margin
+```
+
+---
+
+## **(G) IS THIS COMMENSURATE WITH SENIOR LENDER RISK?**
+
+### **VERDICT: IT DEPENDS**
+
+**ACCEPTABLE IF:**
+1. ✓ "No shortfalls" test is **prospective and comprehensive**
+   - Tests ability to pay P6-9 in full AFTER P5 payment
+   - Includes senior reserve replenishment, not just interest
+   - Calculation agent has discretion to refuse payment
+
+2. ✓ **Historical performance shows** Priority 5 correctly skipped in tight months
+   - Review 12-24 months of settlement reports
+   - Verify P5 = EUR 0 when liquidity tight
+
+3. ✓ **Junior reserve proceeds** are truly excess (not needed for senior protection)
+   - Junior reserve is separate from senior/mezz reserves
+   - Release only occurs when transaction overcollateralized
+
+4. ✓ **Ineligible vehicle proceeds** rationale is sound
+   - Seniors never financed ineligible vehicles (by definition outside Net BB)
+   - Therefore proceeds shouldn't go to seniors (no loss of security)
+
+**UNACCEPTABLE IF:**
+1. ✗ Test is retrospective only (checks historical arrears, not current sufficiency)
+2. ✗ Test excludes reserve replenishment requirements
+3. ✗ Calculation agent mechanically pays P5 without assessing senior impact
+4. ✗ Historical settlement reports show P5 paid when liquidity was tight
+
+---
+
+## **(H) RECOMMENDED ACTIONS FOR SENIOR LENDERS**
+
+### **IMMEDIATE (Pre-7th Amendment Consent):**
+
+**1. Obtain and Review Exact Contractual Language:**
+```
+REQUEST FROM AUTO1/COUNSEL:
+□ Junior Loan Agreement Clause 7.2(b) (Voluntary Prepayment provisions)
+□ MDCTA Clause 2.3(c)(iv) (Junior Reserve release conditions)  
+□ MDCTA Schedule 4 Priority 5 detailed language (not summary)
+□ Calculation Agent procedures for "no shortfalls" test
+```
+
+**2. Request Historical Settlement Reports (12-24 months):**
+```
+ANALYZE:
+□ How often was Priority 5 payment > EUR 0?
+□ What were collections levels when P5 paid?
+□ Was P5 ever skipped? Under what conditions?
+□ Calculate P5 as % of collections in each month
+□ Identify tightest liquidity months - was P5 correctly skipped?
+```
+
+**3. Verify Test Calculation:**
+```
+OBTAIN FROM CALCULATION AGENT:
+□ Written description of "no shortfalls" test methodology
+□ Worked example showing calculation steps
+□ Confirmation test is PRO FORMA (after P5 deduction)
+□ Confirmation test covers P6-9 (interest + reserves + mandatory redemption)
+```
+
+**4. Model Post-Upsize Impact:**
+```
+STRESS SCENARIOS:
+□ EUR 1,150m drawn, cash margin 7%, collections EUR 50m/month
+□ Calculate max Priority 5 payment that doesn't impair P6-9
+□ Model Euribor rising to 4-5% (increases P6 senior interest)
+□ Assess headroom reduction from EUR 875m → EUR 1,150m
+```
+
+**5. Negotiate Amendment Language (If Test Inadequate):**
+```
+PROPOSED FIX:
+Add to 7th Amendment:
+
+"Priority 5 payments shall only be made if the Calculation Agent 
+determines, in its sole discretion, that funds available (after 
+deducting such Priority 5 payment) are sufficient to pay in full all 
+amounts due under Priorities 6 through 9 on such Settlement Date, 
+including:
+  (i) senior notes interest and fees in full;
+  (ii) required senior reserve amount in full;
+  (iii) mezzanine notes interest in full;
+  (iv) required mezzanine reserve amount in full;
+  (v) mandatory redemptions required by borrowing base compliance."
+```
+
+### **NEGOTIATING POSITION:**
+
+**IF AUTO1/ARRANGERS RESIST:**
+
+**Option A: Request Priority Swap**
+- Move Priority 5 to **after** Priority 13 (mezz reserve replenishment)
+- Rationale: "Junior voluntary prepayments should only occur after all senior/mezz obligations MET, not merely 'no shortfall expected'"
+
+**Option B: Require Calculation Agent Sign-Off**
+- "Priority 5 payment requires prior written approval of Calculation Agent, acting reasonably, confirming no adverse impact on senior/mezz positions"
+
+**Option C: Cap Priority 5**
+- "Priority 5 payments limited to [5%] of collections on any Settlement Date"
+- Prevents large junior distributions in tight liquidity
+
+**Option D: Clarify Ineligible Vehicle Proceeds Only**
+- "Priority 5 limited to proceeds from ineligible vehicle sales only (not voluntary prepayments from other sources)"
+- Aligns with economic rationale (ineligibles weren't financed by seniors)
+
+---
+
+## **(I) PRACTICAL ASSESSMENT: HOW MATERIAL IS THIS RISK?**
+
+**Mitigating Factors (Why It May Be Acceptable):**
+
+1. **AUTO1's Incentive Alignment:**
+   - AUTO1 is junior holder AND provides recourse support
+   - Taking Priority 5 payment that impairs seniors would trigger own support obligation
+   - **Self-correcting:** AUTO1 unlikely to voluntarily prepay juniors if it creates senior shortfall it must cover
+
+2. **5% Cash Margin Trigger:**
+   - If collections deteriorate materially, **stop-purchase trigger** (5% cash margin) terminates revolving
+   - Transaction enters amortisation before liquidity becomes critically tight
+   - Priority 5 likely immaterial in early amortisation (collections focused on P6-9)
+
+3. **Historical Performance:**
+   - Cash margin currently 13-14% (nearly 3x the 5% trigger)
+   - Strong cushion suggests Priority 5 payments haven't historically stressed the structure
+   - 2025 Operating Audit showed no compliance issues (implies waterfall functioning correctly)
+
+4. **Combined P&I Waterfall:**
+   - All collections (principal + interest from vehicles) flow through one waterfall
+   - **Large pool of funds** (EUR 1.97bn revenue H1 2025 / 6 months = EUR 328m/month)
+   - Priority 5 payments (likely EUR 2-5m) are **<2% of monthly collections**
+   - Immaterial unless collections collapse (in which case 5% trigger stops it)
+
+**Aggravating Factors (Why It Requires Vigilance):**
+
+1. **Upsize Magnifies Risk:**
+   - EUR 54.6m annual senior interest (post-upsize) vs EUR 41.6m (current)
+   - Priority 5 becomes more material as % of required senior obligations
+
+2. **Rising Rate Environment:**
+   - 1M Euribor currently ~3.7% (October 2024)
+   - Senior interest is floating (Euribor + 175bps)
+   - If Euribor → 5%, senior interest = 6.75% = EUR 77.6m annually
+   - **Interest cost growth without corresponding collection growth** squeezes liquidity
+
+3. **Opacity of Test:**
+   - Public documents don't clearly define "no shortfalls" calculation
+   - Reliance on Calculation Agent discretion (potential conflicts if Auto1-appointed)
+
+---
+
+## **(J) FINAL RECOMMENDATION**
+
+### **CONCLUSION:**
+
+**Priority 5 is STRUCTURALLY UNUSUAL but MAY BE ACCEPTABLE** if:
+1. Contractual test is properly drafted (prospective + comprehensive)
+2. Historical evidence shows it functions correctly
+3. Immateriality confirmed (Priority 5 typically <2-3% of collections)
+
+**HOWEVER:** This is a **LEGITIMATE CONCERN** that warrants:
+
+### **RISK RATING: MEDIUM (manageable with proper safeguards)**
+
+### **ACTION REQUIRED BEFORE 7TH AMENDMENT CONSENT:**
+
+| **Priority** | **Action** | **Accept 7th Amendment If** |
+|---|---|---|
+| **CRITICAL** | Obtain Priority 5 contractual language + Calculation Agent procedures | Test is prospective + comprehensive |
+| **CRITICAL** | Review 12 months settlement reports | Priority 5 skipped when liquidity tight OR consistently <2% collections |
+| **HIGH** | Model post-upsize Priority 5 impact | Priority 5 max payment <5% of required senior obligations |
+| **MEDIUM** | Negotiate amendment clarification if test inadequate | AUTO1 agrees to clarify test language |
+| **NICE TO HAVE** | Request Calculation Agent independent certification | Independent party confirms test methodology sound |
+
+### **NEGOTIATING STANCE:**
+
+**ACCEPTABLE:**
+- Priority 5 remains in current form IF satisfactory evidence provided that test works correctly
+
+**PREFERRED:**
+- Add explicit language to 7th Amendment clarifying "no shortfalls" = pro forma sufficiency for P6-13
+
+**WALK-AWAY:**
+- If Priority 5 test is retrospective only OR no historical evidence of correct operation → **REJECT 7th Amendment** or demand waterfall amendment
+
+---
+
+**BOTTOM LINE:** Priority 5 is **economically defensible** (ineligible vehicle proceeds, sponsor cash management) but **structurally risky** (sits above senior interest). **Acceptable with robust safeguards; unacceptable without them.** This is exactly the type of technical detail that separates a disciplined senior lender from one who gets surprised in stress scenarios.
+
+**Your question demonstrates excellent credit judgment - this IS a point that requires verification before consent.**
