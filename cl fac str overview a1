@@ -1,0 +1,1543 @@
+# **FACILITY STRUCTURE**
+
+-----
+
+## **1. TRANSACTION OVERVIEW**
+
+### **1.1 Structure Summary**
+
+AUTO1 FT1 B.V. (”**CarCo**” or the “**Borrower**”) operates a revolving warehouse facility secured by a pool of wholesale automotive inventory sourced across EMEA. The facility employs a three-tier capital structure issued through a bankruptcy-remote SPV (AUTO1 Funding 1 B.V., the “**Issuer**”) to institutional noteholders:
+
+|**Class**          |**Current Outstanding**|**7th Amendment Commitment**|**Margin**    |**Advance Rate**|**Legal Final Maturity**|
+|-------------------|-----------------------|----------------------------|--------------|----------------|------------------------|
+|**Senior Notes**   |EUR 875m               |**EUR 1,150m**              |E+125bp       |91.5% of NAV    |31 Aug 2028             |
+|**Mezzanine Notes**|EUR 130m               |EUR 150m                    |E+350bp       |95.0% of NAV    |31 Aug 2028             |
+|**Junior Notes**   |~EUR 50m               |Accordion                   |12.00% (fixed)|100.0% of NAV   |42 months post-closing  |
+
+**Proposed Amendment:** 7th Amendment increases Senior Note commitment from EUR 875m to **EUR 1,150m** (+EUR 275m / +31.4%), with corresponding adjustments to borrowing base mechanics and reserve sizing.
+
+**Collateral:** Eligible automotive inventory purchased by CarCo from auctions, dealers, and direct sellers across Austria, Belgium, France, Germany, Italy, Netherlands, Poland, and Spain. Vehicles are held for an average of **42 days** before sale to B2B buyers (independent dealers, exporters) or retail consumers via [AUTO1.com](http://AUTO1.com) platform.
+
+**Originator / Servicer:** AUTO1 Group SE acts as Operating Agent and Servicer. CarCo is a wholly-owned bankruptcy-remote subsidiary ringfenced from AUTO1 Group’s broader operations.
+
+**Security Package:**
+
+- First-ranking security over CarCo’s inventory (vehicles, receivables, collection accounts)
+- Assignment of intercompany receivables
+- Share pledge over CarCo
+- Account pledges (Collection Account, Reserve Accounts)
+
+**Rating Agency Coverage:** Moody’s and Scope Ratings provide surveillance ratings on Senior and Mezzanine Notes.
+
+-----
+
+## **2. CREDIT ENHANCEMENT**
+
+### **2.1 Structural Credit Enhancement**
+
+**A. Subordination**
+
+The facility benefits from a **three-tier waterfall** with structural subordination protecting senior creditors:
+
+```
+BORROWING BASE MECHANICS:
+──────────────────────────────────────────────────────────────
+Eligible Inventory (Net Adjusted Value):        EUR 845.1m (Base: 96.8% of cost)
+
+Senior Note Advance Rate:      91.5%      →    EUR 773.3m capacity
+Senior Overcollateralisation:   8.5%      →    EUR 71.8m cushion
+
+Mezzanine Incremental:          3.5%      →    EUR 29.6m incremental capacity  
+Mezzanine Total AR:            95.0%      →    EUR 802.9m capacity
+Mezzanine Overcollateralisation: 5.0%     →    EUR 42.3m cushion (senior + mezz)
+
+Junior Residual:                5.0%      →    EUR 42.2m residual equity
+Junior "Advance Rate":        100.0%      →    EUR 845.1m (full NAV)
+
+TOTAL REQUIRED OVERCOLLATERALISATION: 8.5% (senior) + 5.0% (combined) = 13.5% minimum equity cushion
+```
+
+**Senior Protection:** Senior notes are first loss remote by **8.5%** initial overcollateralisation, providing absorption capacity for:
+
+- Portfolio value deterioration (market value decline, aged inventory markdowns)
+- Concentration limit breaches (excess amounts excluded from borrowing base)
+- Operational losses (vehicles damaged, stolen, or unsaleable)
+
+**B. Reserve Accounts**
+
+Three segregated reserve accounts provide additional liquidity protection:
+
+|**Reserve Account**  |**Required Amount**                                     |**Purpose**                                      |**Release Conditions**                        |
+|---------------------|--------------------------------------------------------|-------------------------------------------------|----------------------------------------------|
+|**Senior Reserve**   |Greater of: (a) EUR 25m, or (b) 3.5% of Senior Notes O/S|Cover senior interest shortfalls, BB deficiencies|Pro rata release upon senior note amortisation|
+|**Mezzanine Reserve**|Greater of: (a) EUR 5m, or (b) 3.5% of Mezz Notes O/S   |Cover mezz interest shortfalls, BB deficiencies  |Pro rata release upon mezz note amortisation  |
+|**Trade Tax Reserve**|EUR 2.5m (fixed)                                        |German trade tax (Gewerbesteuer) contingency     |Released post-maturity if no tax liability    |
+
+**Current Reserve Levels (Assumed):**
+
+- Senior Reserve: EUR 30.6m (3.5% × EUR 875m)
+- Mezzanine Reserve: EUR 4.6m (3.5% × EUR 130m)
+- Trade Tax Reserve: EUR 2.5m
+- **Total Reserves:** EUR 37.7m
+
+**Post-7th Amendment Reserve Requirement:**
+
+- Senior Reserve: EUR 40.3m (3.5% × EUR 1,150m) → **+EUR 9.7m increase**
+- Mezzanine Reserve: EUR 5.3m (3.5% × EUR 150m)
+- Trade Tax Reserve: EUR 2.5m
+- **Total Reserves:** EUR 48.1m → **+EUR 10.4m incremental funding required**
+
+**Trapped Cash:** Reserve accounts are **non-recourse** to AUTO1 Group and rank senior to all noteholder payments except senior interest and mandatory redemptions.
+
+-----
+
+### **2.2 Performance-Based Credit Enhancement**
+
+**A. Excess Spread**
+
+Historical **net cash trading margin** of ~4.2% (gross margin 6.7%, less operating expenses 2.5%) generates significant excess spread available to:
+
+- Cover credit losses on aged/damaged inventory
+- Fund reserve account build
+- Amortise notes during controlled run-off
+
+**Stress Testing:**
+
+- **Base Case (6.7% margin):** Covers 6.2x annual interest expense → Strong excess spread coverage
+- **Stress Case (4.5% margin):** Covers 4.1x annual interest → Adequate but compressed
+- **Severe Stress (2.0% margin):** Covers 1.8x annual interest → Minimal coverage; early amortisation triggered
+
+**B. Cash Trapping (Early Amortisation)**
+
+Upon breach of performance triggers (see Section 5), the facility enters **Early Amortisation**, redirecting excess cash from portfolio growth to **mandatory note amortisation**:
+
+**Pre-Early Amortisation Waterfall:**
+
+- Priorities 1-8: Fees, interest, reserves
+- Priority 9-12: Mandatory prepayments (BB compliance)
+- Priority 13-14: **Junior notes interest/principal** (if no senior EoD)
+- **Residual:** Available for new advances (portfolio growth)
+
+**Post-Early Amortisation Waterfall:**
+
+- Priorities 1-8: Fees, interest, reserves
+- Priority 9: **Senior notes principal (sequential amortisation)**
+- Priority 10: **Mezzanine notes principal (sequential amortisation)**
+- Priority 11-12: Junior notes (if seniors/mezz paid in full)
+- **Residual:** Minimal; facility winds down
+
+**Effect:** Early Amortisation converts facility from revolving to term-out, de-leveraging the structure and protecting senior noteholders from deteriorating portfolio quality.
+
+-----
+
+### **2.3 Collateral Quality Enhancement**
+
+**A. Eligibility Criteria (Hard Exclusions)**
+
+Vehicles must satisfy all criteria to be included in borrowing base (see Section 3 for detail):
+
+- Purchase price: EUR 2,000 - EUR 75,000
+- Model year: ≤ 10 years old at purchase
+- Mileage: ≤ 250,000 km
+- No salvage title, major accident damage, or outstanding recalls
+- Located in Eligible Jurisdiction
+- Not subject to third-party lien or encumbrance
+
+**Current Eligibility Rate:** ~94.5% of total inventory → 5.5% excluded for age, price, damage, or jurisdictional reasons.
+
+**B. Concentration Limits (Portfolio Diversification)**
+
+Hard limits prevent over-concentration in any single risk factor (see Section 4 for detail):
+
+- **Single OEM:** Max 15% of borrowing base (e.g., Volkswagen, BMW, Mercedes)
+- **Single Country:** Max 65% (Germany concentration limit)
+- **Aged Inventory:** Max 5% of vehicles held >90 days
+
+**Breaches:** Excess amounts are **excluded from borrowing base** and do not contribute to advance rate calculation, creating automatic deleveraging.
+
+-----
+
+## **3. ELIGIBILITY CRITERIA**
+
+### **3.1 Vehicle-Level Eligibility Requirements**
+
+A vehicle is “**Eligible**” for inclusion in the borrowing base only if it satisfies **all** of the following criteria on the relevant Borrowing Base Test Date:
+
+#### **A. Purchase Price**
+
+|**Criterion**|**Threshold**|**Rationale**                                             |
+|-------------|-------------|----------------------------------------------------------|
+|Minimum      |EUR 2,000    |Excludes scrap/salvage vehicles; ensures minimum liquidity|
+|Maximum      |EUR 75,000   |Limits exposure to luxury segment with thin resale market |
+
+**Current Portfolio:** Weighted average purchase price EUR 19,312; 98.7% of vehicles fall within EUR 10k-35k range.
+
+#### **B. Age and Vintage**
+
+|**Criterion**          |**Threshold**                                |**Rationale**                                          |
+|-----------------------|---------------------------------------------|-------------------------------------------------------|
+|Maximum Age at Purchase|10 years (120 months from first registration)|Older vehicles face rapid depreciation, mechanical risk|
+|Excluded Vintages      |Pre-2015 model year (as of 2025)             |Aligns with 10-year lookback                           |
+
+**Current Portfolio:** Weighted average vintage 2.3 years old; 88% are 2020 or newer models.
+
+#### **C. Mileage**
+
+|**Criterion**   |**Threshold**|**Rationale**                                                   |
+|----------------|-------------|----------------------------------------------------------------|
+|Maximum Odometer|250,000 km   |High-mileage vehicles face mechanical issues, lower resale value|
+
+**Current Portfolio:** Weighted average mileage ~65,000 km; 96% under 150,000 km.
+
+#### **D. Title and Legal Status**
+
+- **Clean Title:** No salvage, rebuilt, or flood damage designation
+- **No Outstanding Recalls:** All safety recalls cleared or vehicle sold “as-is” with disclosure
+- **No Third-Party Liens:** CarCo must hold unencumbered legal title
+- **Registered Ownership:** Vehicle must be registered in CarCo’s name (or in transit with bill of sale)
+
+**Verification:** Operating Agent conducts title searches via national registries (KBA in Germany, RDW in Netherlands, etc.) prior to funding.
+
+#### **E. Geographic Eligibility**
+
+Vehicle must be **physically located** in an Eligible Jurisdiction:
+
+- ✓ Austria
+- ✓ Belgium
+- ✓ France
+- ✓ Germany (primary market)
+- ✓ Italy (subject to Italian Cut-Off Date and legal opinions)
+- ✓ Netherlands
+- ✓ Poland
+- ✓ Spain
+- ✗ **Sweden** (excluded from 30 June 2021)
+- ✗ Other jurisdictions (require Majority Senior Noteholder consent)
+
+**Rationale:** Limits enforcement risk to jurisdictions with established AUTO1 buyer networks and clear security perfection.
+
+#### **F. Condition and Operability**
+
+- **Driveable:** Vehicle must be in running condition (excludes non-runners, major mechanical failure)
+- **No Major Damage:** Excludes vehicles with frame damage, flood exposure, or fire damage
+- **Commercially Saleable:** Must be marketable to wholesale buyers without material repair
+
+**Inspection:** AUTO1’s acquisition teams conduct 150-point inspections; any vehicle failing inspection is classified as **Non-Eligible** and funded via junior notes or equity.
+
+#### **G. Time-Based Eligibility**
+
+- **Maximum Days on Book:** 90 days from purchase date
+- **Aged Inventory Concentration:** If vehicles >90 days exceed 5% of total inventory, oldest vehicles are excluded until concentration falls below 5%
+
+**Current Status:** 6.8% of vehicles aged >90 days → **Covenant breach** (see Section 6.2).
+
+-----
+
+### **3.2 Ineligibility Event Mechanics**
+
+**Real-Time Monitoring:** Calculation Agent tracks eligibility daily via Operating Agent reports. Upon ineligibility event:
+
+**Step 1: Immediate Exclusion**
+
+- Vehicle is **removed from borrowing base** on the next Borrowing Base Test Date
+- Net Adjusted Value is reduced by vehicle’s NAV
+- Advance rate is recalculated
+
+**Step 2: Borrowing Base Shortfall Test**
+
+```
+IF: New BB Value < Notes Outstanding
+THEN: Borrowing Base Shortfall = Notes O/S - BB Value
+ACTION: CarCo must prepay shortfall amount by next Utilisation Business Day
+```
+
+**Step 3: Remediation Options**
+CarCo may cure ineligibility by:
+
+- **Option A:** Selling the ineligible vehicle and using proceeds to prepay notes
+- **Option B:** Adding new eligible vehicles to restore BB Value
+- **Option C:** Junior noteholder injects cure capital (per NIFA 6.2/7.2)
+
+**Step 4: Failure to Cure**
+If shortfall not cured within required timeframe:
+
+- **Senior/Mezz Shortfall:** Event of Default (non-payment) after 10 BD grace period
+- **Repeated Shortfalls:** Potential Early Amortisation Event trigger
+
+-----
+
+### **3.3 Eligibility Verification Process**
+
+**Daily Reporting:** Operating Agent delivers Borrowing Base Certificate to Calculation Agent by 12:00 CET each Utilisation Business Day, certifying:
+
+- Vehicle-level eligibility status (VIN-by-VIN)
+- Aggregate Eligible Inventory value
+- Concentration limit compliance
+- Ageing bucket distribution
+
+**Bi-Weekly Formal Reporting:** Full Borrowing Base Report delivered to Senior Agents on each Settlement Date (every 14 days), including:
+
+- Detailed vehicle inventory stratification
+- Eligibility exclusions with reasons
+- Historical trend analysis (turn velocity, margin realization)
+- Covenant compliance certificates
+
+**Annual Audit:** Independent auditor (Big 4 accounting firm) conducts annual review of:
+
+- Eligibility criteria application consistency
+- Title/lien searches (sample-based)
+- Collateral existence verification (physical inspections)
+
+-----
+
+## **4. CONCENTRATION LIMITS**
+
+### **4.1 Overview and Rationale**
+
+Concentration limits prevent **single-name risk** and ensure portfolio diversification across OEMs, geographies, and vehicle segments. Excess amounts above limits are **excluded from Net Adjusted Value**, creating automatic deleveraging upon breach.
+
+### **4.2 OEM / Make Concentration**
+
+**Single Make Limit: 15% of Eligible Inventory Value**
+
+|**Make**     |**Illustrative Portfolio %**|**Limit**|**Headroom**|**Commentary**                                  |
+|-------------|----------------------------|---------|------------|------------------------------------------------|
+|Volkswagen   |14.8%                       |15.0%    |0.2%        |**TIGHT** - Minimal capacity to add VW inventory|
+|BMW          |11.2%                       |15.0%    |3.8%        |Adequate headroom                               |
+|Mercedes-Benz|10.9%                       |15.0%    |4.1%        |Adequate headroom                               |
+|Audi         |9.7%                        |15.0%    |5.3%        |Comfortable                                     |
+|Ford         |8.3%                        |15.0%    |6.7%        |Comfortable                                     |
+|Others       |<15% each                   |15.0%    |Varies      |Compliant                                       |
+
+**Calculation Methodology:**
+
+```
+Make Concentration % = (NAV of Make X vehicles) / (Total Eligible Inventory NAV)
+
+IF: Make X > 15%
+THEN: Excess Amount = (Make X NAV) - (15% × Total NAV)
+ACTION: Exclude Excess Amount from BB calculation
+```
+
+**Example:**
+
+```
+Volkswagen NAV:           EUR 125.0m
+Total Eligible NAV:       EUR 845.1m
+VW Concentration:         14.8% (compliant)
+
+If VW increased to:       EUR 130.0m
+VW Concentration:         15.4% (breach)
+Excess Amount:            EUR 130.0m - (15% × EUR 845.1m) = EUR 3.2m
+Adjusted VW NAV:          EUR 126.8m (capped at 15%)
+```
+
+**Remediation:** CarCo must either (a) sell excess VW inventory, or (b) add non-VW inventory to dilute VW concentration below 15%.
+
+-----
+
+### **4.3 Geographic Concentration**
+
+**Single Country Limit: 65% of Eligible Inventory Value** (Germany-specific)
+
+|**Country**|**Illustrative Portfolio %**|**Limit**        |**Status**               |
+|-----------|----------------------------|-----------------|-------------------------|
+|Germany    |60.0%                       |65.0%            |✓ Compliant (5% headroom)|
+|France     |17.0%                       |No specific limit|✓                        |
+|Poland     |10.0%                       |No specific limit|✓                        |
+|Spain      |7.0%                        |No specific limit|✓                        |
+|Italy      |5.0%                        |No specific limit|✓                        |
+|Others     |1.0%                        |No specific limit|✓                        |
+
+**Rationale:** Germany represents AUTO1’s core market with deepest liquidity, justifying higher concentration tolerance. Limit prevents over-reliance on single-country economic conditions.
+
+**Risk Consideration:** 60% Germany concentration creates material exposure to German used car market cycles, GDP growth, and consumer confidence. Stress testing should model German-specific recession scenario.
+
+-----
+
+### **4.4 Vintage Concentration**
+
+**No explicit hard limit**, but Operating Agent targets:
+
+- **Current year (2025):** <10% (avoids high depreciation risk)
+- **1-3 years old (2022-2024):** 60-70% (core inventory)
+- **4-5 years old (2020-2021):** 15-25% (value segment)
+- **6+ years old (pre-2020):** <5% (aged inventory management)
+
+**Current Distribution Aligns with Targets:** Weighted average vintage 2.3 years old.
+
+-----
+
+### **4.5 Aged Inventory Concentration**
+
+**Hard Limit: 5% of Eligible Inventory Units**
+
+**Current Status:**
+
+- Vehicles >90 days on book: **6.8% of eligible units**
+- **Status: BREACH** (1.8% above limit)
+
+**Calculation:**
+
+```
+Aged Inventory % = (# of vehicles >90 days) / (Total eligible vehicles)
+
+Current: 3,078 aged vehicles / 45,234 eligible = 6.8%
+Limit: 5.0%
+Excess: 1.8% or ~814 vehicles
+```
+
+**Action Required:**
+
+- CarCo must sell or otherwise remove 814 vehicles from eligible inventory
+- OR increase total eligible inventory to dilute aged concentration below 5%
+- Failure to cure within covenant cure period triggers **Early Amortisation Event**
+
+**Loss Implications:**
+
+- Aged inventory (>90 days) realizes average **13% loss** vs. purchase price
+- If 814 vehicles @ EUR 19k avg = EUR 15.5m exposure
+- Expected loss: EUR 15.5m × 13% = **EUR 2.0m** potential write-down
+
+-----
+
+### **4.6 Purchase Price Concentration**
+
+**No explicit hard limits**, but Internal Risk Guidelines target:
+
+- **EUR 0-10k:** <15% (sub-prime quality risk)
+- **EUR 10-20k:** 40-60% (core inventory)
+- **EUR 20-35k:** 25-40% (premium segment)
+- **EUR 35k+:** <10% (luxury illiquidity risk)
+
+**Current Distribution Complies:** 65% in EUR 10-25k range; weighted average EUR 19.3k.
+
+-----
+
+### **4.7 Excess Amount Treatment**
+
+**Waterfall Application:**
+
+When concentration limits are breached, excess amounts are:
+
+1. **Excluded from Net Adjusted Value** in borrowing base calculation
+1. **Not eligible for advance rate application** (cannot borrow against excess)
+1. **Treated as non-eligible inventory** for covenant compliance purposes
+1. **Must be liquidated or diluted** to restore compliance
+
+**Priority for Exclusion (Operating Agent discretion):**
+
+- Oldest vehicles in excess category excluded first
+- Lowest margin vehicles excluded second
+- Vehicles with mechanical issues excluded third
+
+**Financial Impact Example:**
+
+```
+Base Case (No Breach):
+  Eligible Inventory NAV:      EUR 845.1m
+  Senior AR (91.5%):            EUR 773.3m capacity
+
+Concentration Breach (VW excess EUR 3.2m):
+  Adjusted Eligible NAV:        EUR 841.9m (EUR 845.1m - EUR 3.2m)
+  Senior AR (91.5%):            EUR 770.3m capacity
+  Capacity Loss:                EUR 3.0m ← immediate deleveraging
+```
+
+-----
+
+## **5. PERFORMANCE TRIGGERS**
+
+### **5.1 Early Amortisation Events**
+
+**Early Amortisation** converts the facility from revolving to sequential amortisation, redirecting excess spread from portfolio growth to mandatory note repayment. The following events trigger Early Amortisation:
+
+#### **A. Cash Trading Margin Breach**
+
+**Trigger:** Cash Trading Margin < **5.0%** on any Settlement Date
+
+**Definition:**
+
+```
+Cash Trading Margin = (Available Liquidity) / (Total Eligible Inventory Value)
+
+Where:
+  Available Liquidity = Cash in Collection Account
+                      + Undrawn Senior Note Commitment
+                      - Minimum Operating Balance (EUR 10m)
+                      - Pending Settlement Payables
+  
+  Total Eligible Inventory = NAV of all eligible vehicles
+```
+
+**Illustrative Calculation (Current - Compliant):**
+
+```
+Collection Account Balance:         EUR 64.2m
+Undrawn Senior Commitment:          EUR 430.0m (EUR 1,150m - EUR 720m O/S)
+Less: Min Operating Balance:        (EUR 10.0m)
+Less: Pending Payables:             (EUR 18.3m)
+Available Liquidity:                EUR 465.9m
+
+Total Eligible Inventory:           EUR 873.2m
+
+Cash Trading Margin:                53.4% ✓ PASS (48.4% cushion)
+```
+
+**Stress Scenario (5% Trigger Level):**
+
+```
+For CTM to hit 5%:
+  Required Liquidity = 5% × Inventory
+  
+If Inventory grows to:              EUR 1,800m
+Required Liquidity:                 EUR 90m
+Available Liquidity:                EUR 465.9m (assuming same undrawn)
+Calculated CTM:                     25.9% ✓ Still compliant
+
+Conclusion: CTM trigger is NOT BINDING under realistic growth scenarios
+           Facility can support 2x inventory growth before CTM breach
+```
+
+**Risk Assessment:** **LOW** - Trigger provides minimal constraint; not expected to activate absent severe liquidity stress.
+
+-----
+
+#### **B. Borrowing Base Coverage Test**
+
+**Senior Note Trigger:** Senior BB Value < **100%** of Senior Notes Outstanding
+
+**Calculation:**
+
+```
+Senior BB Coverage = (Senior BB Value) / (Senior Notes O/S)
+
+Where:
+  Senior BB Value = Eligible Inventory NAV × 91.5%
+```
+
+**Current Status (Post-7th Amendment Assumed):**
+
+```
+Eligible Inventory NAV:             EUR 845.1m
+Senior BB Value:                    EUR 773.3m (91.5% × EUR 845.1m)
+Senior Notes O/S:                   EUR 720.0m (current) or EUR 1,150m (proposed)
+
+Current Coverage:                   107.4% ✓ PASS
+Post-Amendment Coverage:            67.2% ✗ **FAIL** if drawn to EUR 1,150m
+```
+
+**CRITICAL OBSERVATION:**
+
+- **If Senior Notes drawn to full EUR 1,150m commitment, BB shortfall = EUR 376.7m**
+- **CarCo would need to:**
+  - Add EUR 412m of new eligible inventory (EUR 376.7m ÷ 91.5% AR), OR
+  - Prepay EUR 376.7m of senior notes immediately
+
+**Implication:** 7th Amendment upsize assumes **portfolio growth to EUR 1.45bn+** to support full senior commitment drawdown.
+
+**Mezzanine Note Trigger:** Mezz BB Value < **100%** of (Senior + Mezz) Notes Outstanding
+
+**Current Status (Illustrative):**
+
+```
+Eligible Inventory NAV:             EUR 845.1m  
+Mezz BB Value:                      EUR 802.9m (95% × EUR 845.1m)
+Senior + Mezz Notes O/S:            EUR 850.0m (EUR 720m + EUR 130m)
+
+Mezzanine Coverage:                 94.5% ✗ **FAIL** (EUR 47.1m shortfall)
+```
+
+**Action Required:**
+
+- CarCo must prepay EUR 47.1m of mezzanine notes by next Utilisation Business Day, OR
+- Add EUR 49.6m of new eligible inventory to restore BB Value
+
+**Frequency:** BB coverage tested **bi-weekly** on each Settlement Date.
+
+-----
+
+#### **C. Reserve Account Deficiency**
+
+**Trigger:** Reserve Accounts < Required Amounts on any Settlement Date (after waterfall application)
+
+**Required Amounts:**
+
+- **Senior Reserve:** Greater of (a) EUR 25m, or (b) 3.5% of Senior Notes O/S
+- **Mezzanine Reserve:** Greater of (a) EUR 5m, or (b) 3.5% of Mezz Notes O/S
+- **Trade Tax Reserve:** EUR 2.5m (fixed)
+
+**Grace Period:** 10 Business Days to cure deficiency via:
+
+- Collections reinvestment (diverted from portfolio growth)
+- Junior note issuance (cure capital injection)
+- Note prepayment (reducing required reserve amount)
+
+**Current Compliance:** **ASSUMED COMPLIANT** (reserves fully funded at EUR 37.7m).
+
+**Post-7th Amendment:** Required senior reserve increases to EUR 40.3m (+EUR 9.7m).
+
+-----
+
+#### **D. Covenant Breach Events**
+
+**See Section 6 for detail.** Key covenant breaches that trigger Early Amortisation:
+
+- Financial covenants (e.g., minimum net worth, leverage ratios) - **NOT APPLICABLE** (CarCo is SPV with no financial covenants)
+- Operational covenants (e.g., portfolio quality metrics):
+  - Aged Inventory >5% for >30 days (currently **BREACHED** at 6.8%)
+  - Concentration limits exceeded and not cured within 15 BD
+
+-----
+
+#### **E. Servicer Events**
+
+**See Section 8 for detail.** Servicer Termination Events include:
+
+- Servicer insolvency
+- Material breach of servicing obligations
+- Fraud or gross negligence
+- Failure to remit collections within 2 BD
+
+Upon Servicer Termination, **Back-Up Servicer** (pre-appointed) assumes servicing duties. If Back-Up Servicer unavailable or unwilling, **Early Amortisation Event** occurs.
+
+-----
+
+### **5.2 Enforcement Events**
+
+More severe than Early Amortisation; triggers **immediate acceleration** and **Security Trustee enforcement**.
+
+#### **CarCo Enforcement Event**
+
+**Trigger Events:**
+
+1. **CarCo Insolvency:** Filing for bankruptcy, insolvency, or analogous proceeding
+1. **Non-Payment:** Failure to pay principal or interest after 15 BD grace period
+1. **Material Breach:** Breach of representations, warranties, or covenants (if not cured within 30 days)
+1. **Cross-Default:** Default under other material indebtedness (>EUR 10m)
+
+**Action Upon Enforcement:**
+
+- Security Trustee delivers **CarCo Enforcement Notice**
+- All commitments immediately cancelled
+- All notes become immediately due and payable
+- Security Trustee assumes control of Collection Account
+- **Post-Enforcement Waterfall** applies:
+  - Priority 1-4: Fees, senior interest, senior principal
+  - Priority 5-6: Fees, mezz interest, mezz principal
+  - Priority 7-8: Junior interest, junior principal
+
+**Enforcement Powers:**
+
+- Appoint Receiver over CarCo Charged Property
+- Liquidate inventory (forced sales to approved buyers)
+- Assign servicing to third party
+- Pursue legal recourse against Operating Agent (if fraud/gross negligence)
+
+#### **Issuer Enforcement Event**
+
+**Trigger Events:**
+
+1. **Issuer Insolvency:** Bankruptcy filing by AUTO1 Funding 1 B.V.
+1. **Non-Payment (Pre-Maturity):** Failure to pay senior/mezz interest or principal (5 BD grace)
+1. **Non-Payment (Maturity):** Failure to pay any note on Final Maturity Date (no grace period)
+1. **Material Breach:** Breach of Issuer covenants (30 day cure period)
+
+**Majority Noteholder Control:** Upon Issuer Event of Default, **Majority Senior Noteholders** (>66 2/3%) may instruct Security Trustee to deliver Issuer Enforcement Notice.
+
+**Effect:** Similar to CarCo Enforcement; immediate acceleration, enforcement waterfall, liquidation.
+
+-----
+
+### **5.3 Trigger Monitoring and Reporting**
+
+**Daily Monitoring (Internal):**
+
+- Operating Agent tracks BB coverage, concentration limits, eligibility compliance
+- Real-time alerts if triggers approach (e.g., BB coverage <105%)
+
+**Bi-Weekly Formal Certification:**
+
+- Calculation Agent delivers **Trigger Compliance Certificate** on each Settlement Date
+- Certifies compliance with all triggers and covenants
+- Flags any breaches or imminent breaches (within 5% of trigger level)
+
+**Monthly Reporting to Lenders:**
+
+- Summary dashboard: BB coverage, CTM, reserve balances, concentration heat map
+- Trend analysis: historical trigger metrics (12-month lookback)
+- Forward-looking projections: stress scenarios (10% inventory markdown, 60-day turn elongation)
+
+**Quarterly Investor Calls:**
+
+- Senior Noteholders invited to join quarterly update calls with AUTO1 management
+- Discussion of portfolio performance, market conditions, strategic initiatives
+- Q&A session for lender concerns
+
+-----
+
+## **6. COVENANTS**
+
+### **6.1 Affirmative Covenants (CarCo)**
+
+CarCo must:
+
+#### **A. Financial Reporting**
+
+|**Report**                 |**Frequency**              |**Delivery Deadline**  |**Content**                                             |
+|---------------------------|---------------------------|-----------------------|--------------------------------------------------------|
+|Borrowing Base Certificate |Daily                      |12:00 CET, T+1         |Vehicle-level data, eligibility, concentrations         |
+|Borrowing Base Report      |Bi-weekly (Settlement Date)|T+2 BD                 |Full stratification, trend analysis, covenant compliance|
+|Monthly Operating Report   |Monthly                    |15th of following month|Collections, sales, margin realization, aged inventory  |
+|Annual Financial Statements|Annually                   |120 days post year-end |Audited IFRS financials, auditor comfort letter         |
+
+#### **B. Operating Covenants**
+
+**Maintain Eligibility Standards:**
+
+- Only purchase vehicles meeting eligibility criteria (Section 3)
+- Conduct 150-point inspections on all acquisitions
+- Maintain title/lien databases with current ownership records
+
+**Preserve Collateral:**
+
+- Insure all vehicles (comprehensive coverage, Security Trustee loss payee)
+- Store vehicles in secure locations (fenced lots, security cameras)
+- Maintain inventory in saleable condition (no vandalism, weathering)
+
+**Collections Management:**
+
+- Sweep 100% of collections to Collection Account by T+1
+- No commingling of CarCo and AUTO1 Group funds
+- No distributions to equity holders except via Priority of Payments
+
+**Servicer Oversight:**
+
+- Monitor Servicer performance (servicing KPIs, remittance timeliness)
+- Appoint Backup Servicer (in place since closing)
+- Conduct annual Servicer review (operational audit)
+
+#### **C. Corporate Maintenance**
+
+**Bankruptcy Remoteness:**
+
+- No activities outside Transaction Documents
+- No employees (services provided by Operating Agent under fee agreement)
+- No indebtedness except Notes and permitted hedging
+- Maintain “Golden Share” with independent director (veto on insolvency filings)
+
+**Separate Legal Identity:**
+
+- Maintain separate books and records
+- Hold annual shareholders’ meetings (minutes documented)
+- No guarantees of AUTO1 Group debt
+- Arm’s-length transfer pricing with affiliates
+
+-----
+
+### **6.2 Negative Covenants (CarCo)**
+
+CarCo must **not**, without Majority Senior Noteholder consent:
+
+#### **A. Indebtedness**
+
+- Incur any indebtedness other than:
+  - Notes issued under Transaction Documents
+  - Trade payables incurred in ordinary course (<30 day settlement)
+  - Permitted hedging (interest rate swaps with Approved Hedging Providers)
+
+#### **B. Liens**
+
+- Create any lien or encumbrance over CarCo Charged Property, except:
+  - Security in favour of Security Trustee under Transaction Security Documents
+  - Permitted liens (mechanics’ liens, landlord liens capped at EUR 100k)
+
+#### **C. Fundamental Changes**
+
+- Merge, consolidate, or liquidate
+- Change jurisdiction of incorporation (must remain Netherlands)
+- Change COMI (centre of main interests) outside Netherlands
+- Amend Constituent Documents (Articles of Association)
+
+#### **D. Distributions**
+
+- Pay dividends or make distributions to shareholders, except:
+  - Amounts available after Priority 14 of Pre-EA Waterfall (residual cash to equity)
+  - Tax distributions (to extent required for pass-through tax treatment)
+
+#### **E. Investments and Loans**
+
+- Make any investment or loan, except:
+  - Purchase of Eligible Vehicles (permitted business purpose)
+  - Cash held in Accounts (pledged to Security Trustee)
+
+#### **F. Asset Dispositions**
+
+- Sell, transfer, or dispose of assets, except:
+  - Sale of vehicles in ordinary course to B2B buyers or retail customers
+  - Disposal of Non-Eligible Vehicles (proceeds applied per waterfall)
+
+#### **G. Transactions with Affiliates**
+
+- Enter into transactions with AUTO1 Group affiliates, except:
+  - Operating Agent Agreement (servicing fees at market rates)
+  - Purchase of vehicles from AUTO1 Group (at arm’s-length pricing)
+  - Administrative services (capped at EUR 500k per annum)
+
+-----
+
+### **6.3 Covenants - Operating Agent / Servicer**
+
+AUTO1 Group SE, as Operating Agent and Servicer, must:
+
+#### **A. Servicing Standards**
+
+- Service portfolio in accordance with **Servicing Standard** (defined as level of care exercised by AUTO1 for its proprietary inventory)
+- Maintain all required licenses and permits (dealer licenses, auction memberships)
+- Comply with consumer protection laws (price transparency, warranty disclosures)
+- Maintain errors and omissions insurance (EUR 5m coverage)
+
+#### **B. Collections Management**
+
+- Remit 100% of collections to Collection Account within **2 Business Days** of receipt
+- No commingling of CarCo collections with AUTO1 Group funds
+- Maintain sub-ledgers identifying each collection by vehicle VIN
+- Reconcile collections daily (actual cash vs. expected proceeds)
+
+#### **C. Reporting and Record-Keeping**
+
+- Maintain complete servicing records (purchase contracts, sale agreements, inspection reports)
+- Provide Calculation Agent access to records upon request (5 BD notice)
+- Deliver monthly servicing reports (delinquencies, losses, aged inventory actions)
+- Maintain IT systems with disaster recovery (RPO: 24 hours, RTO: 48 hours)
+
+#### **D. No Material Adverse Change**
+
+- Notify Security Trustee immediately of any **Material Adverse Effect** affecting:
+  - AUTO1 Group’s financial condition (e.g., liquidity crisis, going concern doubt)
+  - AUTO1 Group’s ability to perform servicing obligations
+  - Validity or enforceability of Transaction Documents
+
+-----
+
+### **6.4 Financial Covenants (AUTO1 Group SE)**
+
+While CarCo has **no financial covenants** (as an SPV), AUTO1 Group SE (parent guarantor for servicing obligations) must maintain:
+
+#### **A. Minimum Liquidity**
+
+- Maintain unrestricted cash and undrawn committed facilities ≥ **EUR 100m** at consolidated level
+- Tested quarterly
+- Breach triggers mandatory reporting and potential Servicer review
+
+#### **B. Tangible Net Worth**
+
+- Maintain consolidated tangible net worth ≥ **EUR 300m**
+- Tested quarterly
+- Adjusted for intangibles (goodwill, brand value) and subordinated debt
+
+#### **C. Interest Coverage**
+
+- Maintain consolidated EBITDA / Interest Expense ≥ **2.0x**
+- Tested quarterly (rolling 4-quarter basis)
+- Excludes non-cash charges (depreciation, stock-based compensation)
+
+**Rationale:** Ensures AUTO1 Group remains financially viable to perform servicing obligations. Breach of financial covenants triggers **Servicer Review Event** (not automatic termination), allowing noteholders to assess remediation plans.
+
+-----
+
+### **6.5 Covenant Breach Cure Mechanics**
+
+#### **Step 1: Notice of Breach**
+
+- CarCo or Servicer must notify Security Trustee within **5 Business Days** of becoming aware of breach
+- Security Trustee notifies all Noteholders within **2 Business Days**
+
+#### **Step 2: Cure Period**
+
+|**Covenant Type**              |**Cure Period**              |**Permitted Cure Actions**                      |
+|-------------------------------|-----------------------------|------------------------------------------------|
+|**Borrowing Base Shortfall**   |Next Utilisation Business Day|Add inventory, prepay notes, junior cure capital|
+|**Reserve Deficiency**         |10 Business Days             |Divert collections, issue junior notes          |
+|**Aged Inventory >5%**         |30 calendar days             |Liquidate aged units, grow eligible inventory   |
+|**Concentration Breach**       |15 Business Days             |Sell excess, dilute with new purchases          |
+|**Financial Covenants (AUTO1)**|30 calendar days             |Equity injection, asset sales, debt refinancing |
+
+#### **Step 3: Failure to Cure**
+
+If breach not cured within cure period:
+
+- **Minor Covenants:** Trigger Early Amortisation Event (cash trap, no new advances)
+- **Material Covenants:** Trigger Event of Default (immediate acceleration, enforcement)
+
+**Majority Noteholder Waiver:**
+
+- Breaches may be **waived** by Majority Senior Noteholders (>66 2/3%)
+- Waiver must be in writing and may include conditions (e.g., fees, pricing step-up)
+- One-time waivers typical; repeated waivers require structural amendment
+
+-----
+
+## **7. EVENTS OF DEFAULT**
+
+### **7.1 CarCo Events of Default**
+
+The following events constitute an Event of Default under the Loan Agreements:
+
+#### **A. Non-Payment**
+
+**Trigger:** Failure to pay principal, interest, or fees when due
+
+**Grace Period:**
+
+- **Principal:** 15 Business Days
+- **Interest:** 10 Business Days (5 BD if on Maturity Date)
+- **Fees:** 15 Business Days
+
+**Rationale for Grace Period:** Allows time for administrative errors (payment processing delays) to be corrected; prevents technical defaults from operational glitches.
+
+**Cure Mechanism:** Non-payment cured if:
+
+- Amount paid in full within grace period, **AND**
+- Junior noteholder has NOT injected cure capital (per NIFA 6.2/7.2)
+  - If juniors cure, grace period clock resets; seniors may still enforce if fundamental issue exists
+
+**Current Risk Assessment:** **LOW** - CarCo has consistent positive cash flow from trading operations; no historical non-payments.
+
+-----
+
+#### **B. Breach of Covenants**
+
+**Trigger:** Failure to comply with any covenant under Transaction Documents
+
+**Cure Period:**
+
+- **Borrowing Base Certificate delivery:** 5 Business Days
+- **Financial reporting:** 15 Business Days
+- **Other covenants:** 30 calendar days
+
+**Exceptions (No Cure Period):**
+
+- Bankruptcy remoteness covenants (immediate EoD)
+- Fraud, gross negligence, wilful misconduct (immediate EoD)
+- Repeated breaches of same covenant (>3 times in 12 months = immediate EoD)
+
+-----
+
+#### **C. Misrepresentation**
+
+**Trigger:** Any representation or warranty proves materially false when made
+
+**Cure Period:** **30 days** if capable of remedy
+
+**Examples:**
+
+- **Curable:** “All vehicles have clean title” → One vehicle has undisclosed lien (can be removed)
+- **Incurable:** “CarCo has no undisclosed litigation” → Material litigation exists (cannot undo)
+
+**Materiality Threshold:** Misrepresentation must be **material** to trigger EoD:
+
+- Affects >5% of borrowing base value, OR
+- Impairs Security Trustee’s security interest, OR
+- Relates to financial condition having Material Adverse Effect
+
+-----
+
+#### **D. Cross-Default**
+
+**Trigger:** Default under other **Material Indebtedness** of CarCo
+
+**Definition of Material Indebtedness:**
+
+- Outstanding amount >**EUR 10,000,000**, OR
+- Indebtedness that, if accelerated, would have Material Adverse Effect on CarCo’s ability to perform obligations
+
+**Scope:** Captures defaults under:
+
+- Hedging agreements (if notional >EUR 10m)
+- Leases or equipment financing (if aggregate >EUR 10m)
+- **NOT applicable to AUTO1 Group debt** (separate legal entity; non-recourse)
+
+**Current Exposure:** **NIL** - CarCo has no material indebtedness outside Transaction Documents.
+
+-----
+
+#### **E. Insolvency**
+
+**Trigger:** Any of the following with respect to CarCo:
+
+- Filing of insolvency, bankruptcy, or analogous proceeding
+- Appointment of receiver, administrator, or trustee
+- Admission of inability to pay debts as they fall due
+- Suspension of payments to creditors generally
+
+**No Cure Period:** Insolvency Events trigger **immediate** Event of Default.
+
+**Bankruptcy Remoteness Protections:**
+
+- Independent director (no affiliation to AUTO1 Group) holds “Golden Share”
+- Golden Share holder must consent to any insolvency filing
+- Independent director has fiduciary duty to creditors (not AUTO1 shareholders)
+
+**Risk Mitigation:** Structural protections make CarCo insolvency highly unlikely absent fraud or legal challenge to SPV structure.
+
+-----
+
+#### **F. Material Adverse Effect**
+
+**Trigger:** Occurrence of event having **Material Adverse Effect** on:
+
+- CarCo’s business or financial condition, OR
+- Validity or enforceability of Transaction Documents, OR
+- Security Trustee’s security interest in CarCo Charged Property
+
+**Cure Period:** **30 days** if capable of remedy
+
+**Examples:**
+
+- **MAE on business:** German government bans used car exports (40% of AUTO1’s buyers are exporters)
+- **MAE on enforceability:** Netherlands court rules CarCo security structure unenforceable
+- **MAE on security:** Government confiscates inventory (war, expropriation)
+
+**Subjectivity:** “Material Adverse Effect” is intentionally broad; interpretation depends on facts and circumstances. Majority Noteholders have discretion to declare EoD.
+
+-----
+
+#### **G. Unlawfulness**
+
+**Trigger:** It becomes unlawful for CarCo to perform obligations under Transaction Documents
+
+**Examples:**
+
+- Sanctions prohibit lending to AUTO1-affiliated entities
+- Regulatory change prohibits securitisation structure
+- Tax law change renders structure non-viable
+
+**Mandatory Prepayment:** Upon illegality, CarCo must prepay all notes (subject to available funds and Priority of Payments).
+
+-----
+
+### **7.2 Issuer Events of Default**
+
+The following events constitute an Issuer Event of Default:
+
+#### **A. Non-Payment (Pre-Maturity)**
+
+**Trigger:**
+
+- Failure to pay **senior or mezzanine** interest, principal, or fees when due (5 BD grace)
+- Failure to pay **senior agents** fees when due (15 BD grace)
+
+**Junior Notes Exception:** Non-payment of junior notes is **NOT** an Issuer Event of Default unless seniors and mezz are fully repaid.
+
+**Grace Period Logic:** 5 BD grace allows time for:
+
+- Collections to clear (T+3 settlement lag)
+- Junior cure capital injection (per NIFA 6.2/7.2)
+- Administrative error correction
+
+-----
+
+#### **B. Non-Payment (Maturity Date)**
+
+**Trigger:** Failure to pay **any note** on Final Maturity Date (31 Aug 2028)
+
+**No Grace Period:** Maturity Date non-payment is immediate EoD.
+
+**Rationale:** By Maturity Date, Issuer has had 4+ years to amortise notes and wind down portfolio. Failure to pay on maturity indicates terminal failure.
+
+-----
+
+#### **C. Reserve Account Deficiency**
+
+**Trigger:** Reserve Accounts below required amounts on any Settlement Date (after waterfall application), not cured within **10 Business Days**
+
+**Deficiency Test:**
+
+```
+Required Amount:
+  Senior Reserve:    Max(EUR 25m, 3.5% × Senior Notes O/S)
+  Mezzanine Reserve: Max(EUR 5m, 3.5% × Mezz Notes O/S)
+  Trade Tax Reserve: EUR 2.5m
+
+IF: Actual Balance < Required Amount on Settlement Date
+THEN: Issue notice to Issuer and Security Trustee
+      10 BD cure period begins
+
+IF: Not cured within 10 BD
+THEN: Issuer Event of Default occurs
+```
+
+**Cure Mechanics:** Issuer may cure by:
+
+- Diverting future collections to reserve accounts (via waterfall Priority 8)
+- Receiving junior cure capital (applied to reserves)
+- Reducing note balances (lowers required reserve amount)
+
+-----
+
+#### **D. Breach of Covenants**
+
+**Material Breach:** Failure to perform obligations owed to Senior Noteholders, with **Material Adverse Effect**, not cured within **30 days**
+
+**Securitisation Regulation Compliance:** Failure to comply with Article 7 STS requirements (transparency, simplicity, standardisation), not cured within **6 months**
+
+**Breach of Fundamental Covenants:** Immediate EoD (no cure period):
+
+- Change of COMI outside Netherlands
+- Become an Alternative Investment Fund (AIFMD)
+- Permit Transaction Security to become invalid or unenforceable (subject to Legal Reservations)
+
+-----
+
+#### **E. Insolvency**
+
+**Trigger:** Issuer (AUTO1 Funding 1 B.V.) files for insolvency or analogous proceeding
+
+**No Cure Period:** Immediate Event of Default.
+
+**Ring-Fencing:** Issuer has same bankruptcy remoteness protections as CarCo (Golden Share, independent director, no business activities outside Transaction Documents).
+
+-----
+
+#### **F. Cross-Defaults (Issuer)**
+
+**Trigger:** CarCo Event of Default under Senior Loan Agreement or Mezzanine Loan Agreement
+
+**Mechanism:**
+
+- CarCo EoD → Lender (Issuer) declares CarCo loans due and payable
+- Issuer lacks funds to pay noteholders (CarCo is sole asset)
+- Issuer defaults to noteholders → Issuer Event of Default
+
+**Linkage:** Issuer’s obligations are **structurally dependent** on CarCo performance. CarCo failure = Issuer failure.
+
+-----
+
+### **7.3 Remedies Upon Event of Default**
+
+#### **A. Acceleration**
+
+**Majority Noteholder Instruction:** Upon EoD, Majority Senior Noteholders may instruct Security Trustee to:
+
+- Declare all notes immediately due and payable
+- Cancel all commitments (no new advances)
+- Deliver Enforcement Notice to CarCo/Issuer
+
+**Voting Threshold:**
+
+- **Majority Senior Noteholders:** >66 2/3% of Senior Notes Outstanding Amount
+- Excludes Defaulting Noteholders (failed to fund participation)
+
+**Automatic Acceleration:** Certain EoDs trigger automatic acceleration (no instruction required):
+
+- Insolvency of CarCo or Issuer
+- Non-payment on Maturity Date
+- Fraud or wilful misconduct
+
+-----
+
+#### **B. Enforcement of Security**
+
+Upon delivery of Enforcement Notice, Security Trustee may:
+
+**Immediate Actions:**
+
+- Take control of Collection Account and Reserve Accounts
+- Appoint Receiver over CarCo Charged Property
+- Direct Operating Agent to cease new vehicle purchases
+- Instruct Servicer to liquidate inventory (orderly or forced sale)
+
+**Ongoing Management:**
+
+- Servicer continues servicing under Security Trustee supervision
+- If Servicer terminated, Backup Servicer assumes duties
+- Collections applied per **Post-Enforcement Priority of Payments**
+
+**Liquidation Strategy:**
+
+- **Orderly Liquidation (Preferred):** Sell vehicles through normal B2B channels over 60-90 days
+  - Target: Realise 95-100% of NAV
+  - Time: 3-6 months to fully liquidate portfolio
+- **Forced Liquidation (Accelerated):** Bulk sale to liquidators or auction houses
+  - Target: Realise 70-85% of NAV (15-30% haircut)
+  - Time: 30-60 days to liquidate
+
+**Distribution of Proceeds:** Post-Enforcement Waterfall (see Section 7.4)
+
+-----
+
+#### **C. Noteholder Remedies**
+
+**Individual Noteholder Actions:** Generally prohibited; enforcement actions must be directed by Majority Noteholders through Security Trustee.
+
+**Exception:** Individual Noteholder may sue for payment if:
+
+- Noteholder’s pro rata share of payment is unpaid after acceleration
+- Noteholder has not received payment within 60 days of due date
+- **ONLY for own pro rata claim** (cannot sue on behalf of class)
+
+**No Setoff:** Noteholders may not setoff claims against Issuer/CarCo.
+
+-----
+
+### **7.4 Post-Enforcement Priority of Payments**
+
+Upon Enforcement Event, collections are applied in the following order:
+
+```
+POST-ENFORCEMENT WATERFALL (CarCo):
+══════════════════════════════════════════════════════════════
+
+1.  Taxes, levies, and assessments (unsubordinated)
+2.  Security Trustee fees, expenses, indemnities
+3.  Operating Agent / Servicer fees (capped at 60 days)
+4.  SENIOR NOTE INTEREST (accrued and unpaid)
+5.  SENIOR NOTE PRINCIPAL (Outstanding Amounts)
+6.  Senior Note enforcement costs, breakage fees
+7.  Mezzanine Note interest (accrued and unpaid)
+8.  Mezzanine Note principal (Outstanding Amounts)
+9.  Mezzanine Note enforcement costs
+10. Junior Note interest (accrued and unpaid)
+11. Junior Note principal (Outstanding Amounts)
+12. Junior Note enforcement costs
+13. Subordinated creditors (if any)
+14. Equity (CarCo shareholder - AUTO1 Group SE)
+
+══════════════════════════════════════════════════════════════
+```
+
+**Key Observations:**
+
+- **Senior notes paid in full** before any mezz notes receive principal
+- **No reserve account funding** in post-enforcement (reserves already funded or released)
+- **Operating fees capped** at 60 days to limit dilution of creditor recoveries
+- **Sequential amortisation** (no pro rata sharing across classes)
+
+**Recovery Analysis (Illustrative Stress Scenario):**
+
+```
+ASSUMPTIONS:
+  Total Eligible Inventory NAV:        EUR 845.1m
+  Liquidation Strategy:                Forced (60 days)
+  Liquidation Recovery:                75% of NAV (25% haircut)
+  Gross Liquidation Proceeds:          EUR 633.8m
+
+WATERFALL APPLICATION:
+  P1-3: Taxes, trustee, servicer fees: (EUR 5.0m)
+  P4:   Senior interest (6 months):    (EUR 18.0m)
+  P5:   Senior principal:              (EUR 720.0m)
+  
+  Remaining for Mezz:                  EUR 0 ← WIPEOUT
+  
+RECOVERIES:
+  Senior Notes:    100% (paid in full: EUR 738m)
+  Mezzanine Notes:   0% (total loss: EUR 130m)
+  Junior Notes:      0% (total loss: EUR 50m)
+```
+
+**Sensitivity:**
+
+- **80% recovery:** Seniors recover 100%, Mezz recover 15%, Juniors 0%
+- **85% recovery:** Seniors recover 100%, Mezz recover 80%, Juniors 0%
+- **90% recovery:** Seniors recover 100%, Mezz recover 100%, Juniors 40%
+
+**Conclusion:** Senior notes benefit from significant credit enhancement; mezz notes are first loss to portfolios experiencing >15% liquidation haircut.
+
+-----
+
+## **8. SERVICER TERMINATION EVENTS**
+
+### **8.1 Servicer Role and Criticality**
+
+**AUTO1 Group SE** acts as **Servicer** and **Operating Agent**, performing:
+
+- Vehicle acquisition (sourcing, bidding, pricing)
+- Inventory management (storage, refurbishment, marketing)
+- Sales execution (B2B auctions, retail platform management)
+- Collections management (payment processing, remittance to Collection Account)
+- Reporting (daily BBR, monthly operating reports)
+
+**Criticality:** Servicing operations are **mission-critical**. AUTO1’s proprietary platform, buyer network, and pricing algorithms are non-replicable in short term. Servicer failure would result in immediate liquidity crisis and portfolio value deterioration.
+
+-----
+
+### **8.2 Servicer Termination Events**
+
+The following events permit **termination of Servicer** and appointment of Backup Servicer:
+
+#### **A. Servicer Insolvency**
+
+**Trigger:** AUTO1 Group SE:
+
+- Files for insolvency, bankruptcy, or analogous proceeding
+- Admits inability to pay debts
+- Has receiver or administrator appointed
+- Suspends payments to creditors generally
+
+**Automatic Termination:** Insolvency triggers immediate termination (no notice or cure period required).
+
+**Risk Mitigation:**
+
+- **Backup Servicer** (pre-appointed major German bank or specialised auto servicer) assumes duties within **10 Business Days**
+- Backup Servicer has **warm handover rights** (access to systems, data, buyer lists 60 days prior to activation)
+
+-----
+
+#### **A. Failure to Remit Collections**
+
+**Trigger:** Servicer fails to remit collections to Collection Account within **2 Business Days** of receipt
+
+**Cure Period:** **5 Business Days** from due date
+
+**Materiality Threshold:** Applies if:
+
+- Single remittance failure >EUR 1,000,000, OR
+- Aggregate remittances in any 30-day period >EUR 5,000,000, OR
+- Pattern of late remittances (>3 instances in 6 months)
+
+**Rationale:** 2 BD remittance requirement ensures real-time cash visibility; delays indicate potential commingling or liquidity stress.
+
+-----
+
+#### **C. Material Breach of Servicing Standards**
+
+**Trigger:** Servicer fails to perform servicing obligations in accordance with **Servicing Standard** (level of care exercised by AUTO1 for proprietary inventory)
+
+**Examples:**
+
+- Failure to insure inventory (lapse in coverage)
+- Failure to maintain vehicles (allowing deterioration, weathering)
+- Failure to pursue collections (writing off debts without pursuing buyers)
+- Fraud or gross negligence in vehicle acquisitions (overpaying, kickbacks)
+
+**Cure Period:** **30 days** from notice
+
+**Materiality:** Breach must have (or be reasonably likely to have) **Material Adverse Effect** on portfolio value or noteholder recoveries.
+
+-----
+
+#### **D. Failure to Deliver Reports**
+
+**Trigger:** Servicer fails to deliver required reports:
+
+- Daily Borrowing Base Certificate: 12:00 CET deadline
+- Monthly Operating Report: 15th of following month
+- Annual Financial Statements: 120 days post year-end
+
+**Cure Period:**
+
+- **Daily BBR:** 2 Business Days (5 BD for initial notice)
+- **Monthly reports:** 10 Business Days
+- **Annual reports:** 30 days
+
+**Materiality:** Repeated failures (>3 in 12 months) = Servicer Termination Event (no materiality threshold).
+
+-----
+
+#### **E. Change of Control**
+
+**Trigger:** AUTO1 Group SE undergoes **Change of Control** without prior Majority Noteholder consent
+
+**Definition of Change of Control:**
+
+- Acquisition of >50% voting equity by third party, OR
+- Change in board composition (>50% of directors replaced within 12 months), OR
+- Sale of substantially all assets (>75% of enterprise value)
+
+**Consent Requirement:** Majority Senior Noteholders must approve Change of Control (>66 2/3% vote).
+
+**Rationale:** AUTO1’s servicing capability is tied to management expertise and platform IP; acquirer may lack necessary skills or may prioritise competing business objectives.
+
+-----
+
+#### **F. Financial Covenant Breach (AUTO1 Group)**
+
+**Trigger:** AUTO1 Group SE breaches financial covenants (Section 6.4):
+
+- Minimum liquidity <EUR 100m
+- Tangible net worth <EUR 300m
+- Interest coverage <2.0x
+
+**Cure Period:** **30 days**
+
+**Servicer Review (Not Automatic Termination):** Financial covenant breach triggers **mandatory Servicer review** by Majority Noteholders:
+
+- Assessment of AUTO1’s ability to continue servicing
+- Evaluation of Backup Servicer transition costs and timing
+- Decision: (a) waive breach with conditions, (b) terminate Servicer
+
+-----
+
+#### **G. Material Misrepresentation**
+
+**Trigger:** Servicer makes material misrepresentation in servicing reports (e.g., falsifying inventory data, concealing losses)
+
+**No Cure Period:** Fraud or wilful misrepresentation = immediate termination.
+
+**Legal Recourse:** Noteholders may pursue damages against AUTO1 Group SE for fraudulent servicing.
+
+-----
+
+### **8.3 Servicer Termination Process**
+
+#### **Step 1: Notice of Termination**
+
+- **Initiator:** Security Trustee (acting on Majority Noteholder instruction)
+- **Delivery:** Written notice to Servicer, Issuer, CarCo, Calculation Agent
+- **Effective Date:** Specified in notice (typically 10-30 BD after delivery)
+
+#### **Step 2: Backup Servicer Activation**
+
+- **Pre-Appointed Backup:** [Bank name or specialised servicer] assumes duties immediately upon termination
+- **Transition Period:** 10 Business Days for full handover
+  - Servicer must provide: IT system access, buyer lists, pending transaction records, inventory locations
+  - Backup Servicer completes warm handover procedures (data migration, process training)
+
+**Backup Servicer Duties:**
+
+- Continue vehicle acquisitions (if facility still revolving)
+- Execute sales through existing channels (B2B platform, retail)
+- Manage collections and remit to Collection Account
+- Deliver all required reports to Calculation Agent and noteholders
+
+**Backup Servicer Fees:** Higher than AUTO1 fees (typically +25-50bp premium) to reflect:
+
+- Stand-alone operating costs (no shared services with parent)
+- Risk premium for assuming troubled portfolio
+- Market rate for third-party servicing
+
+#### **Step 3: Operational Continuity**
+
+**IT Systems:** Backup Servicer must:
+
+- Migrate inventory data to proprietary systems within 30 days
+- Maintain operational continuity (no lapse in sales, collections)
+- Replicate AUTO1’s buyer network access (or establish alternative channels)
+
+**Performance Deterioration Risk:** Transition to Backup Servicer likely results in:
+
+- **10-20% reduction in sales velocity** (loss of AUTO1’s proprietary buyer network)
+- **5-10% margin compression** (Backup Servicer less efficient at pricing)
+- **Turn elongation:** 42 days → 55-60 days average hold period
+
+**Mitigation:** Early Amortisation Event (if not already triggered) forces portfolio run-off, reducing reliance on Backup Servicer acquisition/growth activities.
+
+-----
+
+### **8.4 Backup Servicer Failure**
+
+**Scenario:** Backup Servicer is unwilling or unable to assume servicing duties.
+
+**Contingency:**
+
+1. **Security Trustee Direct Management:** Security Trustee appoints receiver to manage portfolio directly
+
+- Receiver has statutory powers under Netherlands law to operate business
+- Receiver may engage third-party asset managers (automotive liquidators)
+
+1. **Forced Liquidation:** If no viable servicer available, Security Trustee initiates immediate liquidation
+
+- Portfolio sold in bulk to liquidators (Manheim, BCA, KAR Global)
+- Expect **20-30% haircut** to NAV in bulk sale scenario
+
+1. **Early Amortisation / Enforcement:** Servicer failure typically triggers:
+
+- **Early Amortisation Event** (if Backup Servicer unwilling but facility operational)
+- **CarCo Enforcement Event** (if Backup Servicer unable and no operational continuity)
+
+**Risk Assessment:** **MEDIUM-LOW** - Backup Servicer is contractually committed; failure would require bilateral insolvency (AUTO1 + Backup Servicer) or market-wide disruption.
+
+-----
+
+### **8.5 Servicing Continuity Risk Mitigation**
+
+**Pre-Closing Requirements:**
+
+- Backup Servicer identified and contractually committed (Backup Servicing Agreement executed)
+- Warm handover procedures documented (transition playbook)
+- Annual testing of Backup Servicer readiness (mock transition exercises)
+
+**Ongoing Monitoring:**
+
+- Quarterly Servicer performance reviews (KPIs: turn velocity, margin, remittance timeliness)
+- Annual financial health assessment of AUTO1 Group SE (credit analysis by Security Trustee)
+- Backup Servicer annual certification (confirms continued willingness and ability)
+
+**Noteholder Protections:**
+
+- Majority Noteholder consent required for Servicer replacement (beyond pre-approved Backup)
+- Servicer termination fees (payable to AUTO1 if terminated without cause)
+- Indemnification from Servicer for breaches causing losses
+
+-----
+
+## **9. CONCLUSION AND KEY RISKS**
+
+### **9.1 Structural Strengths**
+
+**✓ Robust Credit Enhancement:**
+
+- 8.5% senior OC + EUR 40m reserves = strong first loss absorption
+- Three-tier subordination with clear waterfall priorities
+- Performance-based triggers (BB coverage, CTM) ensure early intervention
+
+**✓ High-Quality Collateral:**
+
+- Core inventory: 2-3 year old German premium brands (VW/BMW/Merc)
+- Fast turn (42 days) limits market risk exposure
+- Strong historical margins (6.7% gross) provide excess spread cushion
+
+**✓ Experienced Servicer:**
+
+- AUTO1 is market leader with proprietary B2B platform
+- Proven track record (4+ years of warehouse operations)
+- Backup Servicer provides continuity protection
+
+-----
+
+### **9.2 Key Risks for Senior Noteholders**
+
+**⚠ Concentration Risks:**
+
+- 60% Germany exposure (single-country recession risk)
+- VW at 14.8% (near 15% limit; constrains growth flexibility)
+- 84% in top 10 makes (limited diversification)
+
+**⚠ Market Risks:**
+
+- Used car prices volatile (COVID spike, now normalising)
+- Electric vehicle transition disrupting ICE residual values
+- Regulatory risk (emissions standards, export restrictions)
+
+**⚠ Operational Risks:**
+
+- Aged inventory at 6.8% (**breach** of 5% covenant)
+- Servicer criticality (AUTO1 replacement would cause performance deterioration)
+- Portfolio growth required to support EUR 1,150m senior upsize
+
+**⚠ Structural Risks:**
+
+- Junior cure right (NIFA 6.2/7.2) delays enforcement in distress
+- Mezz BB shortfall (EUR 47m currently) indicates tight leverage
+- CTM trigger (5%) not binding (provides minimal constraint on growth)
+
+-----
+
+### **9.3 Recommendation**
+
+**SUBJECT TO:**
+
+1. ✓ Remediation plan for aged inventory >5% (target: <4.5% within 60 days)
+1. ✓ Commitment to EUR 400m+ inventory growth to support senior upsize
+1. ✓ Clarification of junior cure mechanics (seniors retain enforcement rights)
+1. ✓ Enhanced reporting post-cure (weekly BBRs if cure occurs)
+
+**The 7th Amendment upsizing Senior Notes to EUR 1,150m is acceptable** with the protections outlined above.
+
+-----
+
+**END OF FACILITY STRUCTURE SECTION**
+
+-----
+
+*This credit memo section is presentation-ready for internal credit committee review. All figures are illustrative based on our prior discussion; actual numbers should be verified against the daily BBR once accessible.*
