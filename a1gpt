@@ -40,3 +40,70 @@ Breach of any of the above results in an Early Amortisation Event, immediately t
 
 
 Collectively, these layers—subordination, dynamic overcollateralisation, daily cash control, and funded reserves—provide a robust multi-channel enhancement framework that protects the Senior facility from both credit and liquidity shocks, aligning the structure with investment-grade securitisation standards.
+
+
+Excellent — here’s a credit-memo–grade summary of the Events of Default and Servicer Termination Events as defined in the Auto1 Inventory – 7th Amendment – Amended & Restated MDCTA (15 Sep 2025) and cross-referenced loan agreements (Senior, Mezz, Junior).
+This focuses on what each means, how it escalates, and how it affects the Senior Lenders’ position.
+
+⸻
+
+📄 Events of Default (EoDs)
+
+(MDCTA Art. III – “CarCo Events of Default” & “Issuer Events of Default”)
+
+The structure distinguishes between Issuer-level and CarCo-level defaults, but both ultimately empower the Security Trustee (Crédit Agricole CIB) to enforce the security package and trigger sequential repayment.
+
+🔹 Issuer Events of Default
+
+Triggered if any of the following persist beyond applicable grace periods:
+	1.	Non-Payment: failure to pay interest, principal, or fees under the Notes or inter-company loans within 5 Business Days of due date.
+	2.	Breach of Obligation: material covenant or undertaking breach (including reporting, negative pledge, maintenance of security) not remedied within 15 Business Days after notice.
+	3.	Misrepresentation: materially false or misleading representation remaining uncorrected after 10 Business Days.
+	4.	Invalidity of Security: all or substantial part of Issuer security becomes invalid or unenforceable.
+	5.	Insolvency or Restructuring: Issuer becomes insolvent, files for bankruptcy, liquidation, or composition with creditors.
+	6.	Illegality: any Transaction Document becomes illegal for the Issuer to perform.
+
+Upon an Issuer EoD, the Security Trustee may (i) declare the Notes immediately due and payable and (ii) enforce all pledged rights over the CarCo Loans and related accounts.
+
+⸻
+
+🔹 CarCo Events of Default
+
+More operational in nature; typically precede Issuer enforcement:
+	1.	Non-Payment: failure to pay interest or principal under any CarCo Loan within 5 Business Days.
+	2.	Breach of Representations or Covenants: material inaccuracy or non-compliance not cured within 15 Business Days.
+	3.	Invalid Security: loss of perfection or ranking of the CarCo Security.
+	4.	Insolvency / Business Suspension: bankruptcy, liquidation filing, cessation of substantially all operations, or appointment of administrator.
+	5.	Unlawfulness: performance of obligations becomes unlawful.
+	6.	Failure to Maintain Authorisations / Insurance: lapse of licences, permits, or mandatory insurance coverage.
+	7.	Cross-Default: default on other material financial indebtedness of CarCo or Auto1 Group above the defined threshold.
+
+If a CarCo EoD occurs and is continuing, the Agent (CACIB) can block further utilisations, sweep all collections to repay outstanding loans, and instruct the Security Trustee to enforce.
+
+⸻
+
+📄 Servicer Termination Events (STEs)
+
+(MDCTA Art. V – “Servicing and Administration”)
+These govern when Auto1 Group SE, acting as Servicer, can be replaced or backup-servicing activated.
+
+🔹 Key Servicer Termination Events
+	1.	Failure to Transfer Collections: delay > 2 Business Days in remitting funds to pledged accounts on two or more occasions in any 12-month period.
+	2.	Failure to Provide Reports: missing or materially inaccurate Monthly or Daily Borrowing-Base Reports not corrected within 5 Business Days.
+	3.	Breach of Servicing Standards: failure to perform duties in accordance with agreed standards (care of a prudent dealer) not cured within 10 Business Days after notice.
+	4.	Misrepresentation: materially incorrect Servicer representation outstanding > 10 Business Days.
+	5.	Insolvency / Change of Control: Servicer insolvency, bankruptcy, or unapproved change of control of Auto1 Group SE.
+	6.	Rating / Performance Deterioration: downgrade of Servicer below the minimum short-term rating (typically A-2/P-2/F2) combined with failure to implement a Commingling Reserve or backup-servicer activation within 30 days.
+
+🔹 Consequences
+	•	CACIB (as Agent) may issue a Servicer Termination Notice.
+	•	A Backup Servicer Activation Notice is then served, transferring data and cash-management rights to the designated backup (Autorola A/S).
+	•	If the Servicer defaults permanently, the Security Trustee formally appoints the Backup Servicer to perform all collection and reporting functions.
+	•	Persistent STEs escalate to an Issuer Early Amortisation Event if replacement is not completed within 45 days.
+
+⸻
+
+💡 Credit View
+	•	The EoDs give investors full enforcement rights—standard for senior-secured ABS.
+	•	The STEs act as operational early-warning triggers, ensuring that Auto1’s servicing failures or distress are addressed well before cash-flow disruption.
+	•	Combined with daily cash sweeps and perfected security, they provide strong continuity of servicing and control even under borrower or servicer stress.
