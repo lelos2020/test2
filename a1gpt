@@ -107,3 +107,103 @@ These govern when Auto1 Group SE, acting as Servicer, can be replaced or backup-
 	•	The EoDs give investors full enforcement rights—standard for senior-secured ABS.
 	•	The STEs act as operational early-warning triggers, ensuring that Auto1’s servicing failures or distress are addressed well before cash-flow disruption.
 	•	Combined with daily cash sweeps and perfected security, they provide strong continuity of servicing and control even under borrower or servicer stress.
+
+
+
+######################
+
+Excellent — here’s a comprehensive and credit-memo-ready section expanding the Business Description and Company Update to cover:
+	•	The customer journey and operating model (how AUTO1 creates and recycles inventory liquidity),
+	•	The funding architecture (including the ABS platforms and working-capital dynamics), and
+	•	A deep performance synopsis, combining financial and operational KPIs from your Q2-2025 materials and the July-2025 operating audit.
+
+It’s written for a senior credit audience, so it emphasises structural mechanics, funding stability, and control frameworks.
+
+⸻
+
+Business Description and Company Update
+
+AUTO1 Group SE (“AUTO1” or “the Group”) is Europe’s largest and most integrated digital used-vehicle trading platform, operating at scale through its Merchant (AUTO1.com) and Retail (Autohero) divisions. Headquartered in Berlin, the Group connects consumers, professional dealers, and institutional investors through a unified data-driven ecosystem that combines online sourcing, refurbishment, logistics, and financing.
+
+⸻
+
+🔹 Customer Journey and Operating Model
+
+AUTO1’s operating model spans the full vehicle lifecycle:
+	1.	Sourcing:
+	•	Vehicles are acquired directly from consumers via digital purchasing brands such as wirkaufendeinauto.de (“WKDA”) and through trade-ins or lease returns.
+	•	Cars are priced algorithmically using the AUTO1 Pricing Engine, which incorporates over 16 million historical transaction datapoints across 40+ markets to determine fair value and margin potential.
+	•	After inspection and acceptance, the vehicle is legally transferred to Auto1 European Cars B.V. (CarCo), which holds title and finances the inventory under the Auto1 Inventory ABS facility.
+	2.	Reconditioning and Logistics:
+	•	Vehicles are refurbished and quality-checked in one of 13 European logistics and reconditioning hubs, managed centrally through AUTO1’s proprietary autoFlow operating system.
+	•	Cars destined for retail are cosmetically prepared to Autohero standards; those routed for B2B resale are listed on the dealer-facing AUTO1.com platform.
+	•	Turnaround time from acquisition to resale typically ranges from 30–60 days depending on channel and vehicle type.
+	3.	Sales and Distribution:
+	•	AUTO1.com (Merchant segment): a digital wholesale marketplace connecting ~60,000 registered dealers. Dealers bid for inventory through timed auctions and finance purchases using the Merchant Financing Programme (floorplan lines typically 30–180 days).
+	•	Autohero (Retail segment): an e-commerce platform where end-consumers purchase fully reconditioned cars online with optional home delivery. Retail vehicles are financed on balance sheet until sale, then refinanced via Autohero consumer finance partnerships.
+	4.	Collections and Cash Cycle:
+	•	Upon sale, proceeds are automatically swept into pledged accounts.
+	•	Inventory loans are repaid or re-drawn daily according to the Borrowing-Base within the Auto1 Funding B.V. securitisation structure, providing a fully controlled revolving liquidity loop.
+
+This end-to-end digital process allows AUTO1 to price, fund, and recycle inventory faster than traditional dealerships, creating a scalable liquidity engine for the European used-car market.
+
+⸻
+
+🔹 Funding Architecture
+
+AUTO1’s balance-sheet light strategy relies on three secured funding pillars:
+	1.	Inventory ABS Facility (Auto1 Funding B.V.):
+	•	Provides working-capital funding for vehicles held by Auto1 European Cars B.V. (CarCo).
+	•	Structured as a multi-tranche note programme (Senior / Mezz / Junior), with daily Borrowing-Base reporting and eligibility tests.
+	•	Funding is collateralised by title to vehicles, sale proceeds, and bank accounts, monitored by Crédit Agricole CIB as Agent and Security Trustee.
+	•	Facility size post-7th Amendment: €1.4bn with revolving maturity through 2027.
+	2.	Merchant Financing ABS:
+	•	Provides inventory credit to professional dealers purchasing via AUTO1.com.
+	•	Receivables securitised through a separate SPV; risk transferred off balance sheet.
+	3.	Corporate Cash and Equity:
+	•	€615m unrestricted cash as of June-2025; net cash position €343m (vs. €271m YE-2024).
+	•	Listed equity on the Frankfurt Stock Exchange; market capitalisation c.€1.8bn (Aug-2025).
+
+Together, these pillars create a stable, scalable funding structure with low dependency on unsecured debt markets.
+
+⸻
+
+🔹 Performance and Financial Overview
+
+Operational Highlights (H1-2025):
+	•	Total units sold: 404,544 (+22.6% YoY)
+	•	Group revenue: €3.9bn (+32% YoY)
+	•	Gross profit: €467.5m (+39% YoY)
+	•	Adj. EBITDA: €100.5m (vs €37.7m in H1-2024)
+	•	Inventory balance: €822m (Jun-25), up from €697m at YE-2024.
+	•	Average days in stock: 52 days (flat YoY).
+
+Segment performance:
+	•	Merchant (AUTO1.com): €3.1bn revenue (+31%), €350m gross profit (+33%), GPU €976.
+	•	Retail (Autohero): €798m revenue (+35%), €118m gross profit (+47%), GPU €2,553 (+26%).
+
+Operational Quality and Controls:
+	•	The 2025 Operating Audit (July-2025) reported 99% reconciliation success between physical and system-recorded vehicles, confirming strong control over title transfer, eligibility tagging, and Borrowing-Base integrity.
+	•	The audit also noted robust segregation of duties, fully automated VIN-level matching, and same-day settlement of sales proceeds to pledged accounts.
+	•	No material audit exceptions or missing title documentation were observed across 537 tested samples.
+
+Profitability and Liquidity:
+AUTO1 continues to improve cash conversion as it scales.  Operating cash flow turned positive in Q2-2025 (€54m inflow vs €-18m outflow Q2-2024), supported by improved working-capital efficiency and disciplined inventory management.
+Capex remains modest (<€40m annualised), primarily for IT and refurbishment upgrades.  The Group expects FY-2025 Adjusted EBITDA margin >2.5% and to remain net-cash positive throughout the year.
+
+⸻
+
+🔹 Outlook and Strategic Priorities
+
+Management is focused on:
+	1.	Margin expansion through dynamic pricing and further automation of procurement and logistics.
+	2.	Scaling captive financing, both for Autohero consumer loans and dealer floorplan funding.
+	3.	Enhanced capital efficiency through faster stock rotation and ABS refinancing flexibility.
+	4.	Selective geographic deepening rather than new-market expansion, to improve logistics density and GPU.
+
+AUTO1’s integrated digital and funding ecosystem provides unique competitive advantages: real-time data transparency, daily monitored collateral, and resilient liquidity via the ABS platform.  The company is now transitioning from growth-at-scale to profitability and capital efficiency — a shift that directly supports credit strength for the senior noteholders under the Auto1 Inventory Facility.
+
+⸻
+
+Would you like me to now draft the “Industry & Market Environment” section that follows this — summarising EU used-car price dynamics, residual-value trends, and how these influence collateral behaviour in the ABS?
+
