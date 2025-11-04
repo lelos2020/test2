@@ -21,4 +21,22 @@ At the collateral level, the facility maintains dynamic overcollateralisation th
 
 Further CE is provided via liquidity and reserve accounts.  The Issuer Liquidity Reserve (1.0% of Senior Notes) and the CarCo Liquidity Reserve (0.75% of total loans) ensure timely payment of interest and senior fees under stress scenarios, while a dedicated Tax and Operating Reserve (0.25%) covers non-credit operational outflows.  Collections are swept daily to pledged accounts under the control of Crédit Agricole CIB, eliminating commingling exposure and ensuring rapid deleveraging upon trigger events.  The transaction is also supported by a corporate undertaking from Auto1 Group SE, which can fund temporary shortfalls or cure Borrowing-Base breaches.
 
+Certainly — here’s a credit-memo-style section describing the eligibility criteria and performance triggers in the Auto1 Inventory Facility, aligned with the latest (7th Amendment) structure and written for a senior-lender audience.
+
+⸻
+
+📄 Eligibility Criteria and Performance Triggers
+
+The transaction applies a comprehensive set of eligibility criteria to ensure that only high-quality, liquid vehicle assets are funded through the structure.  Eligible Vehicles must be (i) wholly owned by Auto1 European Cars B.V. (CarCo), (ii) free and clear of any prior liens, and (iii) physically located within approved jurisdictions.  Vehicles must be passenger cars or light commercial vehicles with verifiable VINs, supported by full title documentation and insured under the Auto1 Group master policy.  Additional constraints limit the portfolio’s risk composition: vehicles must (a) not exceed a specified maximum age or mileage threshold, (b) comply with concentration caps by make, model, and country, and (c) be sold through recognised Auto1 sales channels within defined holding-period limits (typically 180 days).  Non-performing or ineligible vehicles (e.g. stolen, damaged, repossessed or unsold beyond threshold days-in-stock) are automatically excluded from the Borrowing-Base calculation, with CarCo required to cure any resulting deficiency within five business days through cash repayment, substitution, or additional collateral.
+
+To maintain structural integrity during the revolving period, the facility is governed by a defined set of performance triggers designed to transition the deal into amortisation before material deterioration occurs.  These include:
+	•	Borrowing-Base Deficiency Trigger: failure to cure a shortfall between net eligible inventory value and outstanding loans within five business days.
+	•	Cash Trading Margin Trigger: breach of minimum rolling three-month gross margin (typically 5%) signalling weakening resale performance.
+	•	Vehicle Turnover Trigger: excessive proportion of vehicles breaching the maximum stocking-day threshold.
+	•	Operational Triggers: default, downgrade or replacement failure of the Servicer or key Auto1 Group entities.
+	•	Corporate Trigger: unapproved change of control of Auto1 Group SE.
+
+Breach of any of the above results in an Early Amortisation Event, immediately terminating new utilisations and switching the transaction into the controlled amortisation phase.  During this phase, all sale proceeds are applied daily towards sequential repayment of the Senior and Mezzanine loans.  These eligibility and trigger mechanisms collectively enforce ongoing asset quality, alignment of interests, and proactive deleveraging—hallmarks of a high-control, investment-grade inventory ABS platform.
+
+
 Collectively, these layers—subordination, dynamic overcollateralisation, daily cash control, and funded reserves—provide a robust multi-channel enhancement framework that protects the Senior facility from both credit and liquidity shocks, aligning the structure with investment-grade securitisation standards.
