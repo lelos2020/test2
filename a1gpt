@@ -310,3 +310,46 @@ Spain
 
 If you like, I can pull specific data tables (e.g., market-days-supply by age band, fuel-type breakdowns for Germany/France/Spain) from Indicata Edition 68 and embed them into your credit memo.
 
+
+
+////////
+old pop
+Here’s the plain-English waterfall for this programme, split by phase. I’m using the structure and defined terms from your drafts (Issuer + CarCo framework with monthly Settlement Dates, rate-linked reserves, Growth Cash, dynamic BB/OC tests).
+
+While the Availability Period is ON (revolving)
+
+Issuer waterfall (each Settlement Date / iPD):
+	1.	Senior expenses & taxes – security trustee, paying/account bank, corporate services, auditors, enforcement costs, issuer taxes.
+	2.	Hedge payments (periodic) – cap premia/periodic amounts due (not termination).
+	3.	Senior Interest Reserve – top-up to the target (steps with 1-m EURIBOR / hedging status).
+	4.	Senior interest (including any default interest if applicable).
+	5.	Mezz interest reserve (if applicable) – top-up to its target.
+	6.	Mezz interest (deferrable per docs if protective triggers bite).
+	7.	Borrowing-Base / OC cures – mandatory prepay to remove any Borrowing Base Shortfall and to restore dynamic CE/advance-rate targets.
+	8.	New purchases / programme funding – permitted Utilisations to CarCo / Italian Issuers (i.e., cash out to buy eligible vehicles) so long as all tests pass.
+	9.	Mezz principal (only if expressly allowed after tests/targets are met).
+	10.	Junior / residual (any remaining excess).
+
+CarCo level (high level): sales proceeds first cover capped CarCo expenses/VAT, then flow (directly or via the Net Monthly CarCo Deficiency Payment) back to the Issuer per the loan agreements; any Monthly CarCo Deficiency Amount is settled so the Issuer isn’t starved of cash for interest/BB cures.
+
+After the Availability Period ENDS (or upon Early Amortisation)
+
+The waterfall flips to defensive / amortising and traps all cash:
+
+Issuer waterfall (sequential pay):
+	1.	Senior expenses & taxes.
+	2.	Hedge payments (periodic) (and any senior-ranking break costs if triggered).
+	3.	Senior Interest Reserve – top-up to target.
+	4.	Senior interest.
+	5.	Senior principal – turbo paydown until seniors are fully redeemed.
+	6.	Mezz interest (including any previously deferred amounts, as allowed).
+	7.	Mezz principal until fully redeemed.
+	8.	Junior / residual.
+
+A few practical points to keep in mind:
+	•	During revolve, you cannot borrow into a shortfall; any deficiency immediately halts new Utilisations and diverts cash to cures.
+	•	Growth Cash can be used (within its caps) during revolve to help coverage; post-availability it functions as trapped cash and will be applied via the amortising waterfall—no funding of new cars.
+	•	Hedge and reserve mechanics are rate-linked (1-m EURIBOR), so liquidity protection increases in high-rate environments without needing a margin step-up.
+	•	If an Early-Amortisation Event occurs before the scheduled end of availability, the deal uses the post-availability (sequential) waterfall immediately and repays seniors first until back inside tests or to full take-out.
+
+If you want, tell me your exact end-of-availability date and I’ll restate this as a one-slide “Pre vs Post” ladder you can paste straight into the IC pack.
