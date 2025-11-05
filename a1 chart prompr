@@ -1,0 +1,121 @@
+Perfect — below is a ready-to-use master prompt you can drop into ChatGPT, Copilot, or your internal workflow to process monthly Borrowing Base / performance data (like your Auto1_ABS_Borrowing_Base_Report_vf.xlsb) and automatically generate the full performance analysis framework we discussed.
+
+It’s structured to guide the model step-by-step through parsing, computing KPIs, and producing the dashboard-level insights consistent with Auto1’s transaction, MDCTA, and S&P NIR framework.
+
+⸻
+
+🧠 Prompt: Auto1 Portfolio Performance Analysis (Structured Securitisation Context)
+
+Objective:
+Process the attached Auto1 Borrowing Base or Servicer Report (xlsb/xlsx/csv) and generate a complete, analytical summary of portfolio performance aligned with the Auto1 Inventory ABS structure and S&P NIR methodology.
+
+⸻
+
+1️⃣ Context
+
+The transaction is a revolving auto inventory ABS with:
+	•	Dual borrower structure (CarCo & CarTrade)
+	•	Borrowing Base calculated monthly (eligible + ineligible + concentration adjustments)
+	•	Advance rate cap of 80–90%
+	•	Early Amortisation Triggers (MDCTA Schedule 10):
+	•	3-month Cash Trading Margin (CTM) floor: ≥ 5.0%
+	•	Days in inventory >300: ≤ 5% of total
+	•	EV share: ≤ 25%
+	•	Country concentration: ≤ 60%
+	•	Utilisation ≤ Advance-Rate Cap
+	•	OC targets: 31.1% (Class A), ~20% (Class B)
+	•	Liquidity reserve ~1% of senior notes
+
+The goal is to monitor health, flag potential breaches, and visualise key trends.
+
+⸻
+
+2️⃣ Input
+
+The attached file typically contains:
+	•	Main Page or Summary sheet with aggregate metrics (eligible, ineligible, gross & net BB, advance rate)
+	•	Daily Overview / Inventory Mgmt sheets with VIN- or bucket-level data
+	•	Purchase Countries Margin for CTM per country
+	•	Possibly “Issuer Accounts” and “Notes” for reserves and utilisation.
+
+⸻
+
+3️⃣ Processing Instructions
+
+Perform the following structured steps:
+
+A. Data Extraction
+	•	Identify and extract from relevant sheets:
+	•	Eligible inventory, ineligible inventory, gross BB, advance rate, utilisation, notes outstanding, reserves, days in stock, cash trading margin (CTM), and country mix.
+	•	Parse any “eligible amount (EUR)” or “total inventory” line for CarCo and CarTrade.
+	•	Extract “Weighted Avg Days in Inventory”, “EV Share”, and “Country Mix” if available.
+
+B. Compute Derived Metrics
+	•	Overcollateralisation (OC) = (Net BB – Notes Outstanding) / Notes Outstanding
+	•	Utilisation = Drawn Amount / Total BB
+	•	Ageing >300d % = (Value of >300d vehicles) / (Total Inventory)
+	•	3M CTM = rolling average from “Purchase Countries Margin” or Sales data.
+	•	Liquidity Coverage = (Reserve Balances / Senior Interest) * Months
+	•	Country Concentration = Max(country_value / total_value)
+	•	Stress Coverage = (Current margin – Applied MVD at Target Rating)
+
+C. Early-Amortisation / Trigger Tests
+Create a compliance table:
+
+Trigger	Threshold	Current	Status
+3M CTM Floor	≥ 5.0%	[computed]	✅/❌
+Days >300	≤ 5%	[computed]	✅/❌
+EV share	≤ 25%	[computed]	✅/❌
+Country conc.	≤ 60%	[computed]	✅/❌
+Utilisation	≤ 80%	[computed]	✅/❌
+Liquidity Res.	≥ required %	[computed]	✅/❌
+
+D. Visual Analysis
+Generate or summarise:
+	•	Trend line for CTM vs. trigger floor
+	•	Histogram for Days in Inventory
+	•	Bar chart for Country mix (value share)
+	•	Time series for OC % vs. Target
+	•	Pie chart: EV vs. non-EV share
+	•	Bridge chart for Borrowing Base change:
+Opening + Additions – Sales – Ageing impact ± FX = Closing
+
+E. Commentary & Interpretation
+Generate a short analytical note:
+
+“Portfolio rotation remains robust, CTM at 6.3% above 5.0% floor, average days in inventory 109 (down MoM). No trigger breaches. OC continues to build, now 28.9% vs. 31.1% target. Liquidity reserve at 1.05% fully funded. Headroom to advance rate cap remains 2.1pp.”
+
+Include:
+	•	Commentary on ageing trends (liquidity risk)
+	•	Margin trajectory (profit resilience)
+	•	Concentration risks (country or brand)
+	•	Outlook for next month given CTM / utilisation trajectory.
+
+⸻
+
+4️⃣ Output Format
+
+Produce:
+	1.	Executive summary table
+	2.	Trigger compliance matrix
+	3.	Key charts
+	4.	Narrative analysis (200–300 words)
+	5.	Optional export to Excel or PDF dashboard
+
+⸻
+
+5️⃣ Tone & Audience
+	•	Professional, concise, suitable for:
+	•	Internal credit/risk committees
+	•	Rating agency surveillance discussions
+	•	Investor reporting (quarterly)
+
+⸻
+
+✅ Example instruction line for ChatGPT
+
+“Process the attached Auto1 Borrowing Base Report (July 2025). Generate the full portfolio performance analysis per the securitisation framework above, including calculated KPIs, trigger compliance table, and summary commentary.”
+
+⸻
+
+Would you like me to adapt this prompt into an Excel-integrated macro workflow (so you can drop in the monthly .xlsb and auto-refresh all visuals and metrics)? That way, it becomes a repeatable monthly tool for internal reporting.
