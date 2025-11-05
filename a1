@@ -1152,4 +1152,128 @@ In short:
 CarCo taps Issuer liquidity because the structure can’t depend on Auto1.
 Those payments aren’t “support” — they’re collateral-preserving disbursements that ensure the senior secured creditor can still realise value once the sponsor collapses.
 
+?????????????????????????
+That’s a great and very advanced question — and it goes right to the core of how liquidity protection, sponsor alignment, and inter-company funding interact in Auto1’s structure.
+
+Let’s unpack it clearly.
+
+⸻
+
+🧩 1️⃣ What actually happens when there’s a deficiency
+
+When the CarCo Deficiency Amount is determined (i.e. available CarCo funds are insufficient to meet the waterfall obligations),
+→ the Servicer and Security Agent retain or trap those funds inside the structure.
+No distributions (like intercompany payments to Auto1 Group) are allowed until the deficiency is cured.
+
+However, this does not mean the Issuer isn’t paid.
+It just means the funding chain shifts from “external flow” to “internal accounting” for that period.
+
+⸻
+
+🏗️ 2️⃣ The structure is designed to isolate the shortfall at CarCo, not starve the Issuer
+
+Let’s recall the chain:
+
+Dealer → CarCo → Issuer → Investors
+	•	The Issuer lends to CarCo under the Senior Loan Agreement (and possibly a Mezz Loan).
+	•	The Issuer itself funds those loans by issuing notes to investors.
+	•	When CarCo sells cars and receives cash, it repays the Issuer according to the CarCo waterfall → Issuer waterfall → investors.
+
+When there is a CarCo deficiency, what happens is:
+	•	CarCo doesn’t have enough immediate sales proceeds to pay the full due amount to the Issuer (principal, interest, reserves).
+	•	That unpaid portion is recorded as a CarCo Deficiency Amount.
+	•	The Issuer recognises a receivable from CarCo — an amount due but not yet settled.
+
+So economically:
+
+📒 The Issuer is owed the amount (it accrues in its ledger), but it’s not yet funded by cash from CarCo.
+
+⸻
+
+💡 3️⃣ How the Issuer still meets its own obligations
+
+The Issuer’s obligations (to noteholders) are funded from available Issuer collections, not strictly from a single CarCo transfer on that day.
+
+There are several structural cushions ensuring the Issuer still pays investors even if CarCo is temporarily short:
+
+a. Liquidity Reserve
+	•	Funded at ~1 % of senior notes.
+	•	Specifically sized to cover at least one month of senior interest and fees.
+	•	Drawn to pay timely interest when inflows from CarCo lag.
+	•	Replenished before any residual distribution once cash catches up.
+
+b. Overcollateralisation (OC) buffer
+	•	The OC built up over time means that even if CarCo’s remittance is lower, the Issuer’s assets (the loan receivable + cash) still exceed note liabilities.
+	•	OC ensures there’s no immediate need for investor cash flow disruption.
+
+c. CarCo Intercompany Support
+	•	Under the Framework Contribution Agreement, Auto1 Group may make a Framework Contribution to CarCo to cure a deficiency — essentially upstreaming corporate liquidity to avoid persistence of shortfalls.
+	•	This is not a guarantee, but in practice it reflects sponsor alignment and ensures operational continuity.
+
+⸻
+
+💰 4️⃣ How it flows through the waterfalls
+
+At CarCo level
+	1.	Collections from vehicle sales fill the CarCo waterfall.
+	2.	If they are insufficient, the unpaid portion → CarCo Deficiency Amount.
+→ Retained and recorded (no leakage to subordinated parties).
+	3.	Next month, when new collections arrive, they first top up that deficiency.
+
+At Issuer level
+	1.	Issuer receives what CarCo paid (less deficiency).
+	2.	If the received cash + reserves are still enough, note interest and fees are paid as normal.
+	3.	If not, the Issuer waterfall authorises drawdown from the Liquidity Reserve to meet senior interest (timely test).
+
+→ So investors are paid timely, even if CarCo is momentarily deficient.
+
+⸻
+
+🧮 5️⃣ How to think about it analytically
+
+Level	Event	Accounting effect	Economic meaning
+CarCo	Deficiency retained	Liability to Issuer increases	“Still owes Issuer cash”
+Issuer	Records receivable	Asset = CarCo loan (performing)	“Issuer still whole”
+Noteholders	Paid via reserves	No missed coupon	“Structure absorbs stress”
+
+
+⸻
+
+📈 6️⃣ How to present it as a sign of robustness
+
+You can spin this in your portfolio performance or credit memo as a proof of structural resilience:
+
+“Even in months where available CarCo collections were temporarily below expected levels, the deficiency retention mechanism ensured cash was trapped and preserved for senior creditors. The Issuer continued to service note obligations on time through available reserves and accumulated OC, with no investor payment delays.”
+
+Add a Deficiency Coverage Ratio to illustrate this:
+
+Deficiency_Coverage_% = (Liquidity_Reserve + Available_Issuer_Cash) / Deficiency_Amount
+
+If > 1 ×  → full coverage of temporary stress.
+
+⸻
+
+🧠 7️⃣ In short
+
+Aspect	Meaning
+Deficiency retained	Internal accounting of a shortfall — not a payment default.
+Why retained	To trap cash and prevent leakage until obligations are met.
+Impact on Issuer	CarCo owes more; Issuer still earns interest on that receivable.
+Investor protection	Liquidity reserve ensures continued timely payment.
+Analytical takeaway	“Structure self-corrects; deficiency curing demonstrates resilience.”
+
+
+⸻
+
+💬 Example language for your credit memo:
+
+“During the period, no cash leakage occurred despite a temporary deficiency retention at CarCo. The shortfall was fully cured within one reporting cycle, and the Issuer maintained timely note payments from liquidity reserves. The deficiency mechanism thus functioned as intended — isolating the stress and reinforcing structural protection.”
+
+⸻
+
+Would you like me to add a new section to your dashboard that automatically calculates:
+	•	CarCo Deficiency (EUR)
+	•	Deficiency / Net BB %
+	•	Liquidity Coverage Ratio (Reserves ÷ Deficiency)
+and flags “PASS” when coverage > 1×?
 
