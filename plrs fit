@@ -40,6 +40,46 @@ Prefunding / ramp modelling
 	•	Fitch: they assume prefunding completes (i.e., no ramp failure stress). If it didn’t complete, Fitch noted the deal could even look “better off” under some mechanics, but that’s not their base assumption.
 	•	For Polaris, they described a process where they were kept updated on the pipeline during ramp, checked limits vs pipeline, and because visibility was good and eligibility wasn’t materially wider than the observed pool, they did not apply an additional “portfolio quality drift” stress. WA metrics (WAFF/WALS context) were said to be broadly stable through ramp.
 
+
+----------------------------------------------------------
+
+Constraints the speaker flags as binding (ratings / modelling)
+	•	Primary binding stress for mezz & junior notes: “rates down + high CPR”
+	•	They explicitly say the constraining run for mezz/juniors is a rates-down, high prepayment (high CPR) stress, because it causes spread compression (fixed-rate loans reset to a lower rate) and reduces available excess spread.
+	•	Mechanism they describe: seniors repay sooner in high CPR scenarios, leaving juniors outstanding and having to rely on lower post-reversion excess spread / cash available, which makes them more vulnerable.
+	•	High-CPR calibration / severity
+	•	They indicate they run high CPR levels (they mention ~40% for this deal; also referencing 40–45–50% in similar cases) to capture the interaction of interest-rate reversion concentration and spread compression.
+	•	For the affected notes, failure is mainly credit loss (principal loss), not liquidity
+	•	When asked whether the junior constraint is credit vs liquidity: they say it is predominantly credit (principal loss) driving the break for the relevant classes in their stress outcomes.
+	•	Lowest notes (F/G) are constrained to very low ratings due to high CPR + low available spread/liquidity
+	•	They state the F and G notes are predominantly driven by high CPR because, after reversion, there is insufficient excess spread / cash available, so they “fail to achieve any rating,” ending up in B- / CCC territory.
+
+Structural / cashflow constraints discussed (secondary)
+	•	Liquidity Reserve Fund (LRF): initially unfunded; builds from principal
+	•	They describe the LRF as unfunded at closing and funded over time from principal collections until it reaches the required target.
+	•	Constraint implication: Day-1 liquidity is lower, and the model “dictates” how quickly it builds, meaning early-period liquidity support is limited versus a day-1 funded reserve.
+	•	LRF sizing change vs prior deal reduces day-1 liquidity
+	•	They highlight a structural difference vs Polaris 2025-2:
+	•	Prior: LRF target was maximum of 1% of Class A and Class B.
+	•	This deal: maximum of 1% of Class A or Class B (as they recall).
+	•	Their point: this change means lower LRF available initially, i.e., slightly weaker day-1 liquidity support.
+	•	LRF amortisation dynamic
+	•	They explain LRF shrinks as Class A amortises, and once Class A falls below Class B, the Class B balance drives the LRF target, so the reserve tracks the larger of A/B over time (per their recollection of the “or”/“maximum” mechanic).
+
+Swap / hedging constraint (not flagged as binding, but monitored)
+	•	Swap can be beneficial in rising-rate scenarios and harmful in low-rate / over-hedged scenarios
+	•	They acknowledge over-hedge risk: in a low-rate environment, if over-hedged, the SPV could pay “too much” on the swap relative to what it receives, which hurts cashflows and would be captured in the runs.
+	•	But they do not present the swap as the key binding constraint here; they say the swap is structured in line with criteria and they do give credit to it.
+
+Call / step-up modelling constraint
+	•	They do NOT assume the call is exercised; they DO model step-up coupons (no-call)
+	•	Because the call is not contractual/mandatory, they assume no call, and model step-up margins/coupons continuing. This can constrain juniors because it extends exposure into the post-reversion period where spread may be lower.
+
+Other items they mention but downplay as binding
+	•	Prefunding negative carry
+	•	They note prefunding can introduce negative carry, but in this case it was limited and not stressed (so not a binding driver here).
+	•	Product switches
+	•	They stress product switches as an additional spread-compression vector, but say it was not driving ratings for Classes K through E; it is more relevant to the very junior notes in combination with high CPR / reversion timing.
 Practical “where to look” for buffer
 	•	Fitch suggested using the presale / new issue report sensitivity tables to infer how much buffer there is (they could not discuss break-even detail on the call).
 
