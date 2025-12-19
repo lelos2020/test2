@@ -1,0 +1,47 @@
+What this call was about
+	•	A catch-up between the deal team and Fitch to understand what actually binds the Polaris structure from a ratings/modelling perspective, and what levers might improve outcomes (especially mezz/junior).
+
+Fitch’s key takeaways on the prior Polaris
+	•	Fitch views Polaris as a fairly standard structure with no obvious structural “hole” that creates a step-change weakness across scenarios.
+	•	The main rating sensitivity driver (especially for mezz/junior) was the “rates down / high CPR” type dynamic, because it interacts with the swap notional / over-hedge profile. In short: the swap/hedge mechanics can become the binding constraint at the margin, rather than a classic structural deficiency.
+
+Swap notional / CPR stress discussion
+	•	The team asked whether moving to a more balanced swap notional would reduce the “over-hedge driven shortfall.” Fitch’s response: likely yes in principle, but they’d need to analyse it.
+	•	On whether Fitch layers an additional CPR stress on top of the deal’s embedded/scheduled CPR assumption used for swap notional:
+	•	Fitch indicated they treat the scheduled notional / embedded CPR as given and do not separately “stress CPR beyond that” just to cancel it out.
+	•	Fitch described an internal simplification/assumption approach:
+	•	They model a scenario where a meaningful fixed-rate portion is retained (the call references ~25% retention), which keeps the hedge in place longer and reduces excess spread (because hedging cost persists instead of reverting to a floating coupon).
+	•	They then assume the retained portion is effectively hedged on a 0% CPR schedule for modelling simplicity (with a caveat that real-life hedge profiles may have small built-in assumptions).
+
+Liquidity reserve (LRF) mechanics
+	•	A notable structural feature: the liquidity reserve is not funded at closing; it builds from principal in the first periods.
+	•	Fitch’s focus here is operational/modelling: how quickly it can reach target from available principal and whether there is any extended period with no liquidity support.
+	•	The team asked whether “principal could be lost” if the reserve is drawn and not replenished, and whether that drives junior CE in stress.
+	•	Fitch response: in the rating scenarios where junior notes are under pressure, the liquidity reserve generally isn’t the driver (often it’s not drawn in those scenarios), so it’s largely a non-factor for junior ratings—more of a theoretical risk.
+
+What drives junior ratings: liquidity/timing vs losses
+	•	The team asked whether junior breaks are driven by liquidity/timing constraints.
+	•	Fitch: junior stress outcomes are more loss-driven than timing/liquidity-driven.
+	•	On timely vs ultimate payment treatment:
+	•	Fitch reiterated the general approach: AAA is typically modelled as timely (supported by liquidity while it is the most senior). Lower classes can be allowed to defer while not most senior, depending on transaction documents; once a class becomes the most senior, timeliness expectations increase.
+
+Reserve sizing sensitivity
+	•	The team explored whether reducing the reserve size could be feasible.
+	•	Fitch cautioned that if the deal is already on the lower end of what they see for payment-interruption protection, reducing it further could pressure the payment interruption tests (even if credit break-evens show buffer elsewhere).
+
+Originator adjustment (performance/quality adjustment)
+	•	The team asked what could change Fitch’s originator adjustment going forward.
+	•	Fitch: changes are more plausible when an originator transitions from being “newer/less established” to more seasoned with demonstrably improved performance and operational maturity.
+	•	For this transaction: the prior deal was very recent, and the product/borrower targeting driving the adjustment is not expected to have changed materially, so Fitch did not expect movement.
+	•	Fitch also noted their modelling “starting point” is a prime benchmark/matrix, so the adjustment helps align assumptions to the originator’s actual underwriting segment/performance rather than a clean high-street prime baseline.
+
+Prefunding / ramp modelling
+	•	The team asked how Fitch models prefunding and whether they assume ramp risk or negative carry.
+	•	Fitch: they assume prefunding completes (i.e., no ramp failure stress). If it didn’t complete, Fitch noted the deal could even look “better off” under some mechanics, but that’s not their base assumption.
+	•	For Polaris, they described a process where they were kept updated on the pipeline during ramp, checked limits vs pipeline, and because visibility was good and eligibility wasn’t materially wider than the observed pool, they did not apply an additional “portfolio quality drift” stress. WA metrics (WAFF/WALS context) were said to be broadly stable through ramp.
+
+Practical “where to look” for buffer
+	•	Fitch suggested using the presale / new issue report sensitivity tables to infer how much buffer there is (they could not discuss break-even detail on the call).
+
+End of call
+	•	The call wrapped with logistics (people being out for holidays) and an agreement to follow up later if needed.
