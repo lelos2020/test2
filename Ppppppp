@@ -456,3 +456,106 @@ Array.from(document.querySelectorAll('*')).filter(el =>
 
 **Screenshot Elements tab** if still no orange.
 
+
+
+
+## **Perfect! Filter Fix - Remove UI Text**
+
+**Capturing**: `"closed captions overflow menu"` = grabbing **menu button text**, not actual captions.
+
+## **V5: INTELLIGENT FILTER - Real Speech Only**
+
+```javascript
+// V5: FILTER UI NOISE - SPEECH ONLY
+let log = [];
+let lastCaption = '';
+let downloadCount = 0;
+
+// NOISE FILTER - Remove UI/menu text
+const NOISE_WORDS = [
+  'closed captions', 'overflow menu', 'captions menu',
+  'show captions', 'turn on', 'settings', 'live captions',
+  'click to', 'open menu', 'more options'
+];
+
+function isRealSpeech(text) {
+  const clean = text.toLowerCase();
+  return !NOISE_WORDS.some(noise => clean.includes(noise)) &&
+         clean.length > 15 &&  // Minimum speech length
+         !clean.match(/^\d{1,2}:\d{2}\s*am|pm/i);  // Remove timestamps
+}
+
+setInterval(() => {
+  try {
+    const selectors = [
+      '[data-tid="live-captions"]',
+      '.ts-caption, .caption-container',
+      '[aria-label*="caption"]:not([aria-label*="menu"])',
+      '.overflow-menu [role="log"]',
+      '.live-captions-text'
+    ];
+    
+    let newCaption = '';
+    for (let sel of selectors) {
+      document.querySelectorAll(sel).forEach(el => {
+        let text = (el.textContent || el.innerText || '').trim();
+        if (text && isRealSpeech(text)) {
+          newCaption += text + ' ';
+        }
+      });
+    }
+    
+    newCaption = newCaption.trim();
+    
+    if (newCaption && newCaption !== lastCaption && newCaption.length > 20) {
+      lastCaption = newCaption;
+      log.push(`${new Date().toLocaleTimeString()} → ${newCaption}`);
+      
+      console.clear();
+      console.log('%c🗣️  REAL SPEECH DETECTED:', 
+        'font-size:20px; color:#00ff88; font-weight:bold; background:#000');
+      console.log('%c' + log.slice(-4).join('\n\n'), 
+        'font-family:Consolas; font-size:16px; line-height:1.5; padding:15px; background:#111; color:#fff');
+      
+      if (++downloadCount % 10 === 0) downloadFile();
+    }
+  } catch(e) {}
+}, 1600);
+
+function downloadFile() {
+  const header = `TEAMS LIVE CAPTIONS - ${new Date().toLocaleString()}\n\n`;
+  const content = header + log.slice(-30).join('\n') + `\n\n📊 Total: ${log.length} lines`;
+  const blob = new Blob([content], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `teams-speech-${Date.now()}.txt`;
+  document.body.append(a);
+  a.click();
+  setTimeout(() => {
+    a.remove();
+    URL.revokeObjectURL(url);
+  }, 100);
+}
+
+console.log('%c✅ V5: SPEECH-ONLY FILTER - Test with actual talking!', 
+  'font-size:22px; color:#00ff88; background:#000; padding:12px');
+```
+
+## **Test**:
+```
+1. Paste V5 → Enter
+2. 🗣️ SPEAK SOMETHING (not menu clicks)  
+3. See 🗣️ GREEN + your words (not "overflow menu")
+4. Downloads: Clean speech only
+```
+
+## **If Still UI Noise**:
+**Tell me**: What does console show when you **speak** vs **click menu**?
+
+**V5 ignores**: Menu buttons, timestamps, settings text. **Only grabs real speech**.
+
+**Green 🗣️ header + your words?** ✅ Perfect capture.
+
+**Downloads clean now?** Check latest .txt file.
+
