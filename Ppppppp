@@ -1,0 +1,14 @@
+// Teams Live Captions Grabber (2026 compatible)
+setInterval(() => {
+  const captions = Array.from(document.querySelectorAll('[data-tid="live-captions"], canvas, [role="caption"]'))
+    .map(el => el.textContent || el.innerText || el.getAttribute('aria-label') || '')
+    .filter(t => t.trim().length > 3)
+    .join('\n');
+  
+  if (captions) {
+    console.clear();
+    console.log('%cLIVE CAPTIONS:\n' + captions, 'font-size:16px; color:#00ff00');
+    navigator.clipboard.writeText(captions);  // Auto-copy
+    console.log('✅ Copied to clipboard!');
+  }
+}, 2000);  // Poll every 2s
