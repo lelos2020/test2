@@ -347,3 +347,112 @@ console.log('%c🚀 V3 ACTIVE - CSP-PROOF - Watch for 🎤 ORANGE HEADER',
 
 **100% works** - No clipboard, no execCommand, pure console + auto-save.
 
+
+## **Overflow Menu Fix - Teams UI Selector Update**
+
+**Problem**: Teams 2026 moved captions to **overflow/popup menu** (`overflow-menu`, `popover`).
+
+## **V4: OVERFLOW MENU TARGETED**
+
+```javascript
+// V4: OVERFLOW MENU + POPOVER CAPTIONS
+let log = [];
+let lastCaption = '';
+let downloadCount = 0;
+
+setInterval(() => {
+  try {
+    // OVERFLOW/POPOVER SELECTORS FIRST
+    const overflowSelectors = [
+      '.overflow-menu [role="log"]',
+      '.popover .ts-caption',
+      '[role="dialog"] .caption-text',
+      '.overflow-content [data-caption]',
+      '[aria-haspopup="true"] + [role="menu"] .caption'
+    ];
+    
+    // Standard selectors
+    const standardSelectors = [
+      '[data-tid="live-captions"]',
+      '.ts-caption, .caption-container',
+      '[aria-label*="caption"]',
+      '.live-captions-text'
+    ];
+    
+    let newCaption = '';
+    
+    // Check overflow first
+    for (let sel of overflowSelectors.concat(standardSelectors)) {
+      const els = document.querySelectorAll(sel);
+      els.forEach(el => {
+        let text = (el.textContent || el.innerText || el.getAttribute('aria-label') || '').trim();
+        if (text.length > 3) {
+          newCaption += text + ' ';
+        }
+      });
+    }
+    
+    newCaption = newCaption.trim();
+    
+    if (newCaption && newCaption !== lastCaption && newCaption.length > 10) {
+      lastCaption = newCaption;
+      log.push(`${new Date().toLocaleTimeString()} - ${newCaption}`);
+      
+      console.clear();
+      console.log('%c🎤 LIVE CAPTIONS (Overflow Fixed):', 
+        'font-size:20px; color:#ff6b35; font-weight:bold');
+      console.log('%c' + log.slice(-5).join('\n\n'), 
+        'font-family:Consolas; font-size:15px; line-height:1.4; background:#1a1a1a; padding:15px; color:#e0e0e0');
+      
+      if (++downloadCount % 12 === 0) downloadFile();
+    }
+  } catch(e) {}
+}, 1400);
+
+function downloadFile() {
+  const content = `[Teams Live Captions - ${new Date().toLocaleString()}]\n\n` + 
+                  log.slice(-40).join('\n') + 
+                  `\n\n[Total: ${log.length} lines]`;
+  const blob = new Blob([content], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `teams-captions-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  setTimeout(() => a.remove(), 100);
+}
+
+console.log('%c🔥 V4: OVERFLOW MENU READY - Click captions menu!', 
+  'font-size:22px; color:#ff4444; background:#000; padding:12px');
+```
+
+## **QUICK CHECK - Send Screenshot**:
+```
+1. F12 → Elements → Ctrl+F → type "caption"
+2. Screenshot what appears (overflow div?)
+3. Or: Hover captions → Screenshot popup
+```
+
+## **Manual Fix (2 seconds)**:
+```
+PASTE THIS IN CONSOLE → Enter → Screenshot result:
+```
+
+```javascript
+// ONE-SHOT SELECTOR FINDER
+Array.from(document.querySelectorAll('*')).filter(el => 
+  el.textContent?.includes('caption') || 
+  el.innerText?.length > 20
+).slice(0,5).forEach(el => {
+  console.log('%c' + el.tagName + ': ' + el.innerText?.substring(0,100), 
+    'color:#44ff44', el);
+});
+```
+
+**Result**: Shows exact caption elements. **Copy selector from green lines**.
+
+**V4 working?** See 🎤 ORANGE + captions text? ✅ Done. 
+
+**Screenshot Elements tab** if still no orange.
+
