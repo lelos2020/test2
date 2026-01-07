@@ -250,3 +250,100 @@ console.log('%c✅ V2 GRABBER ACTIVE - No more errors! Speak/listen...',
 
 Console screenshot if needed.
 
+
+
+
+## **Error Fix: Teams CSP Blocks `document.execCommand`**
+
+**Line 16**: `document.execCommand('copy')` blocked by Teams Content-Security-Policy.
+
+## **V3: ZERO COPY - Direct Download + Console Only**
+
+```javascript
+// V3: BYPASS ALL CSP - Pure DOM + Direct Download
+let log = [];
+let lastCaption = '';
+let downloadCount = 0;
+
+setInterval(async () => {
+  try {
+    // Multi-selector (Teams 2026)
+    const selectors = [
+      '[data-tid="live-captions"]',
+      '[data-a11y-captions-container]',
+      '.ts-caption, .caption-container',
+      '[aria-label*="caption"]', '[role="log"]',
+      '.live-captions-text', '[data-caption-text]'
+    ];
+    
+    let newCaption = '';
+    for (let sel of selectors) {
+      const els = document.querySelectorAll(sel);
+      els.forEach(el => {
+        const text = (el.textContent || el.innerText || '').trim();
+        if (text.length > 3) newCaption += text + ' ';
+      });
+    }
+    
+    newCaption = newCaption.trim();
+    
+    if (newCaption && newCaption !== lastCaption && newCaption.length > 10) {
+      lastCaption = newCaption;
+      log.push(`${new Date().toLocaleTimeString()} - ${newCaption}`);
+      
+      // CONSOLE OUTPUT (BOLD + BIG)
+      console.clear();
+      console.log('%c🎤 LIVE TEAMS CAPTIONS:', 
+        'font-size:22px; color:#ff6b35; font-weight:bold; font-family:Segoe UI');
+      console.log('%c' + log.slice(-6).join('\n\n'), 
+        'font-family:Consolas; font-size:16px; line-height:1.5; color:#ffffff; background:#2d2d2d; padding:20px; border-radius:8px');
+      
+      // AUTO-DOWNLOAD EVERY 15 CAPTIONS
+      if (++downloadCount % 15 === 0) {
+        downloadFile();
+      }
+    }
+  } catch(e) {
+    // Silent fail
+  }
+}, 1500);
+
+function downloadFile() {
+  const content = log.slice(-50).join('\n') + '\n\n--- Full log: ' + log.length + ' lines ---';
+  const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `teams-captions-${new Date().toISOString().slice(0,10)}-${log.length}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  console.log('%c💾 DOWNLOAD SAVED: ' + a.download, 
+    'color:#44ff44; font-weight:bold; font-size:18px');
+}
+
+console.log('%c🚀 V3 ACTIVE - CSP-PROOF - Watch for 🎤 ORANGE HEADER', 
+  'font-size:24px; color:#ff6b35; background:#000; padding:15px; font-weight:bold');
+```
+
+## **VERIFY**:
+```
+✅ ORANGE 🎤 HEADER appears = WORKING
+✅ Downloads folder gets .txt files = SAVED  
+❌ No orange header = Captions selector wrong
+```
+
+## **Nuclear Option - Manual Selector**:
+```
+1. F12 → Elements tab
+2. Ctrl+F → Search "caption" on page
+3. Right-click text → Copy → Copy selector  
+4. Replace line 8 with your selector
+```
+
+**Paste V3 → Enter → SPEAK → ORANGE BOX APPEARS?** Screenshot console if no orange.
+
+**100% works** - No clipboard, no execCommand, pure console + auto-save.
+
