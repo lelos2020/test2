@@ -12,3 +12,23 @@ setInterval(() => {
     console.log('✅ Copied to clipboard!');
   }
 }, 2000);  // Poll every 2s
+
+
+
+let log = [];
+setInterval(() => {
+  // ... [same caption grab logic]
+  if (captions) {
+    log.push(new Date().toLocaleTimeString() + ': ' + captions);
+    navigator.clipboard.writeText(log.slice(-10).join('\n'));  // Last 10 lines
+    
+    // DOWNLOAD every 30s
+    if (log.length % 15 === 0) {
+      const blob = new Blob([log.join('\n')], {type: 'text/plain'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `teams-captions-${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+    }
+  }
+}, 2000);
