@@ -1,0 +1,30 @@
+Sub Create()
+    Dim filePath As String: filePath = "C:\Path\To\Your\File.xlsx" ' <--- CHANGE THIS
+    Dim fileNum As Integer: fileNum = FreeFile
+    Open filePath For Binary Access Read As #fileNum
+    Dim fileBytes() As Byte: ReDim fileBytes(LOF(fileNum) - 1)
+    Get #fileNum, , fileBytes: Close #fileNum
+
+    ' Convert to Base64
+    Dim objXML As Object: Set objXML = CreateObject("MSXML2.DOMDocument")
+    Dim objNode As Object: Set objNode = objXML.createElement("b64")
+    objNode.DataType = "bin.base64": objNode.nodeTypedValue = fileBytes
+    Dim b64 As String: b64 = objNode.Text
+    
+    ' Clear Document
+    ActiveDocument.Range.Delete
+    
+    ' Generate QR Codes in 100-character chunks
+    Dim i As Long, chunk As String, counter As Integer: counter = 1
+    For i = 1 To Len(b64) Step 100
+        chunk = Mid(b64, i, 100)
+        ' Insert Label
+        ActiveDocument.Range.InsertAfter "Chunk " & counter & ":" & vbCrLf
+        ' Insert Native Word QR Code Field
+        Dim rng As Range: Set rng = ActiveDocument.Range(ActiveDocument.Range.End - 1, ActiveDocument.Range.End)
+        ActiveDocument.Fields.Add rng, wdFieldEmpty, "DISPLAYBARCODE """ & chunk & """ QR \q 3 \s 100", False
+        ActiveDocument.Range.InsertAfter vbCrLf & vbCrLf
+        counter = counter + 1
+    Next i
+    MsgBox "Done! Scan these in order."
+End Sub
