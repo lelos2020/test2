@@ -1,0 +1,21 @@
+Sub FileToText()
+    Dim filePath As String
+    ' --- CHANGE THE PATH BELOW TO YOUR EXCEL FILE ---
+    filePath = "C:\Users\YourName\Documents\YourData.xlsx"
+    
+    Dim fileNum As Integer: fileNum = FreeFile
+    Open filePath For Binary Access Read As #fileNum
+    Dim fileBytes() As Byte: ReDim fileBytes(LOF(fileNum) - 1)
+    Get #fileNum, , fileBytes
+    Close #fileNum
+    
+    ' Convert to Base64 using built-in Windows XML library
+    Dim objXML As Object: Set objXML = CreateObject("MSXML2.DOMDocument")
+    Dim objNode As Object: Set objNode = objXML.createElement("b64")
+    objNode.DataType = "bin.base64"
+    objNode.nodeTypedValue = fileBytes
+    
+    ' This inserts the long text string directly into your Word document
+    ActiveDocument.Range.Text = objNode.Text
+    MsgBox "Done! The file content is now in your Word document."
+End Sub
