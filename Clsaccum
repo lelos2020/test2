@@ -1,0 +1,1775 @@
+# 📦 CLASS: clsSummaryAccumulators
+
+## Complete Implementation
+
+```
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    clsSummaryAccumulators CLASS                             ║
+╠════════════════════════════════════════════════════════════════════════════╣
+║  Purpose: Encapsulates all accumulator variables for summary statistics    ║
+║  Pattern: Data Transfer Object (DTO) / Accumulator Pattern                 ║
+║  Usage: Single pass through loan data to collect all metrics               ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## Class Module: clsSummaryAccumulators
+
+```vba
+Option Explicit
+
+'===============================================================================
+' CLASS: clsSummaryAccumulators
+' PURPOSE: Encapsulates all accumulator variables for pool summary statistics
+' PATTERN: Accumulator/Collector pattern for single-pass data aggregation
+'===============================================================================
+
+'===============================================================================
+' BALANCE TOTALS
+'===============================================================================
+Private m_TotalBalance As Double
+Private m_TotalOriginalBalance As Double
+Private m_MaxCurrentBalance As Double
+Private m_MinCurrentBalance As Double
+
+'===============================================================================
+' WEIGHTED VALUE ACCUMULATORS
+'===============================================================================
+Private m_WeightedCurrentBalance As Double
+Private m_WeightedOriginalBalance As Double
+Private m_WeightedCurrentLTV As Double
+Private m_WeightedOriginalLTV As Double
+Private m_WeightedTerm As Double
+Private m_WeightedSeasoning As Double
+Private m_WeightedRemainingTerm As Double
+Private m_WeightedCurrentMargin As Double
+Private m_WeightedCurrentInterestRate As Double
+Private m_WeightedFinalMargin As Double
+Private m_WeightedTimeToReversion As Double
+Private m_WeightedOriginalValuation As Double
+Private m_WeightedPriorBalance As Double
+Private m_WeightedFirstChargeOLTV As Double
+
+'===============================================================================
+' REPAYMENT TYPE BALANCES
+'===============================================================================
+Private m_IOBalance As Double
+Private m_AmortisingBalance As Double
+Private m_PartAndPartBalance As Double
+
+'===============================================================================
+' OCCUPANCY TYPE BALANCES
+'===============================================================================
+Private m_OwnerOccupiedBalance As Double
+Private m_BuyToLetBalance As Double
+Private m_IOOwnerOccupiedBalance As Double
+
+'===============================================================================
+' ARREARS BALANCES
+'===============================================================================
+Private m_TotalArrearsBalance As Double
+Private m_CumulativeArrearsAmount As Double
+Private m_OneMonthPlusArrearsBalance As Double
+Private m_ThreeMonthPlusArrearsBalance As Double
+Private m_SixMonthPlusArrearsBalance As Double
+Private m_TwelveMonthPlusArrearsBalance As Double
+
+'===============================================================================
+' CCJ (COUNTY COURT JUDGEMENT) ACCUMULATORS
+'===============================================================================
+Private m_CCJsSatisfiedBalance As Double
+Private m_CCJsUnsatisfiedBalance As Double
+Private m_TotalValueSatisfiedCCJs As Double
+Private m_TotalValueUnsatisfiedCCJs As Double
+Private m_WeightedValueSatisfiedCCJs As Double
+Private m_WeightedValueUnsatisfiedCCJs As Double
+Private m_WeightedTimeSinceLastCCJ As Double
+Private m_IVABalance As Double
+
+'===============================================================================
+' INTEREST RATE TYPE BALANCES
+'===============================================================================
+Private m_FixedRateBalance As Double
+Private m_FloatingRateBalance As Double
+Private m_FixedToFloatingBalance As Double
+Private m_FixedToFloatingInFixedPeriodBalance As Double
+Private m_FixedToFloatingInFloatingPeriodBalance As Double
+Private m_TotalTimeToReversion As Double
+
+'===============================================================================
+' GEOGRAPHIC BALANCES
+'===============================================================================
+Private m_LondonBalance As Double
+Private m_SouthEastBalance As Double
+Private m_ScotlandBalance As Double
+Private m_WalesBalance As Double
+Private m_NorthBalance As Double
+Private m_MidlandsBalance As Double
+
+'===============================================================================
+' VALUATION TYPE BALANCES
+'===============================================================================
+Private m_FullValuationBalance As Double
+Private m_DriveByValuationBalance As Double
+Private m_AVMValuationBalance As Double
+Private m_IndexedValuationBalance As Double
+Private m_DesktopValuationBalance As Double
+
+'===============================================================================
+' EMPLOYMENT STATUS BALANCES
+'===============================================================================
+Private m_EmployedBalance As Double
+Private m_SelfEmployedBalance As Double
+Private m_UnemployedBalance As Double
+Private m_RetiredBalance As Double
+
+'===============================================================================
+' BORROWER CHARACTERISTIC BALANCES
+'===============================================================================
+Private m_FirstTimeBuyerBalance As Double
+Private m_RightToBuyBalance As Double
+Private m_SecondChargeBalance As Double
+Private m_RemortgageBalance As Double
+
+'===============================================================================
+' LOAN RANKING
+'===============================================================================
+Private m_FirstChargeBalance As Double
+Private m_SecondChargeCount As Long
+
+'===============================================================================
+' COUNTERS
+'===============================================================================
+Private m_LoanCount As Long
+Private m_IOLoanCount As Long
+Private m_AmortisingLoanCount As Long
+Private m_ArrearsLoanCount As Long
+Private m_CCJSatisfiedCount As Long
+Private m_CCJUnsatisfiedCount As Long
+
+'===============================================================================
+' PROPERTY: TotalBalance
+'===============================================================================
+Public Property Get TotalBalance() As Double
+    TotalBalance = m_TotalBalance
+End Property
+
+Public Property Let TotalBalance(value As Double)
+    m_TotalBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: TotalOriginalBalance
+'===============================================================================
+Public Property Get TotalOriginalBalance() As Double
+    TotalOriginalBalance = m_TotalOriginalBalance
+End Property
+
+Public Property Let TotalOriginalBalance(value As Double)
+    m_TotalOriginalBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: MaxCurrentBalance
+'===============================================================================
+Public Property Get MaxCurrentBalance() As Double
+    MaxCurrentBalance = m_MaxCurrentBalance
+End Property
+
+Public Property Let MaxCurrentBalance(value As Double)
+    m_MaxCurrentBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: MinCurrentBalance
+'===============================================================================
+Public Property Get MinCurrentBalance() As Double
+    MinCurrentBalance = m_MinCurrentBalance
+End Property
+
+Public Property Let MinCurrentBalance(value As Double)
+    m_MinCurrentBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedCurrentBalance
+'===============================================================================
+Public Property Get WeightedCurrentBalance() As Double
+    WeightedCurrentBalance = m_WeightedCurrentBalance
+End Property
+
+Public Property Let WeightedCurrentBalance(value As Double)
+    m_WeightedCurrentBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedOriginalBalance
+'===============================================================================
+Public Property Get WeightedOriginalBalance() As Double
+    WeightedOriginalBalance = m_WeightedOriginalBalance
+End Property
+
+Public Property Let WeightedOriginalBalance(value As Double)
+    m_WeightedOriginalBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedCurrentLTV
+'===============================================================================
+Public Property Get WeightedCurrentLTV() As Double
+    WeightedCurrentLTV = m_WeightedCurrentLTV
+End Property
+
+Public Property Let WeightedCurrentLTV(value As Double)
+    m_WeightedCurrentLTV = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedOriginalLTV
+'===============================================================================
+Public Property Get WeightedOriginalLTV() As Double
+    WeightedOriginalLTV = m_WeightedOriginalLTV
+End Property
+
+Public Property Let WeightedOriginalLTV(value As Double)
+    m_WeightedOriginalLTV = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedTerm
+'===============================================================================
+Public Property Get WeightedTerm() As Double
+    WeightedTerm = m_WeightedTerm
+End Property
+
+Public Property Let WeightedTerm(value As Double)
+    m_WeightedTerm = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedSeasoning
+'===============================================================================
+Public Property Get WeightedSeasoning() As Double
+    WeightedSeasoning = m_WeightedSeasoning
+End Property
+
+Public Property Let WeightedSeasoning(value As Double)
+    m_WeightedSeasoning = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedRemainingTerm
+'===============================================================================
+Public Property Get WeightedRemainingTerm() As Double
+    WeightedRemainingTerm = m_WeightedRemainingTerm
+End Property
+
+Public Property Let WeightedRemainingTerm(value As Double)
+    m_WeightedRemainingTerm = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedCurrentMargin
+'===============================================================================
+Public Property Get WeightedCurrentMargin() As Double
+    WeightedCurrentMargin = m_WeightedCurrentMargin
+End Property
+
+Public Property Let WeightedCurrentMargin(value As Double)
+    m_WeightedCurrentMargin = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedCurrentInterestRate
+'===============================================================================
+Public Property Get WeightedCurrentInterestRate() As Double
+    WeightedCurrentInterestRate = m_WeightedCurrentInterestRate
+End Property
+
+Public Property Let WeightedCurrentInterestRate(value As Double)
+    m_WeightedCurrentInterestRate = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedFinalMargin
+'===============================================================================
+Public Property Get WeightedFinalMargin() As Double
+    WeightedFinalMargin = m_WeightedFinalMargin
+End Property
+
+Public Property Let WeightedFinalMargin(value As Double)
+    m_WeightedFinalMargin = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedTimeToReversion
+'===============================================================================
+Public Property Get WeightedTimeToReversion() As Double
+    WeightedTimeToReversion = m_WeightedTimeToReversion
+End Property
+
+Public Property Let WeightedTimeToReversion(value As Double)
+    m_WeightedTimeToReversion = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedOriginalValuation
+'===============================================================================
+Public Property Get WeightedOriginalValuation() As Double
+    WeightedOriginalValuation = m_WeightedOriginalValuation
+End Property
+
+Public Property Let WeightedOriginalValuation(value As Double)
+    m_WeightedOriginalValuation = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedPriorBalance
+'===============================================================================
+Public Property Get WeightedPriorBalance() As Double
+    WeightedPriorBalance = m_WeightedPriorBalance
+End Property
+
+Public Property Let WeightedPriorBalance(value As Double)
+    m_WeightedPriorBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedFirstChargeOLTV
+'===============================================================================
+Public Property Get WeightedFirstChargeOLTV() As Double
+    WeightedFirstChargeOLTV = m_WeightedFirstChargeOLTV
+End Property
+
+Public Property Let WeightedFirstChargeOLTV(value As Double)
+    m_WeightedFirstChargeOLTV = value
+End Property
+
+'===============================================================================
+' PROPERTY: IOBalance
+'===============================================================================
+Public Property Get IOBalance() As Double
+    IOBalance = m_IOBalance
+End Property
+
+Public Property Let IOBalance(value As Double)
+    m_IOBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: AmortisingBalance
+'===============================================================================
+Public Property Get AmortisingBalance() As Double
+    AmortisingBalance = m_AmortisingBalance
+End Property
+
+Public Property Let AmortisingBalance(value As Double)
+    m_AmortisingBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: PartAndPartBalance
+'===============================================================================
+Public Property Get PartAndPartBalance() As Double
+    PartAndPartBalance = m_PartAndPartBalance
+End Property
+
+Public Property Let PartAndPartBalance(value As Double)
+    m_PartAndPartBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: OwnerOccupiedBalance
+'===============================================================================
+Public Property Get OwnerOccupiedBalance() As Double
+    OwnerOccupiedBalance = m_OwnerOccupiedBalance
+End Property
+
+Public Property Let OwnerOccupiedBalance(value As Double)
+    m_OwnerOccupiedBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: BuyToLetBalance
+'===============================================================================
+Public Property Get BuyToLetBalance() As Double
+    BuyToLetBalance = m_BuyToLetBalance
+End Property
+
+Public Property Let BuyToLetBalance(value As Double)
+    m_BuyToLetBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: IOOwnerOccupiedBalance
+'===============================================================================
+Public Property Get IOOwnerOccupiedBalance() As Double
+    IOOwnerOccupiedBalance = m_IOOwnerOccupiedBalance
+End Property
+
+Public Property Let IOOwnerOccupiedBalance(value As Double)
+    m_IOOwnerOccupiedBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: TotalArrearsBalance
+'===============================================================================
+Public Property Get TotalArrearsBalance() As Double
+    TotalArrearsBalance = m_TotalArrearsBalance
+End Property
+
+Public Property Let TotalArrearsBalance(value As Double)
+    m_TotalArrearsBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: CumulativeArrearsAmount
+'===============================================================================
+Public Property Get CumulativeArrearsAmount() As Double
+    CumulativeArrearsAmount = m_CumulativeArrearsAmount
+End Property
+
+Public Property Let CumulativeArrearsAmount(value As Double)
+    m_CumulativeArrearsAmount = value
+End Property
+
+'===============================================================================
+' PROPERTY: OneMonthPlusArrearsBalance
+'===============================================================================
+Public Property Get OneMonthPlusArrearsBalance() As Double
+    OneMonthPlusArrearsBalance = m_OneMonthPlusArrearsBalance
+End Property
+
+Public Property Let OneMonthPlusArrearsBalance(value As Double)
+    m_OneMonthPlusArrearsBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: ThreeMonthPlusArrearsBalance
+'===============================================================================
+Public Property Get ThreeMonthPlusArrearsBalance() As Double
+    ThreeMonthPlusArrearsBalance = m_ThreeMonthPlusArrearsBalance
+End Property
+
+Public Property Let ThreeMonthPlusArrearsBalance(value As Double)
+    m_ThreeMonthPlusArrearsBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: SixMonthPlusArrearsBalance
+'===============================================================================
+Public Property Get SixMonthPlusArrearsBalance() As Double
+    SixMonthPlusArrearsBalance = m_SixMonthPlusArrearsBalance
+End Property
+
+Public Property Let SixMonthPlusArrearsBalance(value As Double)
+    m_SixMonthPlusArrearsBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: TwelveMonthPlusArrearsBalance
+'===============================================================================
+Public Property Get TwelveMonthPlusArrearsBalance() As Double
+    TwelveMonthPlusArrearsBalance = m_TwelveMonthPlusArrearsBalance
+End Property
+
+Public Property Let TwelveMonthPlusArrearsBalance(value As Double)
+    m_TwelveMonthPlusArrearsBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: CCJsSatisfiedBalance
+'===============================================================================
+Public Property Get CCJsSatisfiedBalance() As Double
+    CCJsSatisfiedBalance = m_CCJsSatisfiedBalance
+End Property
+
+Public Property Let CCJsSatisfiedBalance(value As Double)
+    m_CCJsSatisfiedBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: CCJsUnsatisfiedBalance
+'===============================================================================
+Public Property Get CCJsUnsatisfiedBalance() As Double
+    CCJsUnsatisfiedBalance = m_CCJsUnsatisfiedBalance
+End Property
+
+Public Property Let CCJsUnsatisfiedBalance(value As Double)
+    m_CCJsUnsatisfiedBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: TotalValueSatisfiedCCJs
+'===============================================================================
+Public Property Get TotalValueSatisfiedCCJs() As Double
+    TotalValueSatisfiedCCJs = m_TotalValueSatisfiedCCJs
+End Property
+
+Public Property Let TotalValueSatisfiedCCJs(value As Double)
+    m_TotalValueSatisfiedCCJs = value
+End Property
+
+'===============================================================================
+' PROPERTY: TotalValueUnsatisfiedCCJs
+'===============================================================================
+Public Property Get TotalValueUnsatisfiedCCJs() As Double
+    TotalValueUnsatisfiedCCJs = m_TotalValueUnsatisfiedCCJs
+End Property
+
+Public Property Let TotalValueUnsatisfiedCCJs(value As Double)
+    m_TotalValueUnsatisfiedCCJs = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedValueSatisfiedCCJs
+'===============================================================================
+Public Property Get WeightedValueSatisfiedCCJs() As Double
+    WeightedValueSatisfiedCCJs = m_WeightedValueSatisfiedCCJs
+End Property
+
+Public Property Let WeightedValueSatisfiedCCJs(value As Double)
+    m_WeightedValueSatisfiedCCJs = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedValueUnsatisfiedCCJs
+'===============================================================================
+Public Property Get WeightedValueUnsatisfiedCCJs() As Double
+    WeightedValueUnsatisfiedCCJs = m_WeightedValueUnsatisfiedCCJs
+End Property
+
+Public Property Let WeightedValueUnsatisfiedCCJs(value As Double)
+    m_WeightedValueUnsatisfiedCCJs = value
+End Property
+
+'===============================================================================
+' PROPERTY: WeightedTimeSinceLastCCJ
+'===============================================================================
+Public Property Get WeightedTimeSinceLastCCJ() As Double
+    WeightedTimeSinceLastCCJ = m_WeightedTimeSinceLastCCJ
+End Property
+
+Public Property Let WeightedTimeSinceLastCCJ(value As Double)
+    m_WeightedTimeSinceLastCCJ = value
+End Property
+
+'===============================================================================
+' PROPERTY: IVABalance
+'===============================================================================
+Public Property Get IVABalance() As Double
+    IVABalance = m_IVABalance
+End Property
+
+Public Property Let IVABalance(value As Double)
+    m_IVABalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FixedRateBalance
+'===============================================================================
+Public Property Get FixedRateBalance() As Double
+    FixedRateBalance = m_FixedRateBalance
+End Property
+
+Public Property Let FixedRateBalance(value As Double)
+    m_FixedRateBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FloatingRateBalance
+'===============================================================================
+Public Property Get FloatingRateBalance() As Double
+    FloatingRateBalance = m_FloatingRateBalance
+End Property
+
+Public Property Let FloatingRateBalance(value As Double)
+    m_FloatingRateBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FixedToFloatingBalance
+'===============================================================================
+Public Property Get FixedToFloatingBalance() As Double
+    FixedToFloatingBalance = m_FixedToFloatingBalance
+End Property
+
+Public Property Let FixedToFloatingBalance(value As Double)
+    m_FixedToFloatingBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FixedToFloatingInFixedPeriodBalance
+'===============================================================================
+Public Property Get FixedToFloatingInFixedPeriodBalance() As Double
+    FixedToFloatingInFixedPeriodBalance = m_FixedToFloatingInFixedPeriodBalance
+End Property
+
+Public Property Let FixedToFloatingInFixedPeriodBalance(value As Double)
+    m_FixedToFloatingInFixedPeriodBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FixedToFloatingInFloatingPeriodBalance
+'===============================================================================
+Public Property Get FixedToFloatingInFloatingPeriodBalance() As Double
+    FixedToFloatingInFloatingPeriodBalance = m_FixedToFloatingInFloatingPeriodBalance
+End Property
+
+Public Property Let FixedToFloatingInFloatingPeriodBalance(value As Double)
+    m_FixedToFloatingInFloatingPeriodBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: TotalTimeToReversion
+'===============================================================================
+Public Property Get TotalTimeToReversion() As Double
+    TotalTimeToReversion = m_TotalTimeToReversion
+End Property
+
+Public Property Let TotalTimeToReversion(value As Double)
+    m_TotalTimeToReversion = value
+End Property
+
+'===============================================================================
+' PROPERTY: LondonBalance
+'===============================================================================
+Public Property Get LondonBalance() As Double
+    LondonBalance = m_LondonBalance
+End Property
+
+Public Property Let LondonBalance(value As Double)
+    m_LondonBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: SouthEastBalance
+'===============================================================================
+Public Property Get SouthEastBalance() As Double
+    SouthEastBalance = m_SouthEastBalance
+End Property
+
+Public Property Let SouthEastBalance(value As Double)
+    m_SouthEastBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: ScotlandBalance
+'===============================================================================
+Public Property Get ScotlandBalance() As Double
+    ScotlandBalance = m_ScotlandBalance
+End Property
+
+Public Property Let ScotlandBalance(value As Double)
+    m_ScotlandBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: WalesBalance
+'===============================================================================
+Public Property Get WalesBalance() As Double
+    WalesBalance = m_WalesBalance
+End Property
+
+Public Property Let WalesBalance(value As Double)
+    m_WalesBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: NorthBalance
+'===============================================================================
+Public Property Get NorthBalance() As Double
+    NorthBalance = m_NorthBalance
+End Property
+
+Public Property Let NorthBalance(value As Double)
+    m_NorthBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: MidlandsBalance
+'===============================================================================
+Public Property Get MidlandsBalance() As Double
+    MidlandsBalance = m_MidlandsBalance
+End Property
+
+Public Property Let MidlandsBalance(value As Double)
+    m_MidlandsBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FullValuationBalance
+'===============================================================================
+Public Property Get FullValuationBalance() As Double
+    FullValuationBalance = m_FullValuationBalance
+End Property
+
+Public Property Let FullValuationBalance(value As Double)
+    m_FullValuationBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: DriveByValuationBalance
+'===============================================================================
+Public Property Get DriveByValuationBalance() As Double
+    DriveByValuationBalance = m_DriveByValuationBalance
+End Property
+
+Public Property Let DriveByValuationBalance(value As Double)
+    m_DriveByValuationBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: AVMValuationBalance
+'===============================================================================
+Public Property Get AVMValuationBalance() As Double
+    AVMValuationBalance = m_AVMValuationBalance
+End Property
+
+Public Property Let AVMValuationBalance(value As Double)
+    m_AVMValuationBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: IndexedValuationBalance
+'===============================================================================
+Public Property Get IndexedValuationBalance() As Double
+    IndexedValuationBalance = m_IndexedValuationBalance
+End Property
+
+Public Property Let IndexedValuationBalance(value As Double)
+    m_IndexedValuationBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: DesktopValuationBalance
+'===============================================================================
+Public Property Get DesktopValuationBalance() As Double
+    DesktopValuationBalance = m_DesktopValuationBalance
+End Property
+
+Public Property Let DesktopValuationBalance(value As Double)
+    m_DesktopValuationBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: EmployedBalance
+'===============================================================================
+Public Property Get EmployedBalance() As Double
+    EmployedBalance = m_EmployedBalance
+End Property
+
+Public Property Let EmployedBalance(value As Double)
+    m_EmployedBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: SelfEmployedBalance
+'===============================================================================
+Public Property Get SelfEmployedBalance() As Double
+    SelfEmployedBalance = m_SelfEmployedBalance
+End Property
+
+Public Property Let SelfEmployedBalance(value As Double)
+    m_SelfEmployedBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: UnemployedBalance
+'===============================================================================
+Public Property Get UnemployedBalance() As Double
+    UnemployedBalance = m_UnemployedBalance
+End Property
+
+Public Property Let UnemployedBalance(value As Double)
+    m_UnemployedBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: RetiredBalance
+'===============================================================================
+Public Property Get RetiredBalance() As Double
+    RetiredBalance = m_RetiredBalance
+End Property
+
+Public Property Let RetiredBalance(value As Double)
+    m_RetiredBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FirstTimeBuyerBalance
+'===============================================================================
+Public Property Get FirstTimeBuyerBalance() As Double
+    FirstTimeBuyerBalance = m_FirstTimeBuyerBalance
+End Property
+
+Public Property Let FirstTimeBuyerBalance(value As Double)
+    m_FirstTimeBuyerBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: RightToBuyBalance
+'===============================================================================
+Public Property Get RightToBuyBalance() As Double
+    RightToBuyBalance = m_RightToBuyBalance
+End Property
+
+Public Property Let RightToBuyBalance(value As Double)
+    m_RightToBuyBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: SecondChargeBalance
+'===============================================================================
+Public Property Get SecondChargeBalance() As Double
+    SecondChargeBalance = m_SecondChargeBalance
+End Property
+
+Public Property Let SecondChargeBalance(value As Double)
+    m_SecondChargeBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: RemortgageBalance
+'===============================================================================
+Public Property Get RemortgageBalance() As Double
+    RemortgageBalance = m_RemortgageBalance
+End Property
+
+Public Property Let RemortgageBalance(value As Double)
+    m_RemortgageBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: FirstChargeBalance
+'===============================================================================
+Public Property Get FirstChargeBalance() As Double
+    FirstChargeBalance = m_FirstChargeBalance
+End Property
+
+Public Property Let FirstChargeBalance(value As Double)
+    m_FirstChargeBalance = value
+End Property
+
+'===============================================================================
+' PROPERTY: SecondChargeCount
+'===============================================================================
+Public Property Get SecondChargeCount() As Long
+    SecondChargeCount = m_SecondChargeCount
+End Property
+
+Public Property Let SecondChargeCount(value As Long)
+    m_SecondChargeCount = value
+End Property
+
+'===============================================================================
+' PROPERTY: LoanCount
+'===============================================================================
+Public Property Get LoanCount() As Long
+    LoanCount = m_LoanCount
+End Property
+
+Public Property Let LoanCount(value As Long)
+    m_LoanCount = value
+End Property
+
+'===============================================================================
+' PROPERTY: IOLoanCount
+'===============================================================================
+Public Property Get IOLoanCount() As Long
+    IOLoanCount = m_IOLoanCount
+End Property
+
+Public Property Let IOLoanCount(value As Long)
+    m_IOLoanCount = value
+End Property
+
+'===============================================================================
+' PROPERTY: AmortisingLoanCount
+'===============================================================================
+Public Property Get AmortisingLoanCount() As Long
+    AmortisingLoanCount = m_AmortisingLoanCount
+End Property
+
+Public Property Let AmortisingLoanCount(value As Long)
+    m_AmortisingLoanCount = value
+End Property
+
+'===============================================================================
+' PROPERTY: ArrearsLoanCount
+'===============================================================================
+Public Property Get ArrearsLoanCount() As Long
+    ArrearsLoanCount = m_ArrearsLoanCount
+End Property
+
+Public Property Let ArrearsLoanCount(value As Long)
+    m_ArrearsLoanCount = value
+End Property
+
+'===============================================================================
+' PROPERTY: CCJSatisfiedCount
+'===============================================================================
+Public Property Get CCJSatisfiedCount() As Long
+    CCJSatisfiedCount = m_CCJSatisfiedCount
+End Property
+
+Public Property Let CCJSatisfiedCount(value As Long)
+    m_CCJSatisfiedCount = value
+End Property
+
+'===============================================================================
+' PROPERTY: CCJUnsatisfiedCount
+'===============================================================================
+Public Property Get CCJUnsatisfiedCount() As Long
+    CCJUnsatisfiedCount = m_CCJUnsatisfiedCount
+End Property
+
+Public Property Let CCJUnsatisfiedCount(value As Long)
+    m_CCJUnsatisfiedCount = value
+End Property
+
+'===============================================================================
+' INITIALIZATION
+'===============================================================================
+Private Sub Class_Initialize()
+    Call Initialize
+End Sub
+
+'===============================================================================
+' INITIALIZE - Reset all accumulators to zero
+'===============================================================================
+Public Sub Initialize()
+    
+    ' Balance Totals
+    m_TotalBalance = 0
+    m_TotalOriginalBalance = 0
+    m_MaxCurrentBalance = 0
+    m_MinCurrentBalance = 1E+15  ' Very large number for min comparison
+    
+    ' Weighted Values
+    m_WeightedCurrentBalance = 0
+    m_WeightedOriginalBalance = 0
+    m_WeightedCurrentLTV = 0
+    m_WeightedOriginalLTV = 0
+    m_WeightedTerm = 0
+    m_WeightedSeasoning = 0
+    m_WeightedRemainingTerm = 0
+    m_WeightedCurrentMargin = 0
+    m_WeightedCurrentInterestRate = 0
+    m_WeightedFinalMargin = 0
+    m_WeightedTimeToReversion = 0
+    m_WeightedOriginalValuation = 0
+    m_WeightedPriorBalance = 0
+    m_WeightedFirstChargeOLTV = 0
+    
+    ' Repayment Types
+    m_IOBalance = 0
+    m_AmortisingBalance = 0
+    m_PartAndPartBalance = 0
+    
+    ' Occupancy Types
+    m_OwnerOccupiedBalance = 0
+    m_BuyToLetBalance = 0
+    m_IOOwnerOccupiedBalance = 0
+    
+    ' Arrears
+    m_TotalArrearsBalance = 0
+    m_CumulativeArrearsAmount = 0
+    m_OneMonthPlusArrearsBalance = 0
+    m_ThreeMonthPlusArrearsBalance = 0
+    m_SixMonthPlusArrearsBalance = 0
+    m_TwelveMonthPlusArrearsBalance = 0
+    
+    ' CCJs
+    m_CCJsSatisfiedBalance = 0
+    m_CCJsUnsatisfiedBalance = 0
+    m_TotalValueSatisfiedCCJs = 0
+    m_TotalValueUnsatisfiedCCJs = 0
+    m_WeightedValueSatisfiedCCJs = 0
+    m_WeightedValueUnsatisfiedCCJs = 0
+    m_WeightedTimeSinceLastCCJ = 0
+    m_IVABalance = 0
+    
+    ' Interest Rate Types
+    m_FixedRateBalance = 0
+    m_FloatingRateBalance = 0
+    m_FixedToFloatingBalance = 0
+    m_FixedToFloatingInFixedPeriodBalance = 0
+    m_FixedToFloatingInFloatingPeriodBalance = 0
+    m_TotalTimeToReversion = 0
+    
+    ' Geographic
+    m_LondonBalance = 0
+    m_SouthEastBalance = 0
+    m_ScotlandBalance = 0
+    m_WalesBalance = 0
+    m_NorthBalance = 0
+    m_MidlandsBalance = 0
+    
+    ' Valuation Types
+    m_FullValuationBalance = 0
+    m_DriveByValuationBalance = 0
+    m_AVMValuationBalance = 0
+    m_IndexedValuationBalance = 0
+    m_DesktopValuationBalance = 0
+    
+    ' Employment Status
+    m_EmployedBalance = 0
+    m_SelfEmployedBalance = 0
+    m_UnemployedBalance = 0
+    m_RetiredBalance = 0
+    
+    ' Borrower Characteristics
+    m_FirstTimeBuyerBalance = 0
+    m_RightToBuyBalance = 0
+    m_SecondChargeBalance = 0
+    m_RemortgageBalance = 0
+    
+    ' Loan Ranking
+    m_FirstChargeBalance = 0
+    m_SecondChargeCount = 0
+    
+    ' Counters
+    m_LoanCount = 0
+    m_IOLoanCount = 0
+    m_AmortisingLoanCount = 0
+    m_ArrearsLoanCount = 0
+    m_CCJSatisfiedCount = 0
+    m_CCJUnsatisfiedCount = 0
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE BALANCE - Add current balance to total
+'===============================================================================
+Public Sub AccumulateBalance(currentBalance As Double)
+    
+    m_TotalBalance = m_TotalBalance + currentBalance
+    m_WeightedCurrentBalance = m_WeightedCurrentBalance + (currentBalance * currentBalance)
+    m_LoanCount = m_LoanCount + 1
+    
+    ' Track min/max
+    If currentBalance > m_MaxCurrentBalance Then
+        m_MaxCurrentBalance = currentBalance
+    End If
+    
+    If currentBalance < m_MinCurrentBalance Then
+        m_MinCurrentBalance = currentBalance
+    End If
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE WEIGHTED VALUE - Add weighted value for a field
+'===============================================================================
+Public Sub AccumulateWeightedValue(fieldName As String, fieldValue As Double, weight As Double)
+    
+    Select Case UCase(fieldName)
+        Case "CURRENTLTV", "AR141"
+            m_WeightedCurrentLTV = m_WeightedCurrentLTV + (fieldValue * weight)
+        Case "ORIGINALLTV", "AR135"
+            m_WeightedOriginalLTV = m_WeightedOriginalLTV + (fieldValue * weight)
+        Case "TERM", "AR61"
+            m_WeightedTerm = m_WeightedTerm + (fieldValue * weight)
+        Case "SEASONING"
+            m_WeightedSeasoning = m_WeightedSeasoning + (fieldValue * weight)
+        Case "REMAININGTERM"
+            m_WeightedRemainingTerm = m_WeightedRemainingTerm + (fieldValue * weight)
+        Case "CURRENTMARGIN", "AR110"
+            m_WeightedCurrentMargin = m_WeightedCurrentMargin + (fieldValue * weight)
+        Case "CURRENTIR", "AR109"
+            m_WeightedCurrentInterestRate = m_WeightedCurrentInterestRate + (fieldValue * weight)
+        Case "FINALMARGIN", "AR120"
+            m_WeightedFinalMargin = m_WeightedFinalMargin + (fieldValue * weight)
+        Case "ORIGINALBALANCE", "AR66"
+            m_WeightedOriginalBalance = m_WeightedOriginalBalance + (fieldValue * weight)
+            m_TotalOriginalBalance = m_TotalOriginalBalance + fieldValue
+        Case "ORIGINALVALUATION", "AR136"
+            m_WeightedOriginalValuation = m_WeightedOriginalValuation + (fieldValue * weight)
+        Case "PRIORBALANCE", "AR80"
+            m_WeightedPriorBalance = m_WeightedPriorBalance + (fieldValue * weight)
+        Case "FIRSTCHARGEOLTV"
+            m_WeightedFirstChargeOLTV = m_WeightedFirstChargeOLTV + (fieldValue * weight)
+        Case "TIMETOREVERSION"
+            m_WeightedTimeToReversion = m_WeightedTimeToReversion + (fieldValue * weight)
+            m_TotalTimeToReversion = m_TotalTimeToReversion + fieldValue
+    End Select
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE REPAYMENT TYPE
+'===============================================================================
+Public Sub AccumulateRepaymentType(repaymentType As Integer, balance As Double, _
+                                    Optional occupancyType As Integer = 0)
+    
+    Select Case repaymentType
+        Case 1  ' Interest Only
+            m_IOBalance = m_IOBalance + balance
+            m_IOLoanCount = m_IOLoanCount + 1
+            If occupancyType = 1 Then  ' Owner Occupied
+                m_IOOwnerOccupiedBalance = m_IOOwnerOccupiedBalance + balance
+            End If
+        Case 2  ' Amortising
+            m_AmortisingBalance = m_AmortisingBalance + balance
+            m_AmortisingLoanCount = m_AmortisingLoanCount + 1
+        Case 7  ' Part and Part
+            m_PartAndPartBalance = m_PartAndPartBalance + balance
+    End Select
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE OCCUPANCY TYPE
+'===============================================================================
+Public Sub AccumulateOccupancyType(occupancyType As Integer, balance As Double)
+    
+    Select Case occupancyType
+        Case 1  ' Owner Occupied
+            m_OwnerOccupiedBalance = m_OwnerOccupiedBalance + balance
+        Case 3  ' Buy to Let
+            m_BuyToLetBalance = m_BuyToLetBalance + balance
+    End Select
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE ARREARS
+'===============================================================================
+Public Sub AccumulateArrears(monthsInArrears As Double, principalBalance As Double, _
+                              arrearsAmount As Double)
+    
+    If monthsInArrears > 0 Then
+        m_TotalArrearsBalance = m_TotalArrearsBalance + principalBalance
+        m_CumulativeArrearsAmount = m_CumulativeArrearsAmount + arrearsAmount
+        m_ArrearsLoanCount = m_ArrearsLoanCount + 1
+        
+        If monthsInArrears >= 1 Then
+            m_OneMonthPlusArrearsBalance = m_OneMonthPlusArrearsBalance + principalBalance
+        End If
+        
+        If monthsInArrears >= 3 Then
+            m_ThreeMonthPlusArrearsBalance = m_ThreeMonthPlusArrearsBalance + principalBalance
+        End If
+        
+        If monthsInArrears >= 6 Then
+            m_SixMonthPlusArrearsBalance = m_SixMonthPlusArrearsBalance + principalBalance
+        End If
+        
+        If monthsInArrears >= 12 Then
+            m_TwelveMonthPlusArrearsBalance = m_TwelveMonthPlusArrearsBalance + principalBalance
+        End If
+    End If
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE CCJ DATA
+'===============================================================================
+Public Sub AccumulateCCJData(numSatisfied As Integer, numUnsatisfied As Integer, _
+                              valueSatisfied As Double, valueUnsatisfied As Double, _
+                              balance As Double, timeSinceLastCCJ As Long, _
+                              hasIVA As Boolean)
+    
+    If numSatisfied > 0 Then
+        m_CCJsSatisfiedBalance = m_CCJsSatisfiedBalance + balance
+        m_TotalValueSatisfiedCCJs = m_TotalValueSatisfiedCCJs + valueSatisfied
+        m_WeightedValueSatisfiedCCJs = m_WeightedValueSatisfiedCCJs + (valueSatisfied * balance)
+        m_CCJSatisfiedCount = m_CCJSatisfiedCount + 1
+    End If
+    
+    If numUnsatisfied > 0 Then
+        m_CCJsUnsatisfiedBalance = m_CCJsUnsatisfiedBalance + balance
+        m_TotalValueUnsatisfiedCCJs = m_TotalValueUnsatisfiedCCJs + valueUnsatisfied
+        m_WeightedValueUnsatisfiedCCJs = m_WeightedValueUnsatisfiedCCJs + (valueUnsatisfied * balance)
+        m_CCJUnsatisfiedCount = m_CCJUnsatisfiedCount + 1
+    End If
+    
+    If numSatisfied > 0 Or numUnsatisfied > 0 Then
+        m_WeightedTimeSinceLastCCJ = m_WeightedTimeSinceLastCCJ + (timeSinceLastCCJ * balance)
+    End If
+    
+    If hasIVA Then
+        m_IVABalance = m_IVABalance + balance
+    End If
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE INTEREST RATE TYPE
+'===============================================================================
+Public Sub AccumulateInterestRateType(irType As Integer, balance As Double, _
+                                       timeToReversion As Long, finalMargin As Double)
+    
+    Select Case irType
+        Case 1  ' Floating
+            m_FloatingRateBalance = m_FloatingRateBalance + balance
+        Case 3  ' Fixed
+            m_FixedRateBalance = m_FixedRateBalance + balance
+        Case 5  ' Fixed to Floating
+            m_FixedToFloatingBalance = m_FixedToFloatingBalance + balance
+            If timeToReversion > 0 Then
+                m_FixedToFloatingInFixedPeriodBalance = m_FixedToFloatingInFixedPeriodBalance + balance
+                m_TotalTimeToReversion = m_TotalTimeToReversion + (timeToReversion * balance)
+                m_WeightedFinalMargin = m_WeightedFinalMargin + (finalMargin * balance)
+            Else
+                m_FixedToFloatingInFloatingPeriodBalance = m_FixedToFloatingInFloatingPeriodBalance + balance
+            End If
+    End Select
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE GEOGRAPHIC REGION
+'===============================================================================
+Public Sub AccumulateGeographicRegion(regionCode As String, balance As Double)
+    
+    Select Case UCase(regionCode)
+        Case "UKI"  ' London
+            m_LondonBalance = m_LondonBalance + balance
+        Case "UKJ"  ' South East
+            m_SouthEastBalance = m_SouthEastBalance + balance
+        Case "UKM"  ' Scotland
+            m_ScotlandBalance = m_ScotlandBalance + balance
+        Case "UKL"  ' Wales
+            m_WalesBalance = m_WalesBalance + balance
+        Case "UKC", "UKD", "UKE"  ' North
+            m_NorthBalance = m_NorthBalance + balance
+        Case "UKF", "UKG"  ' Midlands
+            m_MidlandsBalance = m_MidlandsBalance + balance
+    End Select
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE VALUATION TYPE
+'===============================================================================
+Public Sub AccumulateValuationType(valType As Integer, balance As Double)
+    
+    Select Case valType
+        Case 1  ' Full
+            m_FullValuationBalance = m_FullValuationBalance + balance
+        Case 3  ' Drive By
+            m_DriveByValuationBalance = m_DriveByValuationBalance + balance
+        Case 4  ' AVM
+            m_AVMValuationBalance = m_AVMValuationBalance + balance
+        Case 5  ' Indexed
+            m_IndexedValuationBalance = m_IndexedValuationBalance + balance
+        Case 6  ' Desktop
+            m_DesktopValuationBalance = m_DesktopValuationBalance + balance
+    End Select
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE EMPLOYMENT STATUS
+'===============================================================================
+Public Sub AccumulateEmploymentStatus(empStatus As Integer, balance As Double)
+    
+    Select Case empStatus
+        Case 1  ' Employed
+            m_EmployedBalance = m_EmployedBalance + balance
+        Case 4  ' Unemployed
+            m_UnemployedBalance = m_UnemployedBalance + balance
+        Case 5  ' Self Employed
+            m_SelfEmployedBalance = m_SelfEmployedBalance + balance
+        Case 6  ' Retired
+            m_RetiredBalance = m_RetiredBalance + balance
+    End Select
+    
+End Sub
+
+'===============================================================================
+' ACCUMULATE BORROWER CHARACTERISTICS
+'===============================================================================
+Public Sub AccumulateBorrowerCharacteristics(isFTB As Boolean, isRTB As Boolean, _
+                                              isSecondCharge As Boolean, balance As Double)
+    
+    If isFTB Then m_FirstTimeBuyerBalance = m_FirstTimeBuyerBalance + balance
+    If isRTB Then m_RightToBuyBalance = m_RightToBuyBalance + balance
+    
+    If isSecondCharge Then
+        m_SecondChargeBalance = m_SecondChargeBalance + balance
+        m_SecondChargeCount = m_SecondChargeCount + 1
+    Else
+        m_FirstChargeBalance = m_FirstChargeBalance + balance
+    End If
+    
+End Sub
+
+'===============================================================================
+' CALCULATE PERCENTAGES - Returns dictionary of percentage metrics
+'===============================================================================
+Public Function CalculatePercentages() As Object
+    
+    Dim pcts As Object
+    Set pcts = CreateObject("Scripting.Dictionary")
+    
+    If m_TotalBalance > 0 Then
+        pcts.Add "IOPct", m_IOBalance / m_TotalBalance
+        pcts.Add "AmortisingPct", m_AmortisingBalance / m_TotalBalance
+        pcts.Add "PartAndPartPct", m_PartAndPartBalance / m_TotalBalance
+        pcts.Add "OwnerOccupiedPct", m_OwnerOccupiedBalance / m_TotalBalance
+        pcts.Add "BuyToLetPct", m_BuyToLetBalance / m_TotalBalance
+        pcts.Add "IOOwnerOccupiedPct", m_IOOwnerOccupiedBalance / m_TotalBalance
+        pcts.Add "OneMonthPlusArrearsPct", m_OneMonthPlusArrearsBalance / m_TotalBalance
+        pcts.Add "ThreeMonthPlusArrearsPct", m_ThreeMonthPlusArrearsBalance / m_TotalBalance
+        pcts.Add "CCJSatisfiedPct", m_CCJsSatisfiedBalance / m_TotalBalance
+        pcts.Add "CCJUnsatisfiedPct", m_CCJsUnsatisfiedBalance / m_TotalBalance
+        pcts.Add "IVAPct", m_IVABalance / m_TotalBalance
+        pcts.Add "FixedRatePct", m_FixedRateBalance / m_TotalBalance
+        pcts.Add "FloatingRatePct", m_FloatingRateBalance / m_TotalBalance
+        pcts.Add "FixedToFloatingPct", m_FixedToFloatingBalance / m_TotalBalance
+        pcts.Add "LondonPct", m_LondonBalance / m_TotalBalance
+        pcts.Add "SouthEastPct", m_SouthEastBalance / m_TotalBalance
+        pcts.Add "LondonAndSEPct", (m_LondonBalance + m_SouthEastBalance) / m_TotalBalance
+        pcts.Add "FullValuationPct", m_FullValuationBalance / m_TotalBalance
+        pcts.Add "SelfEmployedPct", m_SelfEmployedBalance / m_TotalBalance
+        pcts.Add "FirstTimeBuyerPct", m_FirstTimeBuyerBalance / m_TotalBalance
+        pcts.Add "RightToBuyPct", m_RightToBuyBalance / m_TotalBalance
+        pcts.Add "SecondChargePct", m_SecondChargeBalance / m_TotalBalance
+    End If
+    
+    Set CalculatePercentages = pcts
+    
+End Function
+
+'===============================================================================
+' CALCULATE WEIGHTED AVERAGES - Returns dictionary of WA metrics
+'===============================================================================
+Public Function CalculateWeightedAverages() As Object
+    
+    Dim was As Object
+    Set was = CreateObject("Scripting.Dictionary")
+    
+    If m_TotalBalance > 0 Then
+        was.Add "WACurrentBalance", m_WeightedCurrentBalance / m_TotalBalance
+        was.Add "WAOriginalBalance", m_WeightedOriginalBalance / m_TotalBalance
+        was.Add "WACurrentLTV", m_WeightedCurrentLTV / m_TotalBalance
+        was.Add "WAOriginalLTV", m_WeightedOriginalLTV / m_TotalBalance
+        was.Add "WATerm", m_WeightedTerm / m_TotalBalance
+        was.Add "WASeasoning", m_WeightedSeasoning / m_TotalBalance
+        was.Add "WARemainingTerm", m_WeightedRemainingTerm / m_TotalBalance
+        was.Add "WACurrentMargin", m_WeightedCurrentMargin / m_TotalBalance
+        was.Add "WACurrentIR", m_WeightedCurrentInterestRate / m_TotalBalance
+        was.Add "WAFinalMargin", m_WeightedFinalMargin / m_TotalBalance
+        was.Add "WAOriginalValuation", m_WeightedOriginalValuation / m_TotalBalance
+        was.Add "WATimeToReversion", m_WeightedTimeToReversion / m_TotalBalance
+        was.Add "WAPriorBalance", m_WeightedPriorBalance / m_TotalBalance
+        was.Add "WAFirstChargeOLTV", m_WeightedFirstChargeOLTV / m_TotalBalance
+        was.Add "WAValueSatCCJs", m_WeightedValueSatisfiedCCJs / m_TotalBalance
+        was.Add "WAValueUnsatCCJs", m_WeightedValueUnsatisfiedCCJs / m_TotalBalance
+        was.Add "WATimeSinceLastCCJ", m_WeightedTimeSinceLastCCJ / m_TotalBalance
+        was.Add "AvgLoanSize", m_TotalBalance / m_LoanCount
+    End If
+    
+    Set CalculateWeightedAverages = was
+    
+End Function
+
+'===============================================================================
+' TO SUMMARY DICTIONARY - Export all stats to dictionary
+'===============================================================================
+Public Function ToSummaryDictionary() As Object
+    
+    Dim summary As Object
+    Set summary = CreateObject("Scripting.Dictionary")
+    
+    ' Pool Totals
+    summary.Add "TotalBalance", m_TotalBalance
+    summary.Add "TotalOriginalBalance", m_TotalOriginalBalance
+    summary.Add "MaxBalance", m_MaxCurrentBalance
+    summary.Add "MinBalance", m_MinCurrentBalance
+    summary.Add "LoanCount", m_LoanCount
+    
+    ' Merge percentages
+    Dim pcts As Object
+    Set pcts = CalculatePercentages()
+    Dim key As Variant
+    For Each key In pcts.Keys
+        summary.Add key, pcts(key)
+    Next key
+    
+    ' Merge weighted averages
+    Dim was As Object
+    Set was = CalculateWeightedAverages()
+    For Each key In was.Keys
+        summary.Add key, was(key)
+    Next key
+    
+    Set ToSummaryDictionary = summary
+    
+End Function
+
+'===============================================================================
+' DESCRIBE - Return string description of all stats
+'===============================================================================
+Public Function Describe() As String
+    
+    Dim desc As String
+    
+    desc = "=== POOL SUMMARY ===" & vbCrLf
+    desc = desc & "Total Balance: " & Format(m_TotalBalance, "#,##0") & vbCrLf
+    desc = desc & "Loan Count: " & m_LoanCount & vbCrLf
+    desc = desc & "Max Balance: " & Format(m_MaxCurrentBalance, "#,##0") & vbCrLf
+    desc = desc & "Avg Balance: " & Format(m_TotalBalance / m_LoanCount, "#,##0") & vbCrLf
+    desc = desc & vbCrLf
+    
+    desc = desc & "=== REPAYMENT ===" & vbCrLf
+    desc = desc & "IO: " & Format(m_IOBalance / m_TotalBalance, "0.00%") & vbCrLf
+    desc = desc & "Amortising: " & Format(m_AmortisingBalance / m_TotalBalance, "0.00%") & vbCrLf
+    desc = desc & vbCrLf
+    
+    desc = desc & "=== ARREARS ===" & vbCrLf
+    desc = desc & "1m+: " & Format(m_OneMonthPlusArrearsBalance / m_TotalBalance, "0.00%") & vbCrLf
+    desc = desc & "3m+: " & Format(m_ThreeMonthPlusArrearsBalance / m_TotalBalance, "0.00%") & vbCrLf
+    
+    Describe = desc
+    
+End Function
+```
+
+---
+
+## 📋 UPDATED modSummaryStatistics
+
+Now update `modSummaryStatistics` to use the new class:
+
+```vba
+Option Explicit
+
+'===============================================================================
+' MODULE: modSummaryStatistics
+' PURPOSE: Pool-level summary statistics calculation using clsSummaryAccumulators
+'===============================================================================
+
+'===============================================================================
+' CALCULATE SUMMARY STATISTICS
+'===============================================================================
+Public Sub CalculateSummaryStatistics(wsLLD As Worksheet, colDict As Object, fieldCodes As Variant)
+    
+    Dim stats As New clsSummaryAccumulators
+    Dim i As Long
+    
+    ' Initialize dictionaries
+    Set g_SummaryStats = CreateObject("Scripting.Dictionary")
+    Set g_LoanDict = CreateObject("Scripting.Dictionary")
+    Set g_BorrowerDict = CreateObject("Scripting.Dictionary")
+    Set g_PropertyDict = CreateObject("Scripting.Dictionary")
+    
+    ' Initialize accumulators
+    Call stats.Initialize
+    
+    ' Process each loan
+    For i = g_StartRow To g_LastRow
+        
+        If g_FilterActive And wsLLD.Rows(i).EntireRow.Hidden Then
+            GoTo ContinueLoanLoop
+        End If
+        
+        Call ProcessLoanForStats(wsLLD, colDict, i, stats)
+        
+ContinueLoanLoop:
+    Next i
+    
+    ' Store global balance
+    g_TotalBalance = stats.TotalBalance
+    g_TotalLoanCount = stats.LoanCount
+    
+    ' Populate g_SummaryStats dictionary
+    Call PopulateSummaryStats(stats)
+    
+    Debug.Print "Summary Stats Complete: " & stats.LoanCount & " loans, " & _
+                Format(stats.TotalBalance, "#,##0") & " total balance"
+    
+End Sub
+
+'===============================================================================
+' PROCESS LOAN FOR STATS
+'===============================================================================
+Private Sub ProcessLoanForStats(wsLLD As Worksheet, colDict As Object, _
+                                 rowIndex As Long, ByRef stats As clsSummaryAccumulators)
+    
+    Dim currentBalance As Double
+    Dim originalBalance As Double
+    Dim loanID As String
+    Dim borrowerID As String
+    Dim propertyID As String
+    
+    ' Core identifiers
+    currentBalance = GetCellValue(wsLLD, rowIndex, colDict, "AR67")
+    originalBalance = GetCellValue(wsLLD, rowIndex, colDict, "AR66")
+    loanID = CStr(GetCellValue(wsLLD, rowIndex, colDict, "AR3"))
+    borrowerID = CStr(GetCellValue(wsLLD, rowIndex, colDict, "AR7"))
+    propertyID = CStr(GetCellValue(wsLLD, rowIndex, colDict, "AR8"))
+    
+    ' Track unique entities
+    If Not g_LoanDict.Exists(loanID) Then g_LoanDict.Add loanID, Nothing
+    If Not g_BorrowerDict.Exists(borrowerID) Then g_BorrowerDict.Add borrowerID, Nothing
+    If Len(propertyID) > 0 Then
+        If Not g_PropertyDict.Exists(propertyID) Then g_PropertyDict.Add propertyID, Nothing
+    End If
+    
+    ' Accumulate balance
+    Call stats.AccumulateBalance(currentBalance)
+    
+    ' Weighted values
+    Call stats.AccumulateWeightedValue("AR66", originalBalance, currentBalance)
+    Call stats.AccumulateWeightedValue("AR141", GetCellValue(wsLLD, rowIndex, colDict, "AR141"), currentBalance)
+    Call stats.AccumulateWeightedValue("AR135", GetCellValue(wsLLD, rowIndex, colDict, "AR135"), currentBalance)
+    Call stats.AccumulateWeightedValue("AR61", GetCellValue(wsLLD, rowIndex, colDict, "AR61"), currentBalance)
+    Call stats.AccumulateWeightedValue("AR110", GetCellValue(wsLLD, rowIndex, colDict, "AR110"), currentBalance)
+    Call stats.AccumulateWeightedValue("AR109", GetCellValue(wsLLD, rowIndex, colDict, "AR109"), currentBalance)
+    Call stats.AccumulateWeightedValue("AR136", GetCellValue(wsLLD, rowIndex, colDict, "AR136"), currentBalance)
+    Call stats.AccumulateWeightedValue("AR80", GetCellValue(wsLLD, rowIndex, colDict, "AR80"), currentBalance)
+    
+    ' Seasoning
+    Dim originationDate As Date
+    Dim seasoningMonths As Long
+    originationDate = GetCellValue(wsLLD, rowIndex, colDict, "AR55")
+    If IsDate(originationDate) Then
+        seasoningMonths = DateDiff("m", originationDate, g_PoolCutDate)
+        Call stats.AccumulateWeightedValue("Seasoning", seasoningMonths, currentBalance)
+    End If
+    
+    ' Remaining term
+    Dim maturityDate As Date
+    Dim remainingTerm As Long
+    maturityDate = GetCellValue(wsLLD, rowIndex, colDict, "AR56")
+    If IsDate(maturityDate) Then
+        remainingTerm = DateDiff("m", g_PoolCutDate, maturityDate)
+        If remainingTerm > 0 Then
+            Call stats.AccumulateWeightedValue("RemainingTerm", remainingTerm, currentBalance)
+        End If
+    End If
+    
+    ' Repayment type
+    Dim repaymentType As Integer
+    Dim occupancyType As Integer
+    repaymentType = GetCellValue(wsLLD, rowIndex, colDict, "AR69")
+    occupancyType = GetCellValue(wsLLD, rowIndex, colDict, "AR130")
+    Call stats.AccumulateRepaymentType(repaymentType, currentBalance, occupancyType)
+    
+    ' Occupancy type
+    Call stats.AccumulateOccupancyType(occupancyType, currentBalance)
+    
+    ' Arrears
+    Dim monthsInArrears As Double
+    Dim arrearsBalance As Double
+    monthsInArrears = GetCellValue(wsLLD, rowIndex, colDict, "AR170")
+    arrearsBalance = GetCellValue(wsLLD, rowIndex, colDict, "AR169")
+    Call stats.AccumulateArrears(monthsInArrears, currentBalance, arrearsBalance)
+    
+    ' CCJs
+    Dim numCCJsSatisfied As Integer
+    Dim numCCJsUnsatisfied As Integer
+    Dim valueCCJsSatisfied As Double
+    Dim valueCCJsUnsatisfied As Double
+    Dim lastCCJDate As Date
+    Dim timeSinceLastCCJ As Long
+    Dim hasIVA As Boolean
+    
+    numCCJsSatisfied = GetCellValue(wsLLD, rowIndex, colDict, "AR31")
+    numCCJsUnsatisfied = GetCellValue(wsLLD, rowIndex, colDict, "AR33")
+    valueCCJsSatisfied = GetCellValue(wsLLD, rowIndex, colDict, "AR32")
+    valueCCJsUnsatisfied = GetCellValue(wsLLD, rowIndex, colDict, "AR34")
+    lastCCJDate = GetCellValue(wsLLD, rowIndex, colDict, "AR35")
+    hasIVA = (GetCellValue(wsLLD, rowIndex, colDict, "AR36") = "Y")
+    
+    If IsDate(lastCCJDate) And IsDate(originationDate) Then
+        timeSinceLastCCJ = DateDiff("m", lastCCJDate, originationDate)
+    End If
+    
+    Call stats.AccumulateCCJData(numCCJsSatisfied, numCCJsUnsatisfied, _
+                                  valueCCJsSatisfied, valueCCJsUnsatisfied, _
+                                  currentBalance, timeSinceLastCCJ, hasIVA)
+    
+    ' Interest rate type
+    Dim irType As Integer
+    Dim reversionDate As Date
+    Dim timeToReversion As Long
+    Dim finalMargin As Double
+    
+    irType = GetCellValue(wsLLD, rowIndex, colDict, "AR107")
+    
+    If irType = 5 Then  ' Fixed to Floating
+        reversionDate = GetCellValue(wsLLD, rowIndex, colDict, "AR121")
+        finalMargin = GetCellValue(wsLLD, rowIndex, colDict, "AR120")
+        If IsDate(reversionDate) Then
+            timeToReversion = DateDiff("m", g_PoolCutDate, reversionDate)
+        End If
+    End If
+    
+    Call stats.AccumulateInterestRateType(irType, currentBalance, timeToReversion, finalMargin)
+    
+    ' Geographic region
+    Dim regionCode As String
+    regionCode = CStr(GetCellValue(wsLLD, rowIndex, colDict, "AR128"))
+    Call stats.AccumulateGeographicRegion(regionCode, currentBalance)
+    
+    ' Valuation type
+    Dim valType As Integer
+    valType = GetCellValue(wsLLD, rowIndex, colDict, "AR137")
+    Call stats.AccumulateValuationType(valType, currentBalance)
+    
+    ' Employment status
+    Dim empStatus As Integer
+    empStatus = GetCellValue(wsLLD, rowIndex, colDict, "AR21")
+    Call stats.AccumulateEmploymentStatus(empStatus, currentBalance)
+    
+    ' Borrower characteristics
+    Dim isFTB As Boolean
+    Dim isRTB As Boolean
+    Dim isSecondCharge As Boolean
+    
+    isFTB = (GetCellValue(wsLLD, rowIndex, colDict, "AR22") = "Y")
+    isRTB = (GetCellValue(wsLLD, rowIndex, colDict, "AR23") = "Y")
+    isSecondCharge = (GetCellValue(wsLLD, rowIndex, colDict, "AR84") > 1)
+    
+    Call stats.AccumulateBorrowerCharacteristics(isFTB, isRTB, isSecondCharge, currentBalance)
+    
+    ' First charge OLTV for second charges
+    If isSecondCharge Then
+        Dim priorBalance As Double
+        Dim origValAmt As Double
+        Dim firstChargeOLTV As Double
+        
+        priorBalance = GetCellValue(wsLLD, rowIndex, colDict, "AR80")
+        origValAmt = GetCellValue(wsLLD, rowIndex, colDict, "AR136")
+        
+        If origValAmt > 0 Then
+            firstChargeOLTV = priorBalance / origValAmt
+            Call stats.AccumulateWeightedValue("FirstChargeOLTV", firstChargeOLTV, currentBalance)
+        End If
+    End If
+    
+End Sub
+
+'===============================================================================
+' GET CELL VALUE - Safe cell value retrieval
+'===============================================================================
+Private Function GetCellValue(wsLLD As Worksheet, rowIndex As Long, _
+                               colDict As Object, fieldCode As String) As Variant
+    
+    Dim colNum As Integer
+    
+    If Not colDict.Exists(fieldCode) Then
+        GetCellValue = Empty
+        Exit Function
+    End If
+    
+    colNum = colDict.Item(fieldCode)
+    
+    If colNum = 0 Then
+        GetCellValue = Empty
+        Exit Function
+    End If
+    
+    On Error Resume Next
+    GetCellValue = wsLLD.Cells(rowIndex, colNum).Value
+    On Error GoTo 0
+    
+End Function
+
+'===============================================================================
+' POPULATE SUMMARY STATS - Transfer to global dictionary
+'===============================================================================
+Private Sub PopulateSummaryStats(stats As clsSummaryAccumulators)
+    
+    Dim was As Object
+    Dim pcts As Object
+    Dim key As Variant
+    
+    ' Get weighted averages
+    Set was = stats.CalculateWeightedAverages()
+    
+    ' Map to field code format for stratification engine
+    If was.Exists("WACurrentBalance") Then g_SummaryStats.Add "AR67_WAvg", was("WACurrentBalance")
+    If was.Exists("WAOriginalBalance") Then g_SummaryStats.Add "AR66_WAvg", was("WAOriginalBalance")
+    If was.Exists("WACurrentLTV") Then g_SummaryStats.Add "AR141_WAvg", was("WACurrentLTV")
+    If was.Exists("WAOriginalLTV") Then g_SummaryStats.Add "AR135_WAvg", was("WAOriginalLTV")
+    If was.Exists("WATerm") Then g_SummaryStats.Add "AR61_WAvg", was("WATerm")
+    If was.Exists("WACurrentMargin") Then g_SummaryStats.Add "AR110_WAvg", was("WACurrentMargin")
+    If was.Exists("WACurrentIR") Then g_SummaryStats.Add "AR109_WAvg", was("WACurrentIR")
+    If was.Exists("WAFinalMargin") Then g_SummaryStats.Add "AR120_WAvg", was("WAFinalMargin")
+    If was.Exists("WAOriginalValuation") Then g_SummaryStats.Add "AR136_WAvg", was("WAOriginalValuation")
+    If was.Exists("WAPriorBalance") Then g_SummaryStats.Add "AR80_WAvg", was("WAPriorBalance")
+    If was.Exists("WASeasoning") Then g_SummaryStats.Add "Seasoning_WAvg", was("WASeasoning")
+    If was.Exists("WARemainingTerm") Then g_SummaryStats.Add "Remaining Term_WAvg", was("WARemainingTerm")
+    If was.Exists("WATimeToReversion") Then g_SummaryStats.Add "Time to Reversion_WAvg", was("WATimeToReversion")
+    If was.Exists("WAFirstChargeOLTV") Then g_SummaryStats.Add "First Charge OLTV_WAvg", was("WAFirstChargeOLTV")
+    If was.Exists("AvgLoanSize") Then g_SummaryStats.Add "AR67_Avg", was("AvgLoanSize")
+    
+    ' Add max values
+    g_SummaryStats.Add "AR67_Max", stats.MaxCurrentBalance
+    
+    ' Get percentages
+    Set pcts = stats.CalculatePercentages()
+    
+    ' Store all percentages with descriptive keys
+    For Each key In pcts.Keys
+        If Not g_SummaryStats.Exists(CStr(key)) Then
+            g_SummaryStats.Add CStr(key), pcts(key)
+        End If
+    Next key
+    
+End Sub
+```
+
+---
+
+## ✅ USAGE EXAMPLE
+
+```vba
+'===============================================================================
+' EXAMPLE: Using clsSummaryAccumulators
+'===============================================================================
+Sub TestAccumulators()
+    
+    Dim stats As New clsSummaryAccumulators
+    
+    ' Initialize
+    stats.Initialize
+    
+    ' Simulate processing loans
+    stats.AccumulateBalance 250000
+    stats.AccumulateBalance 180000
+    stats.AccumulateBalance 320000
+    
+    stats.AccumulateRepaymentType 1, 250000  ' IO
+    stats.AccumulateRepaymentType 2, 180000  ' Amortising
+    stats.AccumulateRepaymentType 1, 320000  ' IO
+    
+    stats.AccumulateArrears 0, 250000, 0
+    stats.AccumulateArrears 2, 180000, 1500
+    stats.AccumulateArrears 0, 320000, 0
+    
+    ' Get results
+    Debug.Print stats.Describe()
+    
+    Dim was As Object
+    Set was = stats.CalculateWeightedAverages()
+    Debug.Print "Avg Loan Size: " & Format(was("AvgLoanSize"), "#,##0")
+    
+    Dim pcts As Object
+    Set pcts = stats.CalculatePercentages()
+    Debug.Print "IO %: " & Format(pcts("IOPct"), "0.00%")
+    
+End Sub
+```
+
+---
+
+## 📋 CHECKLIST
+
+```
+□ Created clsSummaryAccumulators class module
+□ Added all private member variables
+□ Added all public properties
+□ Added Initialize method
+□ Added accumulation methods for each category
+□ Added calculation methods (percentages, weighted averages)
+□ Added ToSummaryDictionary method
+□ Updated modSummaryStatistics to use the class
+□ Tested with sample data
