@@ -1,0 +1,115 @@
+
+
+# Master Extraction Prompt — Collections & Security Package Review
+
+Below is a prompt you can paste directly into **Copilot** (or any document-grounded LLM). Swap the bracketed placeholder at the top for each transaction's document set.
+
+---
+
+## Prompt
+
+> **Context & Role**
+>
+> You are a structured finance analyst conducting an operational‑resilience review of a lending / private securitisation transaction. You have been given the transaction documents for **[INSERT TRANSACTION NAME / DEAL ID]**. These may include (but are not limited to): the Credit / Facility Agreement, Servicing Agreement, Security Deed / Agreement, Account Bank Agreement, Collections Account Agreement, Intercreditor Agreement, Account Control Agreement (or Account Charge), Power of Attorney, Deed of Assignment, Portfolio Sale provisions, any Side Letters, and ancillary schedules or notices.
+>
+> **Your task is to search every document in scope and answer each of the questions below with precise references (document name, clause / section number, and a short direct quote where possible). Where the documents are silent or ambiguous, say so explicitly.**
+>
+> ---
+>
+> ### QUESTION 1 — Segregated Collection Accounts
+>
+> a) Does the transaction require a **dedicated / segregated collections account** (i.e., an account used exclusively to receive borrower / obligor collections relating to the financed portfolio, separate from the borrower's or originator's general operating accounts)?
+>
+> b) If yes:
+> - Who is the **account holder** (borrower SPV, originator, SPG entity, other)?
+> - At which **bank** is the account held, and is that bank a party to or on notice of the security?
+> - Is there an **Account Control Agreement, Account Charge, or equivalent** granting the lender (or its agent/trustee) control or a fixed charge over the account?
+> - Are there any **permitted withdrawals or commingling rights** that could dilute the ring‑fencing (e.g., the borrower may sweep funds to a general account after a waterfall test)?
+>
+> c) If **no** segregated account exists:
+> - Where do collections land (originator operating account, client account, other)?
+> - Is there any **tracing, earmarking, or trust mechanism** over those receipts in favour of the lender?
+>
+> ---
+>
+> ### QUESTION 2 — Visibility into Collections Accounts
+>
+> For every account into which borrower / portfolio collections are paid:
+>
+> a) Does **SPG (the lender or its servicer)** have **direct, independent, real‑time or periodic electronic access** to view balances and transaction‑level activity on the collections account(s) — without needing to contact any third party? *(This would be classified as "Free & clear access." Note: having to email or call a custodian is still considered free & clear.)*
+>
+> b) If SPG does **not** have direct access, does it obtain account information **via an agent bank, account bank, trustee, or other intermediary** who is contractually obligated to provide it — without requiring the client's / borrower's permission? *(This would be classified as "Reliant on 3rd party.")*
+>
+> c) If neither (a) nor (b), does SPG require the **client's / borrower's consent or cooperation** to obtain visibility over account activity? *(This would be classified as "Reliant on client.")*
+>
+> d) Cite the specific clauses that establish the reporting, access, or information‑sharing obligations for each account. Note any **frequency** (daily, weekly, monthly), **format** (portal, bank statements, data tape), and any **conditions or triggers** that change the access level (e.g., access upgrades upon an event of default).
+>
+> ---
+>
+> ### QUESTION 3 — Collateral Possession & Control
+>
+> a) What is the **nature of the collateral** (receivables, loans, leases, physical assets, shares, IP, other)?
+>
+> b) Has the collateral been **legally assigned, charged, or pledged** to the lender (or a security trustee on its behalf)? Specify whether the assignment/charge is:
+> - **Legal (perfected)** or **equitable / beneficial only**;
+> - **By way of security** or **by way of true sale**;
+> - Whether **notice of assignment** has been given to underlying obligors / debtors.
+>
+> c) In a **servicer‑transfer scenario** (i.e., the current servicer is replaced), can SPG (or its appointed successor servicer) **access and take operational control of the collateral and all related data, records, and systems without the client's / borrower's cooperation**?
+> - If yes — state the mechanism (e.g., step‑in rights, power of attorney, back‑up servicer appointment, data escrow). *(Classify as: "Collateral owned or assigned to borrower; SPG has access in case of servicer transfer or portfolio sale.")*
+> - If access is achievable **through a third party** (e.g., back‑up servicer, data trustee, custodian) **without reliance on the client** — state the mechanism. *(Classify as: "Collateral accessible via 3rd party without reliance on client.")*
+> - If the client's / borrower's **active cooperation is required** to effect the transfer — state what is needed and why. *(Classify as: "Reliance on client necessary.")*
+>
+> d) In a **portfolio‑sale scenario** (SPG sells or transfers its interest in the financed portfolio to a third‑party purchaser):
+> - Can this be effected **without client consent**?
+> - Are there any **consent rights, pre‑emption rights, or transfer restrictions** in favour of the borrower / originator?
+> - Apply the same three‑tier classification as above.
+>
+> e) Where is the **loan / collateral documentation physically or electronically held** (custodian, solicitor's undertaking, SPG's own systems, client's systems)? Does SPG or its security trustee hold originals or certified copies?
+>
+> ---
+>
+> ### QUESTION 4 — Additional / Noteworthy Items
+>
+> Flag anything else that is relevant to SPG's operational resilience and control posture over this transaction, including but not limited to:
+>
+> - Any **waterfall or cash‑management** mechanics that could delay or redirect collections before they reach SPG;
+> - Any **commingling risk** windows (e.g., collections sit in a non‑segregated account for X days before sweep);
+> - Any **set‑off risk** (collections account at a bank to which the borrower owes money);
+> - Any **delegation or sub‑servicing** arrangements that add intermediary layers;
+> - Any **cure or remedy periods** before SPG can exercise step‑in or enforcement rights;
+> - Any **jurisdictional or regulatory constraints** (e.g., local law requirements for account location, data‑protection restrictions on transferring borrower data);
+> - Any provisions that **change upon an Event of Default or Trigger Event** (e.g., account control flips, reporting frequency increases, standstill periods);
+> - Any **gaps or weaknesses** you identify relative to best practice.
+>
+> ---
+>
+> ### OUTPUT FORMAT
+>
+> Return your findings in the following table structure (one row per transaction / facility, or one row per account if multiple accounts exist):
+>
+> | Field | Response |
+> |---|---|
+> | **Transaction / Deal Name** | |
+> | **1. Segregated Collection Account?** | Yes / No — [detail] |
+> | **2. Visibility into Collections Account** | *Free & clear access* / *Reliant on 3rd party* / *Reliant on client* — [detail & clause refs] |
+> | **3. Collateral Possession & Control** | *(i) SPG has access* / *(ii) Accessible via 3rd party* / *(iii) Reliance on client necessary* — [detail & clause refs] |
+> | **4. Comments / Noteworthy Items** | [Free text] |
+>
+> After the table, provide a **"Key Clauses Index"** listing every clause you relied on, grouped by document, so the reviewer can verify quickly.
+>
+> If any question **cannot be answered** from the documents provided, state clearly: *"NOT ADDRESSED IN DOCUMENTS REVIEWED"* and flag it as a follow‑up item.
+
+---
+
+## How to Use
+
+| Step | Action |
+|------|--------|
+| **1** | Upload or reference the full document set for the transaction into Copilot's context window (drag PDFs into the chat, or point Copilot at the relevant SharePoint / Teams folder). |
+| **2** | Paste the prompt above, replacing **[INSERT TRANSACTION NAME / DEAL ID]**. |
+| **3** | Review the output table and the Key Clauses Index. Spot‑check at least the highest‑risk classifications (anything marked *Reliant on client*). |
+| **4** | Copy the table row into your consolidated response tracker (the master spreadsheet with the List tab). |
+| **5** | Repeat for each transaction. |
+
+> **Tip for large document sets:** If Copilot truncates or misses documents, split the prompt into the four numbered sections and run them sequentially, telling Copilot *"Continue answering from the same documents"* each time.
