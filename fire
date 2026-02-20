@@ -113,3 +113,206 @@ Below is a prompt you can paste directly into **Copilot** (or any document-groun
 | **5** | Repeat for each transaction. |
 
 > **Tip for large document sets:** If Copilot truncates or misses documents, split the prompt into the four numbered sections and run them sequentially, telling Copilot *"Continue answering from the same documents"* each time.
+
+
+# Review of developing asset classes/structures: UK second‑lien mortgages
+
+## Executive summary
+
+- The UK second‑lien (“second charge”) mortgage market is a niche but fast‑growing segment of secured consumer lending: new business in the 12 months to November 2025 was **£2,089m across 40,886 agreements** (vs **£1,692m / 35,367** in the 12 months to November 2024, and **£1,385m / 30,411** in the 12 months to November 2023). citeturn20view0turn24search0turn24search14  
+- Borrower use‑cases are dominated by **debt consolidation and home improvement** combinations; in November 2025, **58.0%** of new agreements were solely for consolidation, **22.4%** for home improvements + consolidation, and **10.8%** solely for home improvements. citeturn20view0  
+- Macroeconomic context supports “rate‑lock” demand (borrowers reluctant to refinance a first mortgage): the entity["organization","Bank of England","uk central bank"]’s **Bank Rate is 3.75% (current)**, with the most recent cut in **December 2025** and previous cuts since **August 2024**. citeturn26view0turn26view1turn26view2  
+- Collateral risk is driven by **subordination to the senior mortgage** and realised house prices: the entity["organization","HM Land Registry","land registry, uk"]’s UK HPI (December 2025) reports an average UK house price of **~£270,000** and annual price growth easing to **2.4%** (provisional). citeturn25search0turn25search6  
+- Public securitisation exists and is expanding. Example: **Together Asset Backed Securitisation 2025‑2ND1** lists **£276.8m** of notes (Class A–F and Z, with both Reg S and 144A lines shown on entity["organization","Euronext Dublin","stock exchange, dublin, ie"]’s public documents page). citeturn34search0  
+- A second example of public issuance in 2025: **Fylde Funding 2025‑1** lists **£204.8m** of notes across Classes A–F plus X1/X2. citeturn31view0  
+- Transaction structuring in at least one leading shelf (Together) includes standard UK RMBS protections adapted to second‑ranking collateral: multiple tranches (including non‑collateralised liquidity notes), **25% initial credit enhancement to Class A**, a **liquidity reserve fund**, and **fixed‑to‑floating hedging** where assets include fixed‑rate loans but liabilities reference compounded SONIA. citeturn15view1  
+- Data availability remains a key diligence issue. The entity["organization","Financial Conduct Authority","uk financial regulator"]’s published mortgage Product Sales Data (PSD) explicitly notes that **second charge mortgages are not included in the main PSD analysis**, limiting regulator‑published time series for this segment. citeturn21view0turn22view0  
+
+Second‑lien mortgages are conceptually straightforward—an additional legal charge behind a first mortgage—but they are securitisation‑relevant because they combine (i) consumer‑credit‑like borrower motivations (consolidation, liquidity needs) with (ii) property‑secured recoveries that are structurally subordinated to senior debt. The market’s recent growth and increasing public term issuance suggest it is becoming a repeatable “specialist RMBS” funding channel, but it remains a **data‑sparse** sector relative to first‑lien prime RMBS, requiring careful triangulation of originator disclosures, listing documents, and rating‑agency surveillance.
+
+## Asset class overview
+
+**Slide‑ready bullets**
+
+- **Definition**: a mortgage/secured loan where the lender takes a **second‑ranking legal charge** over a residential property already subject to a first charge; recoveries are paid after the first charge is discharged/paid. (Priority treatment is operationally reflected in Land Registry practice around transfers under a chargee’s power of sale and treatment of higher‑priority charges.) citeturn27search1  
+- **Typical borrower motivations (observable in market stats)**: debt consolidation dominates; home improvement is the next largest use, often combined with consolidation. citeturn20view0  
+- **Observed borrower purpose split (Nov 2025)**: 58.0% consolidation only; 22.4% mixed consolidation + improvements; 10.8% improvements only. citeturn20view0  
+- **Origination flow scale**: trailing 12‑month originations rose from **£1,385m (to Nov 2023)** → **£1,692m (to Nov 2024)** → **£2,089m (to Nov 2025)**. citeturn24search14turn24search0turn20view0  
+- **Average new‑loan ticket (derived from FLA data)**:
+  - 12m to Nov 2023: £1,385m / 30,411 ≈ **£45.5k**  
+  - 12m to Nov 2024: £1,692m / 35,367 ≈ **£47.8k**  
+  - 12m to Nov 2025: £2,089m / 40,886 ≈ **£51.1k** citeturn24search14turn24search0turn20view0  
+- **Product economics (high‑level, evidenced indirectly)**: securitised liabilities reference **compounded SONIA** for at least one major shelf, while assets may include fixed‑rate components, implying active asset/liability management and derivative hedging. citeturn15view1  
+- **Regulatory perimeter and conduct**: arrears/forbearance rules in entity["organization","Financial Conduct Authority","uk financial regulator"] mortgage conduct standards materially influence collections strategy and repossession timing (see MCOB 13 requirements referenced in FCA thematic work). citeturn27search8turn27search0  
+
+Second‑lien lending sits between mainstream residential mortgages and secured consumer credit. The clearest, repeatable fact pattern from published market statistics is **purpose**: the segment largely addresses balance‑sheet repair (consolidation) and property investment in the home (improvements). citeturn20view0 The financing logic is often framed as “do not disturb the first mortgage”: when first‑lien refinancing would crystallise a higher rate, a second charge can provide incremental borrowing while leaving the first charge untouched. This macro linkage is consistent with rate conditions and the timing of policy rate cuts from August 2024 onward. citeturn26view0turn26view1  
+
+```mermaid
+flowchart LR
+  A[Borrower with first mortgage] --> B[Second-lien lender originates second charge]
+  B --> C[Second charge registered behind first charge]
+  B --> D[Warehouse / term take-out]
+  D --> E[SPV purchases receivables]
+  E --> F[Notes issued to investors]
+  F --> G[Coupon to investors: SONIA-linked liabilities]
+  E --> H[Servicer collects borrower payments]
+  H --> I[Waterfall: fees -> interest -> principal -> residual]
+```
+citeturn15view1turn27search1  
+
+## Sector and transaction risk mitigants
+
+**Slide‑ready bullets**
+
+- **Priority/subordination is the core credit risk**: second‑ranking charges sit behind senior mortgages; in a sale under power of sale, the existence of a higher‑priority registered charge can require the transfer to be made **subject to** the senior charge or supported by a **discharge** of that senior charge (and inferior chargees may be notified/cancelled on registration). citeturn27search1  
+- **Statutory enforcement toolkit exists (England & Wales)**: a statutory power of sale is implied (once the mortgage money has become due) under **Law of Property Act 1925 s.101**. citeturn27search5  
+- **Court discretion in residential possession (England & Wales)**: in possession actions involving a dwelling house, the court may adjourn/suspend/postpone if the borrower is likely to remedy the default within a reasonable period (**Administration of Justice Act 1970 s.36**). This can extend timelines vs purely contractual expectations. citeturn27search2  
+- **Conduct and arrears handling are binding constraints**: FCA mortgage arrears rules are explicit that firms must not repossess unless other reasonable attempts have failed (referenced in FCA thematic work on mortgage arrears). citeturn27search8turn27search0  
+- **Structural credit enhancement example (Together 2024‑2ND1)**: the structure initially provided **25% credit enhancement to Class A**, via subordination of junior notes. citeturn15view1  
+- **Liquidity protection example (Together 2024‑2ND1)**: issuance included non‑collateralised **Class X notes** whose proceeds funded a **liquidity reserve fund (LRF)**. citeturn15view1  
+- **Rate/hedging mitigant example (Together 2024‑2ND1)**: fixed‑to‑floating swap against SONIA liabilities, with **entity["company","Natixis S.A.","investment bank, france"]** as swap counterparty (per DBRS disclosure). citeturn15view1  
+- **Servicing mitigant examples (Together shelves)**: originator‑servicing with a named standby servicer—**entity["company","BCMGlobal Mortgage Services Limited","servicer, uk"]**—is disclosed in DBRS surveillance and rating action commentary. citeturn15view1turn15view2  
+
+**Table: structural feature comparison (illustrative, from disclosed UK public term deals where available)**
+
+| Feature | Why it matters in second‑lien RMBS | Example disclosure in public sources |
+|---|---|---|
+| Subordination stack (A–F/Z etc.) | Absorbs losses arising from “thin equity” after senior mortgage pay‑off | Multiple tranches described in Together 2024‑2ND1 (Class A–F, Z, plus liquidity notes). citeturn15view1 |
+| Initial credit enhancement to senior | Quantifies cushion vs stress defaults/house price declines | 25% CE to Class A described for Together 2024‑2ND1. citeturn15view1 |
+| Liquidity reserve fund (LRF) | Mitigates short‑term payment interruption (delinquencies/servicing disruption) | LRF funded at closing via non‑collateralised Class X proceeds (Together 2024‑2ND1). citeturn15view1 |
+| Fixed/float swap / basis risk management | Second‑lien pools may include fixed‑rate products; liabilities generally float (SONIA) | Fixed‑to‑floating swap described in Together 2024‑2ND1. citeturn15view1 |
+| Standby servicer | Operational continuity; reduces tail risk from servicer failure | BCMGlobal named as standby servicer in Together 2024‑2ND1 and referenced in 2022‑2ND1 surveillance. citeturn15view1turn15view2 |
+| Enforcement reality (E&W) | Second‑lien enforcement depends on statutory powers, court discretion, and priority mechanics | LPA 1925 s.101; AJA 1970 s.36; Land Registry PG75 on power‑of‑sale registration. citeturn27search5turn27search2turn27search1 |
+| Repossession as last resort (conduct) | Affects collection timing and loss severity (arrears capitalisation, timeline) | FCA MCOB 13 referenced in FCA TR18/5; rule framing reiterated in FCA policy materials. citeturn27search8turn27search11 |
+
+Second‑lien securitisations look structurally similar to UK specialist RMBS but should be analysed with a “priority‑first” mindset: the **first mortgage balance and its arrears status are effectively a structural senior claim** on collateral proceeds. Operationally, this comes through in how transfers under a power of sale must address higher‑priority charges, and in the reality that the second‑lien lender’s economic recovery may be highly sensitive to small house‑price moves when combined leverage is high. citeturn27search1turn25search0  
+
+From a noteholder perspective, disclosed structures demonstrate that arrangers and CRAs apply familiar mitigants—subordination, liquidity reserves, hedging, standby servicing—and make them explicit in public disclosures, e.g., Together 2024‑2ND1’s 25% senior CE and LRF funding via Class X, plus hedging against SONIA liabilities. citeturn15view1  
+
+## Market backdrop
+
+**Slide‑ready bullets**
+
+- **Policy rate**: Bank Rate is **3.75%** (current), with the most recent change on **18 December 2025**; prior cuts occurred from **August 2024** onward. citeturn26view0turn26view1  
+- **Central bank guidance**: the Bank of England’s explainer (updated **12 February 2026**) states it expects scope for further rate cuts in 2026 if the economy evolves as expected, while emphasising uncertainty in timing/magnitude. citeturn26view1  
+- **Inflation**: CPI inflation was **3.0% in the 12 months to January 2026** (down from 3.4% in December 2025). citeturn25search10turn25search4  
+- **House prices** (December 2025 UK HPI): average UK price **~£270,000**; annual growth **2.4%** (provisional), down from 2.8% in November 2025 (revised). citeturn25search0  
+- **Regional nuance**: England annual growth **1.7%**, while London shows **‑1.0%** (12 months to December 2025). citeturn25search9turn25search0  
+- **Consumer credit**: annual growth rate for all consumer credit **8.2%** in December 2025; credit card borrowing growth **12.4%**. citeturn25search2  
+- **Second‑charge demand linkage (observable)**: FLA commentary explicitly frames 2024–2025 growth against interest‑rate and confidence backdrops, with strong year‑on‑year increases in both volumes and values. citeturn20view0turn24search0  
+
+The macro picture is mixed but directionally supportive for secured‑loan demand. Policy rates have moved down from peaks, but remain elevated; inflation is easing yet still above target. citeturn26view0turn25search10 For second charges, the most directly measurable linkage is through consumer balance‑sheet pressure and refinancing dynamics: growing consumer credit (including credit cards) and a market dominated by consolidation‑purpose lending provide a coherent narrative for continued origination volumes. citeturn25search2turn20view0  
+
+House prices remain positive on a national basis but show regional dispersion (notably London’s negative annual print), which matters because second‑lien recoveries are structurally “equity‑thin” in high combined‑LTV cases. citeturn25search9turn27search1  
+
+## Market size estimate
+
+**Slide‑ready bullets**
+
+- **Primary observable market‑size proxy (annual originations)**: FLA monthly statistics provide a consistent “new business value” and “new agreements” series for the second charge mortgage market. citeturn20view0turn24search0turn24search14  
+- **Latest trailing‑12 originations (12m to Nov 2025)**: **£2,089m** and **40,886** agreements. citeturn20view0  
+- **Time series (aligned 12m to Nov endpoints)**:
+  - 12m to Nov 2023: **£1,385m**, 30,411 agreements  
+  - 12m to Nov 2024: **£1,692m**, 35,367 agreements  
+  - 12m to Nov 2025: **£2,089m**, 40,886 agreements citeturn24search14turn24search0turn20view0  
+- **Derived average new‑loan size** rose from ~£45.5k (12m to Nov 2023) to ~£51.1k (12m to Nov 2025), calculated as value ÷ agreements. citeturn24search14turn20view0  
+- **Outstanding balance**: no single authoritative public series was identified in this research run. FCA PSD publishes mortgage sales but explicitly excludes second charge mortgages from main analysis; this constrains regulator‑published aggregates. citeturn21view0turn22view0  
+- **Methodology for an indicative outstanding estimate (stock‑flow model)**:
+  - Step 1: take an originations proxy (e.g., average annual new business over 2023–2025 endpoints).  
+  - Step 2: assume an average life/tenor in years (high uncertainty without public run‑off data).  
+  - Step 3: Outstanding ≈ Flow × Average Life.  
+  This is a modelling approach, not a confirmed statistic; see confidence ranges below. citeturn24search14turn24search0turn20view0  
+- **Data gaps to close for investment‑grade sizing**: obtain (i) lender regulatory returns that explicitly separate second‑charge balances, and/or (ii) commercial datasets (e.g., Dealogic/Refinitiv) to aggregate originator balance sheets and securitised + warehouse outstandings. (Not available within cited public sources here.) citeturn21view0  
+
+**Table: originations and derived average ticket (from FLA; calculations shown)**
+
+| Trailing 12 months to… | New business value (£m) | New agreements | Derived average loan (£k) | Calculation |
+|---|---:|---:|---:|---|
+| Nov 2023 | 1,385 | 30,411 | 45.5 | 1,385,000,000 ÷ 30,411 |
+| Nov 2024 | 1,692 | 35,367 | 47.8 | 1,692,000,000 ÷ 35,367 |
+| Nov 2025 | 2,089 | 40,886 | 51.1 | 2,089,000,000 ÷ 40,886 |
+
+citeturn24search14turn24search0turn20view0  
+
+```mermaid
+xychart-beta
+  title "UK second charge mortgages: annual originations proxy (FLA new business value)"
+  x-axis ["12m to Nov 2023","12m to Nov 2024","12m to Nov 2025"]
+  y-axis "£m" 0 --> 2300
+  bar [1385,1692,2089]
+```
+citeturn24search14turn24search0turn20view0  
+
+**Indicative outstanding balance (modelled; low confidence)**
+
+Because a public, regulator‑published “outstanding second‑charge balances” series was not confirmed from accessible sources in this run, the most transparent approach is a **sensitivity table** anchored to observable annual flows.
+
+- Step 1 (flow): average annual new business value across the three aligned endpoints = (1,385 + 1,692 + 2,089) / 3 = **£1,722m per year**. citeturn24search14turn24search0turn20view0  
+- Step 2 (life assumption): **cannot be confirmed** from the cited public sources here.  
+- Step 3 (stock estimate): Outstanding ≈ £1.722bn × average life (years).
+
+| Assumed average life (years) | Modelled outstanding (£bn) | Confidence |
+|---:|---:|---|
+| 3 | 5.2 | Low |
+| 5 | 8.6 | Low |
+| 8 | 13.8 | Low |
+
+This range is **illustrative** only: it shows how sensitive outstanding size is to run‑off behaviour, which materially depends on refinancing incentives, borrower credit migration, and house‑price dynamics. The main investment‑grade takeaway is that **originations are observable and rising**, while **stock sizing needs non‑public data or specialist databases** to reach high confidence. citeturn21view0turn26view1turn25search0  
+
+## Competitive landscape
+
+**Slide‑ready bullets**
+
+- The competitive set evidenced in public term issuance is primarily **specialist non‑bank lenders** rather than major high‑street banks. (Public RMBS shelves and listing documents are dominated by specialist names.) citeturn28search0turn34search0turn31view0  
+- **entity["company","Together Financial Services Limited","uk specialist lender"]** is a repeat issuer of second‑charge‑only RMBS (e.g., “TABS … 2ND1” transactions listed in its debt funding materials). citeturn28search0turn34search0turn15view1  
+- **entity["company","Tandem Bank","uk challenger bank"]** presence is evidenced by the **Fylde Funding** RMBS shelf, described by DBRS issuer materials as backed by UK second‑lien mortgage loans, and publicly listed on Euronext. citeturn29search5turn31view0  
+- **entity["company","Enra Specialist Finance","uk mortgage lender"] / entity["company","West One Loans","mortgage lender, uk"]** are evidenced via public communication around the **Elstree Funding** programme, including securitisations backed by **first‑charge BTL** and **prime second charge** mortgages. citeturn12search15turn28search5  
+- Public investor reporting for some programmes is routed via third‑party platforms (e.g., Together references EuroABS issue viewers for securitisations). Access may require registration, creating practical diligence frictions. citeturn28search0  
+- Market purpose mix (consolidation) implies competition overlaps with unsecured consumer lenders and mortgage further advances, but the **secured second‑charge structure** differentiates underwriting and recoveries. citeturn20view0turn27search1  
+- A key competitive lever is **funding**: repeat public RMBS issuance suggests a lower marginal cost of capital than smaller lenders dependent on bilateral/private credit lines (not quantified in public sources here). citeturn28search0turn34search0turn31view0  
+
+**Table: originator / platform comparison (publicly evidenced items only)**
+
+| Originator / platform | Public evidence of UK second‑lien activity | Funding / capital markets signal | Notes / diligence flags |
+|---|---|---|---|
+| Together Financial Services Limited | Repeat “2ND1” RMBS issuance listed in its investor debt funding materials; second‑ranking collateral described in DBRS disclosure for 2024 shelf | Listed notes on Euronext; multiple shelves | Investor reporting often via EuroABS viewer (may require access). citeturn28search0turn15view1turn34search0 |
+| Tandem Bank | Fylde Funding shelf described by DBRS issuer page as backed by UK second‑lien mortgage loans; listed note stack on Euronext | Listed notes on Euronext (A–F + X tranches) | Ratings detail not confirmed in accessible public pages during this run. citeturn29search5turn31view0 |
+| Enra Specialist Finance / West One Loans | West One press release references Elstree securitisation backed by first‑charge BTL and prime second charge mortgages | Public securitisation programme referenced | Investor reporting referenced via Citibank / EuroABS (access constraints). citeturn12search15turn28search5 |
+
+The competitive landscape, as evidenced by public issuance and issuer communications, is skewed toward specialist lenders with established securitisation programmes and/or repeatable listing infrastructure. citeturn28search0turn31view0turn12search15 From a structuring and syndication standpoint, this implies that “supply” for public RMBS is concentrated, and investor familiarity may build around a small set of shelf names—useful for repeat execution, but also a concentration risk for market‑wide performance inference.
+
+## Public securitisations
+
+**Slide‑ready bullets**
+
+- **Public term RMBS exists for second‑lien collateral** and is listed on Euronext Dublin; listing pages show multi‑tranche capital structures (A through mezz plus residual‑like positions). citeturn34search0turn31view0  
+- **Together 2025‑2ND1 (listed notes)**: Euronext documents page lists (unique class sizes):  
+  - Class A **£199.281m**; B **£29.062m**; C **£15.915m**; D **£11.763m**; E **£8.303m**; F **£6.919m**; Z **£5.536m** → total ≈ **£276.8m** (Euronext also shows 144A and Reg S lines for each class). citeturn34search0  
+- **Fylde Funding 2025‑1 (listed notes)**: Euronext documents page lists Class A **£156.337m** plus B–F and X1/X2 tranches totalling ≈ **£204.8m**. citeturn31view0  
+- **Together 2024‑2ND1 (rating agency structural disclosure)**: DBRS states the collateral pool was **£302m** of second‑lien owner‑occupied and BTL mortgages; the issuer had multiple tranches (including a loan note and Classes A–F/Z) and issued **Class X** notes to fund liquidity reserves. citeturn15view1  
+- **Credit enhancement example**: DBRS discloses **25% initial CE to Class A** for Together 2024‑2ND1 via subordination (Classes B–Z). citeturn15view1  
+- **Hedging example**: DBRS discloses a fixed‑to‑floating swap for Together 2024‑2ND1 with Natixis as counterparty due to fixed‑rate loan exposure vs SONIA liabilities. citeturn15view1  
+- **Performance history proxy (where investor reports are not public)**: DBRS annual surveillance actions provide a public “minimum” view. For Together 2022‑2ND1, DBRS confirmed ratings in May 2024 and discloses base‑case PD/LGD assumptions used in surveillance (PD 12.4%, LGD 26.2% at B(sf) level). citeturn15view2  
+- **Data gaps**: many detailed presale/new‑issue reports and investor reporting portals are account‑gated (e.g., rating‑agency portals; EuroABS investor reporting), limiting open‑web extraction of tranche coupons, triggers, arrears/loss curves, and CPR/CDR metrics. citeturn28search0turn23view0  
+
+**Table: confirmed public second‑lien RMBS examples (from open listing / CRA disclosures available in this run)**
+
+| Deal / issuer | Collateral characterisation | Publicly observed issuance / notes | Publicly observed CRA / structural data | Source date(s) |
+|---|---|---:|---|---|
+| Together Asset Backed Securitisation 2025‑2ND1 | Second‑lien residential mortgage‑backed notes (note stack on Euronext listing) | ~£276.8m listed note stack (Class A–F, Z) | Ratings detail not confirmed from accessible public CRA pages in this run; structure is multi‑tranche with duplicated Reg S/144A lines shown | Euronext page as accessed (listing) citeturn34search0 |
+| Fylde Funding 2025‑1 | DBRS issuer materials describe UK second‑lien RMBS; Euronext lists note stack | ~£204.8m listed notes (A–F plus X1/X2) | Ratings / triggers not confirmed from accessible public CRA pages in this run | DBRS issuer page + Euronext listing citeturn29search5turn31view0 |
+| Together Asset Backed Securitisation 2024‑2ND1 | DBRS: **£302m** second‑lien OO + BTL mortgages | Not fully reconstructed from Euronext “documents” page due to incomplete security list display in this run | DBRS: eight collateralised tranches + non‑collateralised Class X; **25% CE** to Class A; Natixis swap | DBRS press release (finalised ratings) citeturn15view1 |
+| Together Asset Backed Securitisation 2022‑2ND1 | DBRS: securitisation of second‑lien mortgage loans (OO + BTL) originated/serviced by Together group companies | Not reconstructed from listing pages in this run | DBRS: ratings confirmed May 2024 (AAA/AA/A(high)/BBB(high)/BB(low)/B), with surveillance PD/LGD disclosure | DBRS press release (May 2024) citeturn15view2 |
+
+```mermaid
+xychart-beta
+  title "Confirmed UK public second-lien RMBS issuance (examples observed in open sources)"
+  x-axis ["2024","2025"]
+  y-axis "£m (sum of deal sizes observed)" 0 --> 520
+  bar [302,482]
+```
+citeturn15view1turn34search0turn31view0  
+
+The securitisation evidence base is strongest for repeat issuers where rating agencies publish structural and surveillance summaries. Together 2024‑2ND1 provides a clear window into how second‑lien risk is packaged: multiple tranches, meaningful senior CE (25%), explicit liquidity protection via a funded reserve, and hedging of fixed‑rate exposures into SONIA liabilities. citeturn15view1  
+
+Performance history is harder to evidence without investor report access, but DBRS surveillance actions provide a public baseline for at least one seasoned deal (Together 2022‑2ND1), including rated‑note outcomes (confirmed ratings) and disclosed modelling parameters. citeturn15view2
