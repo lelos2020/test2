@@ -1,0 +1,11 @@
+.env
+instagram_session.json
+generated_images/
+archive/
+logs/
+analytics.json
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+fonts/

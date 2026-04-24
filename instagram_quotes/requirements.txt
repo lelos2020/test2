@@ -1,0 +1,17 @@
+# Instagram automation
+instagrapi>=2.0.0
+
+# Image generation
+Pillow>=10.0.0
+
+# AI quote curation & captions
+anthropic>=0.40.0
+
+# Scheduling
+schedule>=1.2.0
+
+# Environment / credentials
+python-dotenv>=1.0.0
+
+# HTTP (used internally by instagrapi; pinned for stability)
+httpx>=0.27.0

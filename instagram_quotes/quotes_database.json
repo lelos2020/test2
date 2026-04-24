@@ -1,0 +1,504 @@
+{
+  "quotes": [
+    {
+      "id": "q001",
+      "text": "You'll have bad times, but it'll always wake you up to the good stuff you weren't paying attention to.",
+      "source": "Good Will Hunting",
+      "type": "movie",
+      "themes": ["impermanence", "connection", "gratitude"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q002",
+      "text": "Most people live their lives in quiet desperation. Don't be most people.",
+      "source": "Dead Poets Society",
+      "type": "movie",
+      "themes": ["purpose", "universal tiny moments", "time passing"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q003",
+      "text": "We accept the love we think we deserve.",
+      "source": "The Perks of Being a Wallflower",
+      "type": "movie",
+      "themes": ["connection", "loneliness", "self-worth"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q004",
+      "text": "I used to think that I could never lose anyone if I photographed them enough. In fact, my pictures show me how much I've lost.",
+      "source": "Smoke",
+      "type": "movie",
+      "themes": ["impermanence", "nostalgia", "time passing"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q005",
+      "text": "The present moment always will have been.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["impermanence", "time passing", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q006",
+      "text": "I just want to go on more adventures. Be around good energy. Connect with people. Learn new things. Grow.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["connection", "purpose", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q007",
+      "text": "There's a kind of grief that comes from watching your children need you less.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["bittersweet parenting", "impermanence", "nostalgia"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q008",
+      "text": "Autumn carries more gold in its pocket than all the other seasons.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["seasonal nostalgia", "impermanence", "small rituals"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q009",
+      "text": "It's the quiet after the party that breaks you — all that laughter still hanging in the air.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["quiet after chaos", "connection", "loneliness"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q010",
+      "text": "We're all just walking each other home.",
+      "source": "Ram Dass",
+      "type": "attributed",
+      "themes": ["connection", "impermanence", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q011",
+      "text": "There is a time in the last few days of summer when the heat of the day lingers into the evenings. Some people call it an Indian summer. I call it the most lonely time of year.",
+      "source": "About Time",
+      "type": "movie",
+      "themes": ["seasonal nostalgia", "loneliness", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q012",
+      "text": "The most important things are the hardest to say, because words diminish them.",
+      "source": "Stand By Me",
+      "type": "movie",
+      "themes": ["connection", "universal tiny moments", "loneliness"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q013",
+      "text": "I don't want to be a tree; I want to be its meaning.",
+      "source": "Arrival",
+      "type": "movie",
+      "themes": ["time passing", "purpose", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q014",
+      "text": "You know what I've noticed? Nobody panics when things go according to plan, even if the plan is horrifying.",
+      "source": "The Dark Knight",
+      "type": "movie",
+      "themes": ["universal tiny moments", "quiet after chaos"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q015",
+      "text": "Every passing minute is another chance to turn it all around.",
+      "source": "Vanilla Sky",
+      "type": "movie",
+      "themes": ["impermanence", "time passing", "purpose"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q016",
+      "text": "How lucky I am to have something that makes saying goodbye so hard.",
+      "source": "Winnie the Pooh",
+      "type": "attributed",
+      "themes": ["impermanence", "connection", "bittersweet parenting"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q017",
+      "text": "The light at the end of the day — that last golden hour — feels like a goodbye you've learned to expect.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["seasonal nostalgia", "impermanence", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q018",
+      "text": "Some days you wake up and the whole world feels like a gift you haven't unwrapped yet.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["universal tiny moments", "small rituals", "gratitude"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q019",
+      "text": "The first sip of morning coffee in absolute silence — that is a whole religion.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["small rituals", "universal tiny moments", "quiet after chaos"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q020",
+      "text": "You don't realize how much you love a season until you feel it leaving.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["seasonal nostalgia", "impermanence", "time passing"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q021",
+      "text": "I've learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel.",
+      "source": "Maya Angelou",
+      "type": "attributed",
+      "themes": ["connection", "universal tiny moments", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q022",
+      "text": "Grief is just love with nowhere to go.",
+      "source": "Jamie Anderson",
+      "type": "attributed",
+      "themes": ["loneliness", "connection", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q023",
+      "text": "The kids won't remember the expensive holiday. They'll remember the spontaneous Tuesday you all stayed in your pajamas.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["bittersweet parenting", "small rituals", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q024",
+      "text": "There are years that ask questions and years that answer.",
+      "source": "Zora Neale Hurston",
+      "type": "attributed",
+      "themes": ["time passing", "impermanence", "purpose"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q025",
+      "text": "Sometimes you wake up, sometimes the fall kills you. And sometimes, when you fall, you fly.",
+      "source": "Neil Gaiman",
+      "type": "attributed",
+      "themes": ["purpose", "impermanence", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q026",
+      "text": "There's a bittersweet beauty in watching your child outgrow the person you used to be to them.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["bittersweet parenting", "impermanence", "time passing"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q027",
+      "text": "I keep thinking about this river somewhere, with the water moving really fast. And these two people in the water, trying to hold onto each other.",
+      "source": "Never Let Me Go",
+      "type": "movie",
+      "themes": ["connection", "loneliness", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q028",
+      "text": "The trouble is, you think you have time.",
+      "source": "Buddha",
+      "type": "attributed",
+      "themes": ["impermanence", "time passing", "small rituals"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q029",
+      "text": "Something about the end of summer always feels like a breath being held — like the world is bracing.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["seasonal nostalgia", "impermanence", "quiet after chaos"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q030",
+      "text": "I think the saddest people always try their hardest to make people happy because they know what it's like to feel absolutely worthless.",
+      "source": "Robin Williams",
+      "type": "attributed",
+      "themes": ["connection", "loneliness", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q031",
+      "text": "The most beautiful moments in life are moments when you are expressing your joy, not when you are seeking it.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["universal tiny moments", "small rituals", "connection"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q032",
+      "text": "Being a parent means loving someone so much you can barely stand it, and also watching them leave you in slow motion for twenty years.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["bittersweet parenting", "impermanence", "time passing"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q033",
+      "text": "Do you ever look at someone and wonder what is going on inside their head?",
+      "source": "Inside Out",
+      "type": "movie",
+      "themes": ["connection", "loneliness", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q034",
+      "text": "What if I fall? Oh, but my darling, what if you fly?",
+      "source": "Erin Hanson",
+      "type": "attributed",
+      "themes": ["purpose", "connection", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q035",
+      "text": "Spring arrives like a rumor, and suddenly the whole world is green again.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["seasonal nostalgia", "small rituals", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q036",
+      "text": "After the noise fades, an empty house has a kind of reverence to it — all those voices still echoing in the walls.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["quiet after chaos", "loneliness", "connection"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q037",
+      "text": "The best thing about memories is making them.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["universal tiny moments", "small rituals", "connection"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q038",
+      "text": "We are all going through something. Every single one of us.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["universal tiny moments", "connection", "loneliness"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q039",
+      "text": "Happiness is not a destination. It is a mood, it is not permanent. It comes and goes and if people thought that way they would find happiness more often.",
+      "source": "One Tree Hill",
+      "type": "tv",
+      "themes": ["impermanence", "universal tiny moments", "purpose"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q040",
+      "text": "I think about you all the time. Not in a way that stops me from thinking about other things. Just in a way that's always there.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["connection", "loneliness", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q041",
+      "text": "When was the last time you did something for the first time?",
+      "source": "Original",
+      "type": "original",
+      "themes": ["time passing", "purpose", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q042",
+      "text": "Life shrinks or expands in proportion to one's courage.",
+      "source": "Anais Nin",
+      "type": "attributed",
+      "themes": ["purpose", "impermanence", "connection"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q043",
+      "text": "You cannot protect yourself from sadness without protecting yourself from happiness.",
+      "source": "Jonathan Safran Foer",
+      "type": "attributed",
+      "themes": ["connection", "impermanence", "loneliness"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q044",
+      "text": "Winter is not a season, it's a celebration of the courage it takes to stay warm.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["seasonal nostalgia", "small rituals", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q045",
+      "text": "Not all those who wander are lost.",
+      "source": "J.R.R. Tolkien",
+      "type": "attributed",
+      "themes": ["purpose", "universal tiny moments", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q046",
+      "text": "Every child you ever loved becomes a ghost eventually — and you have to learn to love the ghost too.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["bittersweet parenting", "impermanence", "time passing"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q047",
+      "text": "I realized that the deepest kindness is presence.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["connection", "small rituals", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q048",
+      "text": "The most common form of despair is not being who you are.",
+      "source": "Soren Kierkegaard",
+      "type": "attributed",
+      "themes": ["purpose", "loneliness", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q049",
+      "text": "There is a crack in everything. That's how the light gets in.",
+      "source": "Leonard Cohen",
+      "type": "attributed",
+      "themes": ["impermanence", "connection", "purpose"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q050",
+      "text": "I was within and without, simultaneously enchanted and repelled by the inexhaustible variety of life.",
+      "source": "The Great Gatsby",
+      "type": "movie",
+      "themes": ["connection", "loneliness", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q051",
+      "text": "The quiet between rain drops is where I've always lived.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["quiet after chaos", "small rituals", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q052",
+      "text": "Sometimes I wonder if the stars look down and envy us — the way we love and lose and love again.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["impermanence", "connection", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q053",
+      "text": "Somewhere between the first cry and the first step, you became someone I'd walk through fire for.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["bittersweet parenting", "connection", "impermanence"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q054",
+      "text": "I think of you in colors that don't exist yet.",
+      "source": "Original",
+      "type": "original",
+      "themes": ["connection", "loneliness", "universal tiny moments"],
+      "used": false,
+      "used_date": null
+    },
+    {
+      "id": "q055",
+      "text": "What good is sitting alone in your room? Come hear the music play.",
+      "source": "Cabaret",
+      "type": "movie",
+      "themes": ["connection", "loneliness", "small rituals"],
+      "used": false,
+      "used_date": null
+    }
+  ],
+  "metadata": {
+    "total_quotes": 55,
+    "last_updated": "2026-04-24",
+    "version": "1.0"
+  }
+}
